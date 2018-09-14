@@ -1,0 +1,9 @@
+This example will build a stiff matrix of Laplacian operator on a mesh
+including triangles and rectangles. The sparsity pattern of the obtained
+stiff matrix is saved in a "gnuplot" file.
+
+Usage:
+	1. compile with make [-e debug=no];
+	2. run with ./run;
+	3. view the obtained sparsity pattern with gnuplot;
+

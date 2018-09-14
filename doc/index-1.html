@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+              
+  <meta name="GENERATOR" content="SGML-Tools 1.0.9">
+  <title>The AFEPack Handbook: Introduction</title>
+                         
+  <link href="index-2.html" rel="next">
+               
+  <link href="index.html#toc1" rel="contents">
+</head>
+  <body>
+  <a href="index-2.html">Next</a>   Previous <a href="index.html#toc1">Contents</a>
+ 
+<hr>  
+<h2><a name="s1">1. Introduction</a> </h2>
+ <br>
+   
+<h2><a name="ss1.1">1.1 Why AFEPack?</a> </h2>
+ There are already a lot of finite element libraries provided until now,
+then why we develop AFEPack and who will use it? <br>
+ 
+<ul>
+   <li>As can be seen, a very considerable part of existed finite element 
+libraries are designed for practical application that they are very efficient 
+but not ultimate flexible, I mean there are only kinds of very matured element 
+types and common used finite element spaces. Of course, this can be enough 
+for those practical user who want to write a program to solve a practical 
+problem with matured scheme. But for those researcher in finite element scheme 
+designment, such kind of library is not suitable for their work because they 
+want to try those element types that have never been studied or they want 
+to build a very strange finite element space to check its numerical characters. 
+Now AFEPack comes to help you! You can build very flexible finite element 
+spaces on any type of triangulation if you can provide the geometry information 
+of the elements and the basis functions on them.</li>
+   <li>To write a program to manage adaptive mesh is very time comsuming
+but fortunately, now there are some libraries as Albert or Deal.II can help
+you to do that in a very easy way. AFEPack is such a library that can handle 
+adaptive mesh, too. And furthermore, AFEPack can build finite element spaces 
+on multimesh, saying if you have several different adaptive meshes, AFEPack 
+can build finite element spaces on those different meshes respectively and 
+build the relationship between those finite element spaces as constructing 
+the matrix of a bilinear operator. As the authors' knowledge, AFEPack is the
+only library until now that have such feather. If your problem have more than
+one variables, and the regularity of those variables are different, or even
+the irregular areas of those variables are at different locations, AFEPack
+will be your choice!</li>
+ 
+</ul>
+ Then will you be the user of AFEPack?<br>
+ 
+<h2><a name="ss1.1">1.2 A First Glance</a> </h2>
+ The AFEPack (Adaptive Finite Element PACKage) is a class library provided
+    to develop finite element and adaptive finite element application. The
+ package   is divided into three levels:<br>
+   
+<ul>
+    <li>Finite Element Module: &nbsp;the base part to construct a finite
+element space, it help the user construct finite element space by only providing
+the template element and appointing template for every element in the mesh,
+such a mechanism is mainly for flexibility - to construct finite element
+space on elments with ANY geometry and ANY basis functions;</li>
+    <li>Mesh Adaptation Module: mesh adpatation is based a so called hierarchy
+geometry tree, only on all those meshes constructed from the same hierarchy
+geometry tree we can build the inter-mesh relationship that the bilinear
+operator on two different finite element spaces on two different mesh can
+be implemented;</li>
+    <li>Application Module: for developping;</li>
+   
+</ul>
+       Every level is based on the prior ones. The library is developed on
+ the   complete abstraction of the idea of finite element method. To understand
+  the structure of the library, we should talk more about mathematics than
+ programming. The main object of this package is to provide convenient tools
+ to develop practical finite element application in very short time. The
+package  now can provide the following feathers:<br>
+   
+<ul>
+    <li>To build a complex finite element space on an arbitrary mesh with 
+  given element templates:&nbsp;</li>
+       
+  <ul>
+      <li>the package is element geometry independent, your element can 
+be  triangle, rectangle or any other geometry;</li>
+      <li>the different geometries can be in the same finite element space;&nbsp;</li>
+      <li>the element geometry can be in any dimension, including dimension 
+   1, 2, 3 and any;</li>
+      <li>the basis functions on different elements of a finite element 
+space  are arbitrary;</li>
+      <li>the administration of degree of freedom are completely automatic;</li>
+      <li>boundary condition administration(only Dirichlet boundary until 
+  now);<br>
+      </li>
+       
+  </ul>
+    <li>To build the relationship of two different finite element spaces
+  on the same mesh;</li>
+       
+  <ul>
+      <li>to construct the matrix of a bilinear operator on the finite  element 
+  spaces;</li>
+      <li>to project a finite element function from one finite element  space 
+  to another;</li>
+      <li>to discritize a finite element function in one finite element 
+space  in another;<br>
+      </li>
+       
+  </ul>
+    <li>To build different adaptive mesh on the same geometry hierchary 
+tree;</li>
+       
+  <ul>
+      <li>to obtain adaptive mesh on the geometry hierchary tree;</li>
+      <li>to adapt a mesh itself according an indicator;</li>
+      <li>to adapt a mesh to another mesh;<br>
+      </li>
+       
+  </ul>
+    <li>To build the relationship of two different finite element spaces
+  on two different meshes from the same geometry hierchary tree;</li>
+   
+</ul>
+       With AFEPack, you can code dimension independent and code on abstract
+  finite  element spaces, that means: you can save many time on coding because
+  most  of the codes are reusable, and you can devoted into problem solving
+  without  caring the detailed implementation of the finite element space.<br>
+  <br>
+   
+<h2><a name="ss1.1">1.3 Changes</a> </h2>
+   
+<hr><a href="index-2.html">Next</a>   Previous <a href="index.html#toc1">Contents</a>
+ <br>
+ <br>
+</body>
+</html>

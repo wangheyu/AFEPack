@@ -1,0 +1,132 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_PREREQ(2.50)
+AC_INIT(AFEPack, 1.8, [rli@math.pku.edu.cn])
+AC_CONFIG_SRCDIR([library])
+AM_CONFIG_HEADER(config.h)
+AC_CANONICAL_SYSTEM
+AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
+
+AFEPACK_PATH=`pwd`
+AC_SUBST(AFEPACK_PATH)
+
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_CXX
+AC_PROG_LN_S
+AC_CHECK_TOOL(AR, ar, :)
+AC_CHECK_TOOL(DOCGEN, doxygen, :)
+AC_CHECK_TOOL(PERL, perl, :)
+AC_CHECK_TOOL(SED, sed, :)
+AC_CHECK_PROGS(MAKE, [gmake make])
+AC_LANG(C++)
+
+CPPFLAGS="$EXTRA_INCDIR -g -std=c++0x -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
+CFLAGS="$EXTRA_INCDIR -g -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/" 
+CXXFLAGS="$EXTRA_INCDIR -g -std=c++0x  -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
+
+AC_ARG_ENABLE(optimized,
+  AC_HELP_STRING([--enable-optimize], [if using -O3 optimizing compiling flags(default: yes)]),,
+  [enable_optimize=yes])
+
+AC_MSG_CHECKING([if optimize support was requested])
+if test "x$enable_optimize" != xno; then
+  AC_MSG_RESULT(yes)
+  CFLAGS="-O3 $CFLAGS"
+  CXXFLAGS="-O3 $CXXFLAGS"
+else
+  AC_MSG_RESULT(no)
+fi
+
+LIBS="$EXTRA_LIBDIR -L/usr/local/dealii-8.1.0-mpi/lib -lmpi -lmpi_cxx -lm"
+
+AC_TRY_CPP([#include <dlfcn.h>],
+  dl_header=yes, dl=no)
+AC_MSG_CHECKING([for dlfcn.h])
+if test "x$dl_header" != xno; then
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+  AC_ERROR([dlfcn.h not found])
+fi
+
+AC_TRY_CPP([#define DEBUG
+  #include <base/exceptions.h>],
+  deal_II_header=yes, deal_II_header=no)
+AC_MSG_CHECKING([for deal.II header files])
+if test "x$deal_II_header" != xno; then
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+  AC_ERROR([deal.II header not found])
+fi
+
+dnl shared option
+AC_ARG_ENABLE(shared,
+  AC_HELP_STRING([--enable-shared], [set compilier flags to generate shared library(default: yes)]),,
+  [enable_shared=yes])
+
+AC_MSG_CHECKING([if shared support was requested])
+if test "x$enable_shared" != xno; then
+  AC_MSG_RESULT(yes)
+  CFLAGS="$CFLAGS -fPIC"
+  CXXFLAGS="$CXXFLAGS -fPIC"
+else
+  AC_MSG_RESULT(no)
+fi
+AC_SUBST(enable_shared)
+
+dnl multi-thread option
+AC_ARG_ENABLE(thread,
+  AC_HELP_STRING([--enable-thread], [enable POSIX thread support(default: yes)]),,
+  [enable_thread=yes])
+
+AC_MSG_CHECKING([if thread support was requested])
+if test "x$enable_thread" != xno; then
+  AC_MSG_RESULT(yes)
+  CFLAGS="$CFLAGS -D__SERIALIZATION__ -DMULTITHREAD -pthread"
+  CXXFLAGS="$CXXFLAGS -D__SERIALIZATION__ -DMULTITHREAD -pthread"
+  LIBS="$LIBS -pthread"
+else
+  AC_MSG_RESULT(no)
+fi
+AC_SUBST(enable_threadd)
+
+CFLAGS="$CFLAGS -I$AFEPACK_PATH/library/include"
+CXXFLAGS="$CXXFLAGS -ftemplate-depth-128 -I$AFEPACK_PATH/library/include"
+AC_SUBST(CFLAGS)
+AC_SUBST(CXXFLAGS)
+
+dnl Checks for libraries.
+LIBS="$LIBS -ldl"
+AC_TRY_LINK([#include <dlfcn.h>],
+  [dlopen("",0);],
+  dl_library=yes, dl_library=no)
+AC_MSG_CHECKING([for library -ldl])
+if test "x$dl_library" != xno; then
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+  AC_ERROR([library -ldl not found])
+fi
+
+LIBS="-ldeal_II $LIBS"
+AC_TRY_LINK([#include <base/exceptions.h>
+  #include <lac/vector.h>],
+  deal_II_library=yes, deal_II_library=no)
+AC_MSG_CHECKING([for deal.II library])
+if test "x$deal_II_library" != xno; then
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+  AC_ERROR([deal.II library not found])
+fi
+
+dnl Checks for header files.
+AC_HEADER_STDC
+
+AC_OUTPUT(Makefile \
+  template/Makefile \
+  example/Makefile \
+  example/local_refine/Makefile \
+  Make.global_options)
+

@@ -1,0 +1,61 @@
+10
+
+3	0
+0.0	0.0	0.0
+2	0 0 0	0
+./tetrahedron.2.D.bas_fun.so
+	phi_1	gradient_phi_1
+
+3	0
+1.0	0.0	0.0
+2	0 0 0	0
+./tetrahedron.2.D.bas_fun.so
+	phi_2	gradient_phi_2
+
+3	0
+0.0	1.0	0.0
+2	0 0 0	0
+./tetrahedron.2.D.bas_fun.so
+	phi_3	gradient_phi_3
+
+3	0
+0.0	0.0	1.0
+2	0 0 0	0
+./tetrahedron.2.D.bas_fun.so
+	phi_4	gradient_phi_4
+
+3	0
+0.5	0.0	0.0
+2	0 0 0	0
+./tetrahedron.2.D.bas_fun.so
+	psi_1	gradient_psi_1
+
+3	0
+0.0	0.5	0.0
+2	0 0 0	0
+./tetrahedron.2.D.bas_fun.so
+	psi_2	gradient_psi_2
+
+3	0
+0.0	0.0	0.5
+2	0 0 0	0
+./tetrahedron.2.D.bas_fun.so
+	psi_3	gradient_psi_3
+
+3	0
+0.5	0.5	0.0
+2	0 0 0	0
+./tetrahedron.2.D.bas_fun.so
+	psi_4	gradient_psi_4
+
+3	0  
+0.5	0.0	0.5
+2	0 0 0	0
+./tetrahedron.2.D.bas_fun.so
+	psi_5	gradient_psi_5
+
+3	0
+0.0	0.5	0.5
+2	0 0 0	0
+./tetrahedron.2.D.bas_fun.so
+	psi_6	gradient_psi_6

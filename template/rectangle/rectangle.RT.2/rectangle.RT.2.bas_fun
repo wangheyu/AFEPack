@@ -1,0 +1,76 @@
+# 本文件为湘潭大学易年余同学提供
+
+12
+
+1	0
+-0.333333	-1.0
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_01	gradient_lambda_01
+
+1	0
+0.333333	-1.0
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_02	gradient_lambda_02
+
+1	1
+1.0	-0.333333	
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_11	gradient_lambda_11
+
+1	1
+1.0	0.333333
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_12	gradient_lambda_12
+
+1	2
+0.333333	1.0
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_21	gradient_lambda_21
+
+1	2
+-0.333333	1.0
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_22	gradient_lambda_22
+
+1	3
+-1.0	0.333333
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_31	gradient_lambda_31
+
+1	3
+-1.0	-0.333333
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_32	gradient_lambda_32
+
+2	0
+0.0	0.0
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_41	gradient_lambda_41
+
+2	0
+0.0	0.0
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_42	gradient_lambda_42
+
+2	0
+0.0	0.0
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_43	gradient_lambda_43
+
+2	0
+0.0	0.0
+2	0 0 	0
+./rectangle.RT.2.bas_fun.so
+	lambda_44	gradient_lambda_44
+

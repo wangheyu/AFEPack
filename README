@@ -1,0 +1,54 @@
+AFEPack
+Copyright (C) 2002 Robert Lie
+http://circus.math.pku.edu.cn/AFEPack
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+-------------------------------------------------------------------------------
+
+AFEPack is a C++ library for adaptive finite element programming.
+
+AFEPack homepage: http://162.105.68.168/AFEPack
+
+AFEPack has been tested on and works with:
+ - Deal.II version 3.1
+ - Redhat Linux 7.1, 7.3, 8.0
+
+If anyone is interested in extending the library, feel free to contact
+the author. Since there are no stable funding to support free software
+development in China, the author has only very limited time on the 
+maintainment of the package. Anyone who would like to help can contribute
+on:
+ - writing the document;
+ - adding more template elements;
+ - applying to some suitable problems;
+
+If anyone applied the package on some interesting problems, the author
+is very glad to get the information.
+
+See COPYING for the full text of the license under which is this work
+is being made available.
+
+See ChangeLog for recent changes.
+
+See AUTHORS for a list of people to blame for this mess.
+
+See TODO for a list of things that you can help out with.
+
+See INSTALL for instructions on how to install and use this.
+
+Feel free to contact me about any issues you may have, or to volunteer
+to help out.
+
+Robert Lie
+http://dsec.pku.edu.cn/~rli
+
+

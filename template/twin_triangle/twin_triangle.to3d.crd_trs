@@ -1,0 +1,6 @@
+./twin_triangle.geometry.so
+	to3d_local_to_global
+	to3d_global_to_local
+	to3d_local_to_global_jacobian
+        to3d_global_to_local_jacobian
+

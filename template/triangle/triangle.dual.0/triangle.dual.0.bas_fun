@@ -1,0 +1,19 @@
+3
+
+0	0
+0.0000000000	0.0000000000
+0	0 0 	0
+./triangle.dual.0.bas_fun.so
+	chi_0	gradient_chi_0
+
+0	1
+1.0000000000	0.0000000000
+0	0 0	0
+./triangle.dual.0.bas_fun.so
+	chi_1	gradient_chi_1
+
+0	2
+0.0000000000	1.0000000000
+0	0 0	0
+./triangle.dual.0.bas_fun.so
+	chi_2	gradient_chi_2

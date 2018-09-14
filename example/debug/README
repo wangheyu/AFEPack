@@ -1,0 +1,16 @@
+注意：
+
+1. 凡是使用到了 boost 序列化的程序，链接的时候要链接上 boost 的
+   serialization 库，比如旗标 -lboost_serialization-gcc(这依赖于 boost
+   的编译情况)；
+
+2. 凡是用到了 MPI 的库，需要使用 MPI 的编译器(mpiCC)；
+
+3. 需要定义宏 __SERIALIZATION__ 才可以激活和序列化有关系的部分代码；
+
+4. MPI 有关的库文件转移到目录 ${AFEPack home}/library/mpi，其中的文件经
+   过编译将得到库文件 ${AFEPack home}/library/lib/libAFEPack_mpi.so，使
+   用了并行功能的库需要与此库链接；
+
+5. 凡是使用到了 boost 的程序选项(program_options)的程序，链接的时候需要
+   加上旗标-lboost_program_options-gcc；

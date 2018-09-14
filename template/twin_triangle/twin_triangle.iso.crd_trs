@@ -1,0 +1,5 @@
+./twin_triangle.geometry.so
+	iso_local_to_global
+	iso_global_to_local
+	iso_local_to_global_jacobian
+        iso_global_to_local_jacobian

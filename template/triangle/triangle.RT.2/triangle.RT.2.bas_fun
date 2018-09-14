@@ -1,0 +1,51 @@
+# 本文件由湘潭大学魏华夷同学提供，特此致谢！
+
+8
+
+1	2
+0.333333	0.0
+2	0 0	0
+./triangle.RT.2.bas_fun.so
+	lambda_01	gradient_lambda_01
+
+1	2
+0.666667	0.0
+2	0 0	0
+./triangle.RT.2.bas_fun.so
+	lambda_02	gradient_lambda_02
+
+1	0
+0.666667	0.333333
+2	0 0	0
+./triangle.RT.2.bas_fun.so
+	lambda_11	gradient_lambda_11
+
+1	0
+0.333333	0.666667
+2	0 0	0
+./triangle.RT.2.bas_fun.so
+	lambda_12	gradient_lambda_12
+
+1	1
+0.0	0.666667
+2	0 0	0
+./triangle.RT.2.bas_fun.so
+	lambda_21	gradient_lambda_21
+
+1	1
+0.0	0.333333
+2	0 0	0
+./triangle.RT.2.bas_fun.so
+	lambda_22	gradient_lambda_22
+
+2	0
+0.333333       0.333333
+2	0 0	0
+./triangle.RT.2.bas_fun.so
+	lambda_31	gradient_lambda_31
+
+2	0
+0.333333   0.333333
+2	0 0	0
+./triangle.RT.2.bas_fun.so
+	lambda_32	gradient_lambda_32

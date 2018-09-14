@@ -1,0 +1,34 @@
+/**
+ * @file   HGeometry.cpptemplate
+ * @author Robert Lie
+ * @date   Sun Apr 29 10:54:20 2007
+ * 
+ * @brief  
+ * 
+ * 
+ */
+
+template class HGeometryTree<DIM, DOW>;
+template class IrregularMesh<DIM, DOW>;
+template class HElement<DIM, DOW>;
+template class RegularMesh<DIM, DOW>;
+template class MeshAdaptor<DIM, DOW>;
+
+template class ElementIterator<DIM, DOW>;
+template class ActiveElementIterator<DIM, DOW>;
+template class IrregularMeshPair<DIM, DOW>;
+template class ActiveElementPairIterator<DIM, DOW>;
+
+template std::ostream& operator<<(std::ostream&, const HElement<DIM, DOW>&);
+template std::ostream& operator<<(std::ostream&, IrregularMesh<DIM, DOW>&);
+
+template bool operator==(const ElementIterator<DIM, DOW>&, ElementIterator<DIM, DOW>&);
+template bool operator!=(const ElementIterator<DIM, DOW>&, ElementIterator<DIM, DOW>&);
+
+template bool operator==(const ActiveElementPairIterator<DIM, DOW>&, ActiveElementPairIterator<DIM, DOW>&);
+template bool operator!=(const ActiveElementPairIterator<DIM, DOW>&, ActiveElementPairIterator<DIM, DOW>&);
+
+/**
+ * end of file
+ * 
+ */

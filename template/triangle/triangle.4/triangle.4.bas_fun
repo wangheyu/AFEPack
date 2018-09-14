@@ -1,0 +1,91 @@
+15
+
+0	0
+0.0	0.0
+4	0 0	0
+./triangle.4.bas_fun.so
+	phi_0	gradient_phi_0
+
+0	1
+1.0	0.0
+4	0 0	0
+./triangle.4.bas_fun.so
+	phi_1	gradient_phi_1
+
+0	2
+0.0	1.0
+4	0 0	0
+./triangle.4.bas_fun.so
+	phi_2	gradient_phi_2
+
+1	2
+0.5	0.0
+4	0 0	0
+./triangle.4.bas_fun.so
+	phi_010	gradient_phi_010
+
+1	2
+0.25	0.0
+4	0 0	0
+./triangle.4.bas_fun.so
+	phi_011	gradient_phi_011
+
+1	2
+0.75	0.0
+4	0 0	0
+./triangle.4.bas_fun.so
+	phi_012	gradient_phi_012
+
+1	0
+0.5	0.5
+4	0 0	0
+./triangle.4.bas_fun.so
+	phi_120	gradient_phi_120
+
+1	0
+0.75        0.25
+4	0 0	0
+./triangle.4.bas_fun.so
+        phi_121   gradient_phi_121
+
+1	0
+0.25        0.75
+4	0 0	0
+./triangle.4.bas_fun.so
+        phi_122   gradient_phi_122
+
+1	1
+0.0	        0.5
+4	0 0	0
+./triangle.4.bas_fun.so
+        phi_200   gradient_phi_200
+
+1	1
+0.0	        0.75
+4	0 0	0
+./triangle.4.bas_fun.so
+        phi_201   gradient_phi_201
+
+1	1
+0.0	        0.25
+4	0 0	0
+./triangle.4.bas_fun.so
+        phi_202   gradient_phi_202
+
+2	0
+0.25        0.25
+4	0 0	0
+./triangle.4.bas_fun.so
+        phi_012_0   gradient_phi_012_0
+
+2	0
+0.5        0.25
+4	0 0	0
+./triangle.4.bas_fun.so
+        phi_012_1   gradient_phi_012_1
+
+2	0
+0.25        0.5
+4	0 0	0
+./triangle.4.bas_fun.so
+        phi_012_2   gradient_phi_012_2

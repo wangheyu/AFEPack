@@ -1,0 +1,77 @@
+## ChangeLog
+
+* Use the boost::iostream::filtering_istream to permit shell script style
+  comments in the text library file in the template data. So for user please
+  put boost to some directory can be found be the compiler!
+
+* A bug in renumerateElement is corrected.
+
+* Lasy mode is added to adapt the code for really large scale computation.
+  Under such case, we only handle the node basis functions and the element
+  image building is not implemented at all. The user should make the vertices
+  of the element to be stored in correct order. In the class IrregularMesh,
+  a method lazyRegularize is provided to generate a mesh only store the 
+  information of elements and nodes. Dirty tricks!
+
+* Add the POSIX threads support. The support mainly includes the interface
+  to call a member function or a non-member function by a new thread.
+  Class ThreadManager will take care of the threads. Functions provided
+  by POSIX thread library are still avaible in the thread functions. You
+  should guarantee the code is thread safe yourself.
+
+* Add the order-0 Raviart-Thomas element on rectangle and twin-triangle.
+
+* in FEMFunction::writeEasyMeshData and FEMFunction::writeOpenDXData,
+  the bug to save incorrect data when the nodes is not sorted is removed.
+
+* class DBMesh is revised that the bug in setting boundary marker is
+  removed.
+
+* A serious bug removed from Element::buildGeometryImage.
+
+* Rename the AMGSolver::init member function as AMGSolver::reinit which
+  is more nature.
+
+* Add the support to vector value basis function finite element space.
+  This is a big upgrade of the whole library. A list of files are revised
+  including TemplateElement, FEMSpace, BilinearOperator, etc. There is
+  only one vector value template element in the library currently, which
+  is the order-0 Raviart-Thomas element on triangles.
+  
+	
+* A bug is removed from file Operator.template.h in function
+        template <class value_type, int DIM>
+        void Operator::L2Project(FEMFunction <value_type, DIM> & f0, 
+	                         FEMFunction <value_type, DIM> & f1, 
+                                 Method method, 
+                                 int algebric_accuracy);
+
+* All examples are revised and a list of simple tools provided in the example
+  directory.
+
+* Add an example to solve a viscous Burgers equation using class MovingMesh.
+
+* Modified the prototype of some member function of class AMGSolver,
+  AMGOptimizer, AMGPreconditioner. The original ones have some problems
+  in a "const" modifier.
+
+* Debug the Makefile problem in directory "template".
+
+* Add the mechenism to use Algebraic Multigrid Method as a pre-conditioner
+  of the solvers in deal.II.
+
+* Add the optimization mechenism for finite element space. With this 
+  mechenism, the efficiency of the numerical integration can be improved 
+  if it should be taken for more than one time because it can save the 
+  integration information in memory.
+
+* Add the class DGFEMSpace to handle Discontinuous Garlerkin Finite
+  Element Space.
+
+* Add the class MovingMesh as the derivative class of Mesh which can
+  be used as a general mesh while with a provided monitor, the mesh
+  can move according the monitor.
+
+* Since version 1.5, the package is planed to be released. The package
+  now is comparative stable while there must be a lot of bugs still that
+  it at most is an Alpha version. :-)

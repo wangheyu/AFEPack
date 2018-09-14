@@ -1,0 +1,61 @@
+10
+
+2	0
+0.0	0.0
+3	0 0	0
+./triangle.DG.3.bas_fun.so
+	phi_1	gradient_phi_1
+
+2	0
+1.0	0.0
+3	0 0	0
+./triangle.DG.3.bas_fun.so
+	phi_2	gradient_phi_2
+
+2	0
+0.0	1.0
+3	0 0	0
+./triangle.DG.3.bas_fun.so
+	phi_3	gradient_phi_3
+
+2	0
+0.333333	0.0
+3	0 0	0
+./triangle.DG.3.bas_fun.so
+	phi_12	gradient_phi_12
+
+2	0
+0.666667	0.0
+3	0 0	0
+./triangle.DG.3.bas_fun.so
+	phi_21	gradient_phi_21
+
+2	0
+0.666667	0.333333
+3	0 0	0
+./triangle.DG.3.bas_fun.so
+	phi_23	gradient_phi_23
+
+2	0
+0.333333        0.666667
+3	0 0	0
+./triangle.DG.3.bas_fun.so
+        phi_32   gradient_phi_32
+
+2	0
+0.0	        0.333333
+3	0 0	0
+./triangle.DG.3.bas_fun.so
+        phi_13   gradient_phi_13
+
+2	0
+0.0	        0.666667
+3	0 0	0
+./triangle.DG.3.bas_fun.so
+        phi_31   gradient_phi_31
+
+2	0
+0.333333        0.333333
+3	0 0	0
+./triangle.DG.3.bas_fun.so
+        phi_123   gradient_phi_123

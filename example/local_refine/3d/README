@@ -1,0 +1,9 @@
+This example will generate a local refined mesh from the original
+mesh data. The obtained mesh is saved in file "cube.dx".
+
+Usage:
+	1. compile with make [-e debug=no];
+	2. run ./run, press ENTER to next refine round or CTRL+C
+	   to stop;
+	3. view the obtained mesh with OpenDX;
+

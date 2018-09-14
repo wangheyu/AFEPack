@@ -1,0 +1,1 @@
+此程序从 ex17 上修改而来，测试 FacaData::SyncerPtr 对于数据是指针情况的操作。

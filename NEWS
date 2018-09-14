@@ -1,0 +1,6 @@
+* Major feather of AFEPack 1.6
+
+* Flexible finite element space construction based template element
+  library;
+* Convenient facilities to implement mesh adaption;
+* Multi-mesh operation supported;

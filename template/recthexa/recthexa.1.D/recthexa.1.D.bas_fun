@@ -1,0 +1,26 @@
+4
+
+3	0
+0.0	0.0	0.0
+1	0 0 0	0
+./recthexa.1.D.bas_fun.so
+	lambda_1	gradient_lambda_1
+
+3	0
+1.0	0.0	0.0
+1	0 0 0	0
+./recthexa.1.D.bas_fun.so
+	lambda_2	gradient_lambda_2
+
+3	0
+0.0	1.0	0.0
+1	0 0 0	0
+./recthexa.1.D.bas_fun.so
+	lambda_3	gradient_lambda_3
+
+3	0
+0.0	0.0	1.0
+1	0 0 0	0
+./recthexa.1.D.bas_fun.so
+	lambda_4	gradient_lambda_4
+

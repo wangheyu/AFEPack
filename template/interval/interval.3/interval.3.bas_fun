@@ -1,0 +1,27 @@
+# 此文件为魏华祎同学提供
+
+4
+
+0	0
+-1.0
+3	0 	0
+./interval.3.bas_fun.so
+	lambda_1	gradient_lambda_1
+
+0	1
+1.0
+3	0 	0
+./interval.3.bas_fun.so
+	lambda_2	gradient_lambda_2
+
+1	0
+-0.333333
+3	0 	0
+./interval.3.bas_fun.so
+	lambda_3	gradient_lambda_3
+
+1	0
+0.3333333
+3	0 	0
+./interval.3.bas_fun.so
+	lambda_4	gradient_lambda_4
