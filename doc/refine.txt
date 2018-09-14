@@ -1,0 +1,102 @@
+/**
+
+网格的局部加密从原理上来说是很简单的事情，但是具体的实现相当复杂。
+AFEPack支持在二维和三维的单纯形网格上进行局部加密和稀疏化的操作。为了
+实现加密和稀疏化，我们事实上要处理不同的网格之间的关系。AFEPack通过一
+个所谓几何遗传树的数据结构来实现。几何遗传树是一个由不断加密的几何体构
+成的树型数据结构，而每个网格则是这棵树的一个所谓截面上的所有叶子节点构
+成的。AFEPack支持的网格上的操作可以是非常大幅度的操作，它通过几个分解
+了的动作简单地完成了需要构造复杂的算法来完成的功能。涉及到的概念包括非
+正则网格、半正则网格和正则网格。在一个网格被进行了自适应操作后，获得的
+是一个所谓非正则网格。这个非正则网格进行一下半正则化，就得到一个半正则
+网格。然后再进行一下正则化，就得到了正则网格。在正则网格上就可以按照正
+常的程序建造有限元空间了。这中间的过程相当复杂，不是一两句话就可以说清
+楚的。如果有兴趣，我们可以在讨论班上慢慢介绍。下面就是一个简单的例子：
+
+*/
+/**
+ * @file   refine.cpp
+ * @author Robert Lie
+ * @date   Wed Mar  7 11:43:40 2007
+ * 
+ * @brief  
+ * 
+ * 
+ */
+
+#include <AFEPack/HGeometry.h>
+
+#define DIM 2
+
+int main(int argc, char * argv[])
+{
+  /// 声明几何遗传树，并从Easymesh格式的文件中读入数据
+  HGeometryTree<DIM> h_tree;
+  h_tree.readEasyMesh(argv[1]);
+
+  /// 在背景网格上建立第一个非正则网格，并均匀加密三次
+  IrregularMesh<DIM> irregular_mesh(h_tree);
+  irregular_mesh.globalRefine(3);
+
+  do {
+    /// 对非正则网格做半正则化和正则化
+    irregular_mesh.semiregularize();
+    irregular_mesh.regularize(false);
+
+    /// 这就是通过正则化得到的网格
+    RegularMesh<DIM>& regular_mesh = irregular_mesh.regularMesh();
+
+    /// 将这个网格输出到数据文件中
+    regular_mesh.writeOpenDXData("D.dx");
+    std::cout << "Press ENTER to continue or CTRL+C to stop ..." << std::flush;
+    getchar();
+
+    /**
+     * 下面一段计算用于加密的指示子。我们在以c0和c1两个点为中心，以半
+     * 径处于0.004到0.005直接的环状区域中设置指示子的值为单元的面积，
+     * 从而会将这两个环状区域中的地带均匀加密掉。其他部分的指示子是零。
+     * 所有这些计算都是手工进行的，您需要深入了解网格中的数据放置方式。
+     * 
+     */
+    Indicator<DIM> indicator(regular_mesh);
+    Point<DIM> c0(0.495, 0.5);
+    Point<DIM> c1(0.505, 0.5);
+    for (int i = 0;i < regular_mesh.n_geometry(2);i ++) {
+      /// 这是三角形的三个顶点。对于三角形和双生三角形都是这样的。
+      Point<DIM>& p0 = regular_mesh.point(regular_mesh.geometry(2,i).vertex(0));
+      Point<DIM>& p1 = regular_mesh.point(regular_mesh.geometry(2,i).vertex(1));
+      Point<DIM>& p2 = regular_mesh.point(regular_mesh.geometry(2,i).vertex(2));
+
+      /// 这是三角形的重心
+      Point<DIM> p((p0[0] + p1[0] + p2[0])/3., (p0[1] + p1[1] + p2[1])/3.);
+
+      /// 手工计算三角形的面积
+      double area = ((p1[0] - p0[0])*(p2[1] - p0[1]) -
+                     (p2[0] - p0[0])*(p1[1] - p0[1]));
+
+      /// 计算三角形的重心到c0和c1的距离。如果三角形过大，这个计算会抓
+      /// 不住正确的指示子，所以一开始我们把网格均匀加密了三倍。
+      double d0 = (p - c0).length();
+      double d1 = (p - c1).length();
+      if ((d0 > 0.004 && d0 < 0.005) || 
+          (d1 > 0.004 && d1 < 0.005)) { /// 在环状区域中设置指示子
+        indicator[i] = area;
+      }
+    }
+
+    /// 下面的几行调用进行自适应的函数，都是套话。
+    MeshAdaptor<DIM> mesh_adaptor(irregular_mesh);
+    mesh_adaptor.convergenceOrder() = 0.; /// 设置收敛阶为0
+    mesh_adaptor.refineStep() = 1; /// 最多允许加密一步
+    mesh_adaptor.setIndicator(indicator);
+    mesh_adaptor.tolerence() = 2.5e-10; /// 自适应的忍量
+    mesh_adaptor.adapt(); /// 完成自适应
+  } while (1);	
+
+  return 0;
+}
+
+/**
+ * end of file
+ * 
+ */

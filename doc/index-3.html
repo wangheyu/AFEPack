@@ -1,0 +1,964 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+                                                                        
+                                                                        
+                                                                        
+                                                  
+  <meta name="GENERATOR" content="SGML-Tools 1.0.9">
+  <title>The AFEPack Handbook: Usage</title>
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                  
+  <link href="index-4.html" rel="next">
+                                                                        
+                                                                        
+                                                                        
+                                                  
+  <link href="index-2.html" rel="previous">
+                                                                        
+                                                                        
+                                                                        
+                                                  
+  <link href="index.html#toc3" rel="contents">
+</head>
+  <body>
+                           <a href="index-4.html">Next</a> <a
+ href="index-2.html">Previous</a>        <a href="index.html#toc3">Contents</a>
+                              
+<hr>                           
+<h2><a name="s3">3. Usage </a> </h2>
+                                                     
+<h3><a name="Step_by_Step_Tutorial"></a>                                
+  3.1 Step by Step Tutorial</h3>
+                                                     
+<ul>
+                             <li><a name="ss3.1.1" href="#Step_1">Step 1: 
+Mesh   Data</a>         </li>
+                             <li><a name="ss3.1.2" href="#Step_2">Step 2: 
+Contruct     a  Template     Element</a></li>
+                         <li>     <a name="ss3.1.3"></a><a
+ href="#step_3">Step    3:  Construct      a  Finite  Element Space</a></li>
+                        <li><a name="ss3.1.4"></a><a href="#step_4">Step
+4:  Construct      a  Stiff    Matrix</a></li>
+                       <li><a name="ss3.1.5"></a><a
+ href="#Solve_a_Laplacian_Equation">Step    5:  Solve a Laplacian Equation</a></li>
+                       <li><a name="ss3.1.6" href="#Mesh_Adaptation"></a><a
+ href="#Mesh_Adaptation">Step 6: Mesh Adaptation</a></li>
+                <li><a name="ss3.1.7"></a><a
+ href="#Step_7:_Multi-Mesh_Operation">Step    7: Multi-Mesh Operation</a><br>
+                </li>
+                                                     
+</ul>
+                                                     
+<h4><a name="Step_1"></a>               Step 1: Mesh Data</h4>
+                                                          The library supports
+   4  kinds    of  mesh   file     data   format    now.   One   is  the
+ data   file generated     by <a href="niceno@univ.trieste.it">         
+        easymesh</a>                                , a 2d mesh generator
+developed  by Bojan Niceno(Italy),                 easy   to  use.   <i>Class
+  EasyMesh</i>  is designed for reading      and writing        this   kind
+  of data file.    This   data file save   the   data in three    files:
+   (1)   filename.n     : the data  file to    store   the node information;
+   (2)    filename.s    : the data   file to store  the side  information;
+(3)   filename.e    : the data  file to store   the  element  information.
+  See   the following     example:<br>
+                                                     
+<blockquote><tt>#include &lt;AFEPack/EasyMesh.h&gt;<br>
+                                                          ... ...<br>
+                                                          EasyMesh easy_mesh; 
+  //  construct      a  EasyMesh     object    named    "easy_mesh"<br>
+                                                          easy_mesh.readData("a");
+     //  read   in  the   mesh   data   in  files    "a.n",    "a.s",   
+"a.e"<br>
+                                                          ... ...<br>
+                                                          easy_mesh.writeData("b"); 
+     //  write    the   mesh   data   in  files    "b.n",    "b.s",    "b.e" 
+       </tt></blockquote>
+                                                           The hierarchy
+tree   <i>class     HGeometryTree&lt;2&gt;</i>           can   read   in
+ easymesh       data   file  as its data source. Another     <i>class   
+  RegularMesh&lt;2&gt;</i>            also support     outputting    the
+data into these     kind of file     format.   See    the following   example:<br>
+                                                       
+<blockquote><tt>#include &lt;</tt><tt>AFEPack/</tt><tt>Geometry.h&gt;<br>
+                                                          #include &lt;</tt><tt>AFEPack/</tt><tt>HGeometry.h&gt;<br>
+                                                          ... ...<br>
+                                                          HGeometryTree&lt;2&gt;
+    h_geometry_tree;         //  construct      a  hierarchy      geometry
+     tree object named   "h_geometry_tree"           <br>
+                                                          h_geometry_tree.readEasyMesh("a");
+          //  read   in  easymesh     data   file   as  macro   elements<br>
+                                                          IrregularMesh&lt;2&gt;
+    irregular_mesh(hierarchy_tree);                 //  construct      a
+ irregular     mesh object "irregular_mesh"<br>
+                                                          irregular_mesh.globalRefine(2); 
+        //  global    refine    the   irregular      mesh   for   2 times<br>
+                                                          irregular_mesh.semiregularize();
+         //  turn   the   mesh   into   a  semiregular       one<br>
+                                                          irregular_mesh.regularize();
+       //  generate     regular     mesh   from   the   irregular      mesh<br>
+                                                          RegularMesh&lt;2&gt;&amp; 
+     regular_mesh       =  irregular_mesh.regularMesh();                // 
+  this   is the regular     mesh   from the irregular mesh<br>
+                                                          regular_mesh.writeEasyMesh("b")// 
+         write    the   data   into   files    "b.n",    "b.s",    "b.e"</tt><br>
+                               </blockquote>
+                                                          Another supported 
+ data   file   is  generated      by      <a
+ href="http://www-rocq.inra.fr/gamma/cdrom/www/bamg/eng.htm">           
+                  bamg</a>                                , a very    powerful
+          mesh generator by Fridiric   Hecht(France).        <i>Class   
+DBMesh</i>                is designed for reading such mesh   data file,
+can  manipulate          both      triangle    and quadrilaterial elements.
+  Class DBMesh   is   derivated          from  the  base <i>class    SimplestMesh&lt;2,2&gt;</i>.
+       See the    following   example:<br>
+                                                         
+<blockquote><tt>#include &lt;</tt><tt>AFEPack/</tt><tt>DBMesh.h&gt;<br>
+                                                          ... ...<br>
+                                                          DBMesh dbmesh;
+//  construct      a  DBMesh    object    named    "dbmesh"<br>
+                                                          dbmesh.readData("a_g.msh"); 
+      //  read   in  the   data   file   generated      by  bamg<br>
+                                                          Mesh&lt;2,2&gt; 
+mesh;    //  construct      a  Mesh&lt;2,2&gt;         object    named   
+"mesh"<br>
+                                                          dbmesh.generateMesh(mesh);
+      //  convert     the   dbmesh    data   file   to  the   library   internal
+       data  format</tt><br>
+                                 </blockquote>
+                          For 3D case, we provide the facility to read in 
+data   generated      by  <a href="http://www.geuz.org/gmsh">gmsh</a>. This 
+is a  free software     that  can    generate comparative comple 3D mesh. 
+<i>Class   GmshMesh</i>   is  designed   for such  data, but we can only handle
+pure   simplex data file   now. Class  GmshMesh is  also derivated from class
+SimplestMesh&lt;3,3&gt;.      See the following   example:<br>
+                                                   
+<blockquote>                                                            
+                 
+  <pre>#include &lt;<tt>AFEPack/</tt>GmshMesh.h&gt;<br>... ...<br>GmshMesh gmshmesh; // construct a GmshMesh object named "gmshmesh"<br>gmshmesh.readData("a.msh"); // read in the data file generated by gmsh<br>Mesh&lt;3,3&gt; mesh; // construct a Mesh&lt;3,3&gt; object named "mesh"<br>gmshmesh.generateMesh(mesh); // convert the gmsh data file to the library internal data format<br></pre>
+                          </blockquote>
+                          Note that the member function generateMesh of class 
+  SimplestMesh       is  very   time-comsuming that you should not use it 
+for  very large meshes.      If  you need  a large mesh, you can get it by 
+read  a very coarse mesh  and    then  global refine  it with the library 
+and then  save it in the internal      format.<br>
+                          The last one is the data file format we defined.
+     This     format       is   in  fact   our internal data format, then
+is  the fastest       format       for   input   and  output,   dimension
+independent,   able   to store    geometry      in any  shape.<br>
+                                                           
+<blockquote><tt>#include &lt;</tt><tt>AFEPack/</tt><tt>Geometry.h&gt;<br>
+                                                       ... ...<br>
+                                                       Mesh&lt;2,2&gt; mesh;
+  //  construct      a  mesh   object<br>
+                                                       mesh.readData("a.mesh"); 
+   //  read   data   from   file   "a.mesh"<br>
+                                                       ... ...<br>
+                                                       mesh.writeData("b.mesh");
+    //  write    the   data   to  file   "b.mesh"</tt><br>
+                                   </blockquote>
+                          It's clear that the supported data format can be
+ extended     very   easily    by  writing more port if you can get the data
+ format of   other mesh  data  file.&nbsp;                              
+       
+<h4><a name="Step_2"></a>              Step 2: Construct a Template Element</h4>
+                                                             
+<ul>
+                                     <li><a href="#Geometry_Information">1. 
+ Geometry     Information</a>                  </li>
+                                     <li><a
+ href="#Coordinate_Transformation">2.   Coordinate      Transformation</a>
+                </li>
+                                     <li><a href="#Degree_of_Freedom">3.
+Degree    of  Freedom</a>                 </li>
+                                     <li><a href="#Basis_Function">4. Basis 
+ Function</a>                   </li>
+                                                             
+</ul>
+                                                      Now let's construct 
+a  template     element,     which    is  a  main   task   to  construct 
+   a finite element    space.   We  will construct     a linear   Lagrangian 
+     element on   a  triangle,   the  most often used  one   in coding.  
+Most of the   work  needed in   this operation should be achieved   by hand. 
+  We divide it   into several  steps:                                    
+                                                                      
+<h5>1. <a name="Geometry_Information">Geometry Information</a>         </h5>
+                                                      The geometry information
+   includes     the   shape    description       of  the   triangle,    
+ a  function to   calculate    the volume   of the triangle       and  the
+  numerical quadrature       information   on  the triangle. So the    data
+  file  have   three part.    The following      is an example to describe
+    the geometry  information      on a triangle   element.       The texts
+ following    a "#" are comment(When     you   write   such a file   of yourself,
+     please  remove   those comments    because  until   now the  library
+doesn't support     comments   in this   file).<br>
+                                                             
+<blockquote><tt># the information of the function to calculate the      
+        volume of the triangle<br>
+                                                      ./triangle.geometry.so&nbsp;&nbsp;&nbsp;
+           &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;       &nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;          # the function 
+   to    calculate   the volume of  the triangle is in  this     shared 
+ library<br>
+                                                      &nbsp;&nbsp;&nbsp;
+triangle_volume&nbsp;&nbsp;&nbsp;                  &nbsp;&nbsp;&nbsp;   
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;    &nbsp;&nbsp;&nbsp;             
+&nbsp;&nbsp;&nbsp;      &nbsp;&nbsp;&nbsp;       # the name of the    function
+        to calculate the volume     of  the  triangle<br>
+                                     <br>
+                                                      # the geometry shape
+ information       of  the   triangle<br>
+                                                      3&nbsp;&nbsp;&nbsp; 
+&nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; 
+       &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  
+       &nbsp;&nbsp;&nbsp;        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+         &nbsp;#       there     are   3 points in this geometry<br>
+                                                      &nbsp;&nbsp;&nbsp;
+0.0&nbsp;&nbsp;&nbsp;            0.0&nbsp;&nbsp;&nbsp;            &nbsp;&nbsp;&nbsp;
+     &nbsp;&nbsp;&nbsp;            &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+           &nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+#  these      three    lines    are    the  cooridinate      of the 3 points<br>
+                                                      &nbsp;&nbsp;&nbsp;
+1.0&nbsp;&nbsp;&nbsp;            0.0<br>
+                                                      &nbsp;&nbsp;&nbsp;
+0.0&nbsp;&nbsp;&nbsp;            1.0<br>
+                                     <br>
+                                                      3&nbsp;&nbsp;&nbsp; 
+&nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; 
+       &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  
+       &nbsp;&nbsp;&nbsp;        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+         &nbsp;#       there     are   3 vertices in this geometry<br>
+                                                      &nbsp;&nbsp;&nbsp;
+0&nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          &nbsp;#       the   information     of number
+0 vertex is<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          1&nbsp;&nbsp;&nbsp;           0&nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;         # 1 point,    that's      the number 0 point<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          1&nbsp;&nbsp;&nbsp;           0&nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp;         # 1 boundary,       that's   the number 0 point<br>
+                                                      &nbsp;&nbsp;&nbsp;
+1<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          1&nbsp;&nbsp;&nbsp;           1<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          1&nbsp;&nbsp;&nbsp;           1<br>
+                                                      &nbsp;&nbsp;&nbsp;
+2<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          1&nbsp;&nbsp;&nbsp;           2<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          1&nbsp;&nbsp;&nbsp;           2<br>
+                                     <br>
+                                                      3&nbsp;&nbsp;&nbsp; 
+&nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; 
+       &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  
+       &nbsp;&nbsp;&nbsp;        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+         &nbsp;#       there     are   3 sides in this geometry<br>
+                                                      &nbsp;&nbsp;&nbsp;
+0&nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          &nbsp;#       the   information     of number
+0 side is<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          2&nbsp;&nbsp;&nbsp;           1&nbsp;&nbsp;&nbsp;
+       2&nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;   &nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+ &nbsp;&nbsp;        # 2 vertices,         saying      the  number 1 and
+number 2  vertices<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          2&nbsp;&nbsp;&nbsp;           1&nbsp;&nbsp;&nbsp;
+       2&nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;   &nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+ &nbsp;&nbsp;        # 2 boundarys,         saying       the number 1 and
+number 2  vertices<br>
+                                                      &nbsp;&nbsp;&nbsp;
+1<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          2&nbsp;&nbsp;&nbsp;           0&nbsp;&nbsp;&nbsp;
+       2<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          2&nbsp;&nbsp;&nbsp;           0&nbsp;&nbsp;&nbsp;
+       2<br>
+                                                      &nbsp;&nbsp;&nbsp;
+2<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          2&nbsp;&nbsp;&nbsp;           0&nbsp;&nbsp;&nbsp;
+       1<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          2&nbsp;&nbsp;&nbsp;           0&nbsp;&nbsp;&nbsp;
+       1<br>
+                                     <br>
+                                                      1&nbsp;&nbsp;&nbsp; 
+&nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; 
+       &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  
+       &nbsp;&nbsp;&nbsp;        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+         &nbsp;#       there     is   1 element in this geometry<br>
+                                                      &nbsp;&nbsp;&nbsp;
+0&nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          &nbsp;#       the   information     of number
+0 element is<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          3&nbsp;&nbsp;&nbsp;           0&nbsp;&nbsp;&nbsp;
+       1&nbsp;&nbsp;&nbsp;          2&nbsp;&nbsp;&nbsp;    &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+  &nbsp;    #  3 vertices,  saying      the    number    0, 1 and 2 vertices<br>
+                                                      &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          3&nbsp;&nbsp;&nbsp;           0&nbsp;&nbsp;&nbsp;
+       1&nbsp;&nbsp;&nbsp;          2&nbsp;&nbsp;&nbsp;    &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+  &nbsp;    #  3 boundarys,   saying      the    number   0, 1 and 2 boundarys<br>
+                                     <br>
+                                                      # the numerical quadrature
+    information       on  the   triangle<br>
+                                                      2&nbsp;&nbsp;&nbsp; 
+&nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; 
+       &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  
+       &nbsp;&nbsp;&nbsp;        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+         &nbsp;#       there     are   2 quadrature information on this geometry<br>
+                                                      &nbsp;&nbsp;&nbsp;
+2&nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          &nbsp;#       for   the    first one, algebraic
+accuracy is 2<br>
+                                                      &nbsp;&nbsp;&nbsp;
+1&nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          &nbsp;#       1 quadrature       point<br>
+                                                      &nbsp;&nbsp;&nbsp;
+0.333333&nbsp;&nbsp;&nbsp;              0.333333&nbsp;&nbsp;&nbsp;      
+       1.0&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;            &nbsp;&nbsp;&nbsp;
+&nbsp;       &nbsp;#       coordinate of the  quadrature          point is
+(0.333333, 0.333333),       weight 1.0<br>
+                                     <br>
+                                                      &nbsp;&nbsp;&nbsp;
+3&nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          &nbsp;#       for   the    second one, algebric
+accuracy is 3<br>
+                                                      &nbsp;&nbsp;&nbsp;
+3&nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+         &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;          &nbsp;#       3 quadrature       points<br>
+                                                      &nbsp;&nbsp;&nbsp;
+0.500000     &nbsp;    &nbsp;0.000000&nbsp;&nbsp;&nbsp;                 0.333333&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp; &nbsp; # coordinate           of   the   quadrature
+       point is (0.500000,   0.000000), weight 0.333333<br>
+                                                      &nbsp;&nbsp;&nbsp;
+0.500000&nbsp;&nbsp;&nbsp;              0.500000&nbsp;&nbsp;&nbsp;      
+       0.333333&nbsp;&nbsp;&nbsp;       &nbsp;&nbsp;&nbsp;       &nbsp; #
+coordinate      of   the    quadrature      point is (0.500000, 0.500000),
+     weight 0.333333<br>
+                                                      &nbsp;&nbsp;&nbsp;
+0.000000&nbsp;&nbsp;&nbsp;              0.500000&nbsp;&nbsp;&nbsp;      
+       0.333333&nbsp;&nbsp;&nbsp;       &nbsp;&nbsp;&nbsp;       &nbsp; #
+coordinate      of   the    quadrature      point is (0.000000, 0.500000),
+     weight 0.333333</tt><br>
+                                     </blockquote>
+                                                  Let's save those information
+   in  a  file   named,    such   as  "triangle.tmp_geo".          Obviously,
+   we  need  a C  source code    file  for the shared library "triangle.geometry.so". 
+               That's easy.   We  edit such a source file as following:<br>
+                                                               
+<blockquote><tt>/* triangle.geometry.c */<br>
+                                       <br>
+                                                     double triangle_volume(const 
+    double    *  vertex)<br>
+                                                     {<br>
+                                                     &nbsp;&nbsp;&nbsp;/* 
+we  know   the   volume    of  the   triangle     is  0.5    */<br>
+                                                     &nbsp;&nbsp;&nbsp; return
+   0.5;<br>
+                                                     }<br>
+                                       <br>
+                                                     /* end of file */</tt></blockquote>
+                                                    Then we compile this
+file   as  following<br>
+                                                                 
+<blockquote><tt>$ gcc -c triangle.geometry.c<br>
+                                                   $ gcc -shared -o triangle.geometry.so
+        triangle.geometry.</tt><br>
+                                         </blockquote>
+                                                   to obtain the shared library.
+    Now   we  can   construct      a  template     geometry     at first,
+which    is  the base of  a template   element.    See the   following  example:<br>
+                                                                   
+<blockquote><tt>#include &lt;</tt><tt>AFEPack/</tt><tt>Geometry.h&gt;<br>
+                                                  ... ...<br>
+                                                  TemplateGeometry&lt;2&gt;&nbsp;&nbsp;&nbsp; 
+          triangle_template_geometry;<br>
+                                                  triangle_template_geometry.readData("triangle.tmp_geo");<br>
+                                                  ... ...</tt><br>
+                                           </blockquote>
+                                                Note: if you want to compile
+  this   C  source    file  with a C++ compiler, please use C style prototype
+  declaration    for  the  function  as<br>
+                                         
+<blockquote>                                                             
+ 
+  <pre>#ifdef __cplusplus<br>extern "C" double triangle_volume(const double * vertex);<br>#endif // __cplusplus<br></pre>
+                     </blockquote>
+                                         
+<h5>2. <a name="Coordinate_Transformation">Coordinate Transformation</a> 
+               </h5>
+                                                The coordinate transformation 
+  is  the   information       to  map   the   point    from   the  template 
+  geometry   to the real element,       and  vice   visa.   It's in   fact 
+ four  C  function    in a shared library.       We need  prepare   a text 
+  file  as<br>
+                                                                     
+<blockquote><tt>./triangle.geometry.so&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+             &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+             &nbsp;&nbsp;&nbsp; # the shared library in which those functions 
+    included<br>
+                                                &nbsp;&nbsp;&nbsp; local_to_global&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;        &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;
+     &nbsp;&nbsp; # the function        to map a point from   template  
+    to  real element<br>
+                                                &nbsp;&nbsp;&nbsp; global_to_local&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;        &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;
+     &nbsp;&nbsp; # the function        to map a point from   real     to
+ template    element<br>
+                                                &nbsp;&nbsp;&nbsp; local_to_global_jacobian&nbsp;&nbsp;&nbsp; 
+                  &nbsp;&nbsp;&nbsp;      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      &nbsp;&nbsp;&nbsp;            &nbsp; # the  jacobian    determinant 
+of   the   function to map a point      from     template to real  element<br>
+                                                &nbsp;&nbsp;&nbsp; global_to_local_jacobian&nbsp;&nbsp;&nbsp; 
+                  &nbsp;&nbsp;&nbsp;      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      &nbsp;&nbsp;&nbsp;            &nbsp; </tt><tt>           # the jacobian 
+    determinant  of the function        to   map a point from real   to  template
+     element</tt><br>
+                                             </blockquote>
+                                              Save this file, and give it 
+a  name   as  "triangle.crd_trs".           The   corresponding      C source 
+ file  is as:<br>
+                                                                       
+<blockquote><tt>/* triangle.crd_trs.c */<br>
+                                               <br>
+                                                void local_to_global(const
+ double    *  point_on_template_element,<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      const    double    **  vertices_of_template_element,<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      const    double    **  vertixes_of_real_element,<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      double    *  point_on_real_element)<br>
+                                                {<br>
+                                                &nbsp;&nbsp;&nbsp; /* write 
+ code   here   to  map   the   point    on  the   template     element<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp; 
+&nbsp;to     the   point    on  the   real   element     */<br>
+                                                }<br>
+                                               <br>
+                                                void global_to_local(const
+ double    *  point_on_real_element,<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      const    double    **  vertices_of_real_element,<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      const    double    **  vertices_of_template_element,<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      double    *  point_on_template_element)<br>
+                                                {<br>
+                                                &nbsp;&nbsp;&nbsp; /* write 
+ code   here   to  map   the   point    on  the   real   element<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp; 
+&nbsp;to     the   point    on  the   template     element     */<br>
+                                                }<br>
+                                               <br>
+                                                double local_to_global_jacobian(const 
+      double    *  point_on_template_element,<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      const    double    **  vertices_of_template_element,<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      const    double    **  vertices_of_real_element)<br>
+                                                {<br>
+                                                &nbsp;&nbsp;&nbsp; /* calculate 
+   the   jacobian     determinant       */<br>
+                                                &nbsp;&nbsp;&nbsp; return 
+jacobian_determinant;<br>
+                                                }<br>
+                                               <br>
+                                                double global_to_local_jacobian(const 
+      double    *  point_on_real_element,<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      const    double    **  vertices_of_template_element,<br>
+                                                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+      const    double    **  vertices_of_real_element)<br>
+                                                {<br>
+                                                &nbsp;&nbsp;&nbsp; /* calculate 
+   the   jacobian     determinant       */<br>
+                                                &nbsp;&nbsp;&nbsp; return 
+jacobian_determinant;<br>
+                                                }<br>
+                                               <br>
+                                                /* end of file */<br>
+                                               </tt><br>
+                                               </blockquote>
+                                                As before, we compile the 
+file   into   shared    library     as                                   
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                    
+<blockquote><tt>$ gcc -c triangle.crd_trs.c<br>
+                                                $ gcc -shared -o triangle.geometry.so 
+        </tt><br>
+                                                 </blockquote>
+                                               Of course, you should not
+overwrite      the   shared    library     we  prepared     just   now. Now
+we can construct      a  coordinate    transformation      object:      
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                          
+<blockquote><tt> #include &lt;</tt><tt>AFEPack/</tt><tt>Geometry.h&gt;<br>
+                                              ... ...<br>
+                                              CoordTransform&lt;2&gt; triangle_coord_transform;<br>
+                                              triangle_coord_transform.readData("triangle.crd_trs");<br>
+                                              ... ...<br>
+                                                   </tt></blockquote>
+                                                                        
+    
+<h5>3. <a name="Degree_of_Freedom">Degree of Freedom</a>                
+        </h5>
+                                             This is a very simple but important
+    information.       It's   only   a  text   file   to  tell how many degrees
+    of freedom on   certain   geometries.     Let's  see the   following
+ example:<br>
+                                                                        
+    
+<blockquote><tt>3&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;          &nbsp;&nbsp;&nbsp;
+             &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;   
+      &nbsp;&nbsp;&nbsp;        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;        # there are 3 lines of information
+ in   this file<br>
+                                                     <br>
+                                             0&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;
+      1&nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;       &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;       #  there  are 1
+dof   on  the   number    0 of 0 dimension geometries<br>
+                                             0&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;
+      1&nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;       &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;       #  there  are 1
+dof   on  the   number    1 of 0 dimension geometries<br>
+                                             0&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;
+      1&nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;       &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;           &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;       #  there  are 1
+dof   on  the   number    2 of 0 dimension geometries</tt><br>
+                                                     </blockquote>
+                                             Let's save it into a file named
+  as  "triangle.1.tmp_dof"           and   construct      the  degree of
+freedom    object                                                       
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                   
+<blockquote><tt>#include &lt;</tt><tt>AFEPack/</tt><tt>Geometry.h&gt;<br>
+                                             #include &lt;</tt><tt>AFEPack/</tt><tt>TemplateElement.h&gt;<br>
+                                             ... ...<br>
+                                             TemplateDOF&lt;2&gt; triangle_template_dof(triangle_template_geometry); 
+                     // the information of template geometry is needed<br>
+                                             triangle_template_dof.readData("triangle.1.tmp_dof");<br>
+                                             ... ...</tt><br>
+                                                       </blockquote>
+                                                                        
+        
+<h5>4. <a name="Basis_Function"></a>                                    
+Basis Function</h5>
+                                         Because the basis function are very
+  flexible,      we  provide     certain     mechanism     to identify different
+  basis  functions     and then    build basis    functions from     shape
+ functions  and then  distribute   degree    of freedom   on the whole triangulation.
+                                   We implemented   the identification of
+basis   functions  as a protocol,   though     not very tough.<br>
+                                                                        
+        
+<h6>4.1 Basis Function Identification Protocol(BFIP)</h6>
+                              In the impelmented basis functions in the library,
+    we  adopted     the   following    format to identify different basis
+functions:<br>
+                                                                        
+        
+<blockquote><tt>template &lt;int DIM&gt;<br>
+                             class BasisFunctionIdentity <br>
+                             {<br>
+                             private:<br>
+                             &nbsp;&nbsp;&nbsp; unsigned int order;&nbsp;&nbsp;&nbsp; 
+      &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; // 
+the    order  of the polynomial    on   the  boundary of the element<br>
+                             &nbsp;&nbsp;&nbsp; int alpha[DIM];&nbsp;&nbsp;&nbsp; 
+    &nbsp;&nbsp;       &nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   &nbsp;&nbsp; 
+    // the interpolation      operator  description<br>
+                             &nbsp;&nbsp;&nbsp; unsigned int flag;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//
+      additional flag, for   special      basis function<br>
+                             };<br>
+                                                         </tt></blockquote>
+                            In which "order" is the order of the polynomial 
+ on  the   boundary     of  the   element, such that the basis funtions of 
+ different    order can  be   differed.    Generally, the basis function has
+ certain interpolation    meaning   such as  value,  or value of certain derivative
+ operator($\frac    \partial  {\partial  x^i}$ or  $\frac \partial {\partial
+ n}$, and so on).    The array  "alpha" gives  such information, such as
+the  index of the differential    operator.  The "flag"  is kept as the further
+ distinguish flag to some really   like basis  functions.   Though we called
+ it a "protocol", you can freely   choose the value in this   struct to identify
+ your own basis functions.  We  tried to make it like a protocol  because
+we attent to consider the case   when many contributors would like to provide
+ their basis functions that to  make all those basis functions from  different
+ source able to cooperate together   smoothly.<br>
+                        After appointing the identity of the basis function,
+  we  need   to  further     tell which geometry in the template element
+this   basis  function    relys on   and the interpolate point of the basis
+function.    At  last, the   information    needed is the shared library
+of the implementation     of the  basis function   and the symbol name. The
+following is the piecewise     linear  basis function   on the first vertex
+of the triangle template element:<br>
+                                               
+<blockquote>                                                            
+           
+  <pre>0	0				 // the basis function rely on the 0-th 0-dim geometry<br>0.0     0.0				 // the interpolate point is (0.0, 0.0)<br>1	0 0	0			 // its identity&nbsp;is: order=1, alpha=[0,0], flag=0<br>./triangle.1.bas_fun.so			 // the filename of the shared library in which there are the functions needed<br>        lambda_1   gradient_lambda_1     // the name of the value and gradient function of this basis function<br></pre>
+                        </blockquote>
+                                                                    Then
+you   can   write    the   implementation   of the basis function in a C
+source   file,   saying  "triangle.1.bas_fun.c",     as<br>
+                                             
+<blockquote>                                                             
+       
+  <pre>void lambda_1(const double * p, const double ** v, void * value)<br>{<br>        double * val = (double *)value;<br>        double area = (v[1][0] - v[0][0])*(v[2][1] - v[0][1])<br>                - (v[1][1] - v[0][1])*(v[2][0] - v[0][0]);<br>        val[0] = (v[1][0] - p[0])*(v[2][1] - p[1])<br>                - (v[1][1] - p[1])*(v[2][0] - p[0]);<br>        val[0] /= area;<br>};<br><br>void gradient_lambda_1(const double * p, const double ** v, void * value)<br>{<br>        double * val = (double *)value;<br>        double area = (v[1][0] - v[0][0])*(v[2][1] - v[0][1])<br>                - (v[1][1] - v[0][1])*(v[2][0] - v[0][0]);<br>        val[0] = (v[1][1] - v[2][1])/area;<br>        val[1] = (v[2][0] - v[1][0])/area;<br>};<br></pre>
+                       </blockquote>
+                       Note the prototype of the value and gradient function
+  of  a  basis    function     are as<br>
+                                             
+<blockquote>                                                             
+       
+  <pre>void function_name(const double * p, const double ** v, void * value)<br>    p: the coordinate of the point<br>    v: the coordinate of the vertices of the element<br>    value: the returned value will be stored here<br></pre>
+                       </blockquote>
+                       Of course, you should write other basis functions
+to  construct      a  complete     template element. All basis functions
+on a  template element      is administrated     by a struct "class BasisFunctionAdmin&lt;value_type, 
+      DIM, TDIM&gt;", it   will  read in information from a text file in which
+     there are the information   of  all those basis function. The text file,
+    assumed with name "triangle.1.bas_fun",     is as<br>
+                                             
+<blockquote>                                                             
+       
+  <pre>3							// there are total 3 basis functions<br><br>0       0						// the information of the 1st basis function	<br>0.0     0.0<br>1       0 0     0<br>./triangle.1.bas_fun.so<br>        lambda_1        gradient_lambda_1<br><br>0       1						// the information of the 2nd basis function<br>1.0     0.0<br>1       0 0     0<br>./triangle.1.bas_fun.so<br>        lambda_2        gradient_lambda_2<br><br>0       2						// the information of the 3rd basis function<br>0.0     1.0<br>1       0 0     0<br>./triangle.1.bas_fun.so<br>        lambda_3        gradient_lambda_3<br></pre>
+                       </blockquote>
+                       Now let's construct the basis functions for the template 
+   element     as<br>
+                                             
+<blockquote>                                                             
+       
+  <pre>#include &lt;<tt>AFEPack/</tt>Geometry.h&gt;<br>#include &lt;<tt>AFEPack/</tt>TemplateElement.h&gt;<br><br>...<br>BasisFunctionAdmin&lt;double,2,2&gt; triangle_basis_function(triangle_template_dof);<br>triangle_basis_function.readData("triangle.1.bas_fun");<br></pre>
+                       </blockquote>
+                       <br>
+                       With all those steps, we at last can construct a template
+    element     for   a  finite element space. Let's collect those codes
+together     as following:<br>
+                                             
+<blockquote>                                                             
+       
+  <pre>#include &lt;<tt>AFEPack/</tt>Geometry.h&gt;<br>#include &lt;<tt>AFEPack/</tt>TemplateElement.h&gt;<br><br>int main()<br>{<br>        // construct template geometry<br>        TemplateGeometry&lt;2&gt; triangle_template_geometry;<br>        triangle_template_geometry.readData("triangle.tmp_geo");<br><br>        // construct coordinate transformation<br>        CoordTransform&lt;2,2&gt; triangle_coord_transform;<br>       &nbsp;triangle_coord_transform.readData("triangle.crd_trs");<br><br>        // construct template degree of freedom<br>        TemplateDOF&lt;2&gt; triangle_template_dof(triangle_template_geometry);<br>        triangle_template_dof.readData("triangle.1.tmp_dof");<br><br>        // construct basis functions<br>        BasisFunctionAdmin&lt;double,2,2&gt; triangle_basis_function(triangle_template_dof);<br>        triangle_basis_function.readData("triangle.1.bas_fun");<br><br>        // construct template element, <br>        // because to construct a finite element space, we general need a list of<br>        // template elements that we store the template elements in a vector and<br>        // provide it to a finite element space<br>        std::vector&lt;TemplateElement&lt;double,2,2&gt; &gt; template_element(1);<br>        template_element.reinit(triangle_template_geometry,<br>                triangle_template_dof,<br>                triangle_coord_transform,<br>                triangle_basis_function);<br><br>        ... ...<br>}<br></pre>
+                       </blockquote>
+                                             
+<h3>   </h3>
+                                             
+<h4><a name="step_3"></a>Step 3: Construct a Finite Element Space</h4>
+                       Now we already have mesh data and template elements, 
+ and   the   following      is  to build a finite element space. This is really
+  easy now  - the only    thing   you need to do is: appoint a template for
+  every geometry  element.    Let's continue  the codes in last example:<br>
+                                             
+<blockquote>                                                             
+       
+  <pre>        // read in a mesh at first, assume that there are only triangles in the mesh<br>        Mesh&lt;2,2&gt; mesh;<br>        mesh.readData("mesh_data_file");<br><br>        // construct the finite element space on the mesh and the template element<br>        FEMSpace&lt;double,2&gt; fem_space(mesh, template_element);<br><br>        // this is the number of the geometry elements<br>        int n_element = mesh.n_geometry(2);<br>        // and set the number of elements in the finite element space the same as geometry elements<br>        fem_space.element().resize(n_element);<br>        // appoint that for every element, its template element is the 0-th one in the vector template_element<br>        for (int i = 0;i &lt; n_element;i ++)<br>                fem_space.element(i).reinit(fem_space,i,0);<br><br>        // build the element information in the finite element space<br>        fem_space.buildElement();<br>        fem_space.buildDof();<br>        fem_space.buildDofBoundaryMark();<br><br>        // done! now we get a finite element space but it looks that nothing happened though the library<br>        // in fact have done a lot of things for you, :-)<br></pre>
+                       </blockquote>
+                                             
+<h4><a name="step_4"></a>Step 4: Construct a Stiff Matrix</h4>
+                      Now it's time to show that the library have done something
+    for   you.   We  will  construct a stiff matrix on the finite element
+space.    It's   again   very  easy  as a continuing of the last example:<br>
+                                           
+<blockquote>                                                            
+     
+  <pre>#include &lt;<tt>AFEPack/</tt>BilinearOperator.h&gt;<br><br>        ... ...<br><br>        StiffMatrix&lt;2,double&gt; stiff_matrix(fem_space);<br>        stiff_matrix.build();<br><br>        // done! now we output the sparsity pattern of this matrix to have a look<br>        ofstream os("a_file_name");<br>        stiff_matrix.get_sparsity_pattern().print_gnuplot(os);<br></pre>
+                      </blockquote>
+                       Look, it really built a sparse matrix for you! (the
+ figure    is  created     by  gnuplot.)<br>
+                                           
+<div align="center"><img src="graphics/pattern0.jpg" alt="pattern0.jpg"
+ width="640" height="480">
+                      <br>
+                      </div>
+                                           
+<h4><a name="Solve_a_Laplacian_Equation"></a>Step 5: Solve a Laplacian Equation</h4>
+                      With all those preparation, we can now try to solve 
+a  Laplacian      equation     on the mesh. We set the problem with Dirichlet 
+ boundary condition     as<br>
+                      <br>
+                                           
+<div align="center"><i>u_b(x,y)=sin(2*\pi*x)*sin(2*\pi*y), if (x,y) \in \partial
+           \Omega</i><br>
+                                           
+<div align="left"><br>
+                      and the right hand side is a constant function<br>
+                      <br>
+                                           
+<div align="center"><i>f(x,y) = 1, for (x,y) \in \Omega</i><br>
+                                           
+<div align="left"><br>
+                      Now our problem is<br>
+                      <br>
+                                           
+<div align="center"><i>-\Delta u = f<br>
+                      u |_{\partial \Omega} = u_b<br>
+                   </i>   <br>
+                                           
+<div align="left">We have calculated the stiff matrix already, and in the
+           following we need only calculate the right hand side and apply
+the    boundary       condition. See the following code:<br>
+                                           
+<blockquote>                                                            
+     
+  <pre>#include &lt;<tt>AFEPack/</tt>AMGSolver.h&gt;<br>#include &lt;<tt>AFEPack/</tt>Operator.h&gt;<br><br>          ... ...<br><br>          // calculate the right hand side<br>          Vector&lt;double&gt; right_hand_side;<br>          Operator::L2Discretize(&amp;f, right_hand_side, 3);<br><br>	  // construct the solution which is a finite element function<br>          FEMFunction&lt;double,2&gt; solution(fem_space);<br><br>          // construct the boundary condition for boundary with boundary marker 1,<br>          // boundary type is Dirichlet<br>          // and the value is decided by function u_b<br>          BoundaryFunction&lt;double,2&gt; boundary(BoundaryConditionInfo::DIRICHLET, 1, &amp;u_b);<br><br>          // construct a boundary condition administrator to store boundary condition<br>          BoundaryConditionAdmin&lt;double,2&gt; boundary_admin(fem_space);<br>          // add the boundary condition to the administrator<br>          boundary_admin.add(boundary);<br>          // apply the boundary condition on the linear system<br>          boundary_admin.apply(stiff_matrix, solution, right_hand_side);<br><br>          // construct a algebraic multigrid solver for the linear system<br>          AMGSolver solver(stiff_matrix);<br>          // and solver it<br>          solver.solve(solution, right_hand_side);<br>          // save the solution in a OpenDX data file<br>          solution.writeOpenDXData("a_file_name");<br>}<br></pre>
+                      </blockquote>
+                      </div>
+                      </div>
+                      </div>
+                      </div>
+                      </div>
+                      </div>
+                      Of course, you should write down the expression of
+functions      $<i>u_b</i>$     and $<i>f</i>$  as<br>
+                                           
+<blockquote>                                                            
+     
+  <pre>double f(const double * p)<br>{<br>           return 1.0;<br>}<br><br>double u_b(const double * p)<br>{<br>           return sin(2*PI*p[0]) * sin(2*PI*p[1]);<br>}<br></pre>
+                      </blockquote>
+                      Let's have a look at the solution<br>
+                                           
+<div align="center"><img src="graphics/surface0.jpg" alt="surface0.jpg"
+ width="640" height="480">
+                      <br>
+                                           
+<div align="left">hehe, it's really the solution except the mesh is too coarse(the 
+          figure is plotted by <i>IBM Open Data Explorer</i>).<br>
+                                         
+<h4><a name="Mesh_Adaptation"></a>Step 6: Mesh Adaptation</h4>
+                     Mesh adaptation is only supported for simplex element
+ in  the   package.     The  <i>class Mesh&lt;DOW,DIM&gt; </i>doesn't support 
+ mesh adaptation  automaticly     because the mesh adaptation is based on 
+the finite element  base part. A  derived  <i>class RegularMesh&lt;DIM&gt;</i> 
+ will support mesh  adaptation.   The mesh  adaptation is designed to support 
+ multimesh  machenism  at the beginning   that  even you want to adapt one 
+ mesh, it will  be taken  as multiple mesh  adaptation.  Let's see how to 
+write such code.<br>
+                                         
+<blockquote>                                                             
+ 
+  <pre>#include &lt;<tt>AFEPack/</tt>HGeometry.h&gt;		// the head file declaring those class support mesh adaptation<br><br>int main(void)<br>{<br></pre>
+                                                                        
+          
+  <blockquote>                                                           
+                                             
+    <pre>// construct a hierarchy geometry tree for 2 dimensional case<br>HGeometryTree&lt;2&gt; h_geometry_tree;<br>// read in the macro mesh from easymesh formatted data files<br>h_geometry_tree.readEasyMesh("mesh_file_name");<br>// construct a irregular mesh based on the hierarchy geometry tree<br>IrregularMesh&lt;2&gt; irregular_mesh(h_geometry_tree);<br>// semiregularize the irregular mesh to a so called semi-regular mesh<br>irregular_mesh.semiregularize();	// because the macro mesh from easymesh formatted data is always <br>					// semi-regular, we in fact can omit this line. but for a general<br>					// irregular mesh, this line is essential.<br>// regularize the mesh to get the regular mesh from the irregular mesh<br>irregular_mesh.regularize(false);	// if the argument is true, the elements of the mesh will be sorted<br>					// according certain principle to try to minimize the band width of<br>					// the obtained matrix.<br>// construct an indicator on the regular mesh from the irregular mesh<br>Indicator&lt;2&gt; indicator(irregular_mesh.regularMesh());<br>... ... 	// you can set the value of the indicator to control how to adapt the mesh by certain way. <br>		// see example in the following part to see how to do that<br>// construct a mesh adaptor which will provide facilities to implement the mesh adaptation<br>MeshAdaptor&lt;2&gt; mesh_adaptor(irregular_mesh);<br>// set the convergence order of the mesh adaptor as 1.0<br>mesh_adaptor.convergenceOrder() = 1.;<br>// and the refine step as 1<br>mesh_adaptor.refineStep() = 1;<br>// and the indicator is the one we gave just now<br>mesh_adaptor.setIndicator(indicator);<br>// the tolerence of the mesh adaptor is set as 1.0e-8<br>mesh_adaptor.tolerence() = 1.0e-8;<br>// implement the mesh adaption<br>mesh_adaptor.adapt();<br><br>// now the mesh is adapted. let's get the regular mesh from it to see what a mesh we get<br>// this mesh is really not semiregular after the adaptation now. we semiregularize it at first<br>irregular_mesh.semiregularize();<br>// and then construct the regular mesh from it<br>irregular_mesh.regularize(false);<br>// save the regular mesh to certain data files<br>irregular_mesh.regularMesh().writeEasyMesh("mesh_file_name");<br></pre>
+                       </blockquote>
+                                                                        
+          
+  <pre>};</pre>
+                     </blockquote>
+                     This is a comparative complete example to show how to
+ implement      a  mesh   adaptation  on a 2D mesh except there are no detail
+ how to set    the  indicator.   In the following figures there is a example
+ we get to  refine    the meshes in  two contacted circle. The first figure
+ is the original  macro    mesh and the  second one is the refined mesh and
+ the third one is  the local    detail of the  refined mesh.<br>
+                                       
+<div align="center"><img src="graphics/local_refined_mesh_original.jpg"
+ alt="original mesh" width="729" height="647">
+                    <img src="graphics/local_refined_mesh.jpg"
+ alt="adapted mesh" width="729" height="647">
+                    <img src="graphics/local_refined_mesh_detail.jpg"
+ alt="local detail" width="729" height="647">
+                    <br>
+                                     
+<div align="left">                   
+<h4><a name="Step_7:_Multi-Mesh_Operation"></a>Step 7: Multi-Mesh Operation</h4>
+                   In this step, we will build two finite element spaces
+on  two   different      meshes  and then construct the matrix of a bilinear 
+operator   on this two    finite element  spaces to show how to code with 
+the multi-mesh   facilities     in the package.  Of course, again the two 
+meshes should base   on the same    hierarchy geometry  tree. We try to solve 
+a elliptic system   as<br>
+                                     
+<div align="center"><i>-{\frac \partial {\partial x^i}} (a^0_{ij} {\frac {\partial
+u^0} {\partial x^j}}) + c^0_i u^i = f^0<br>
+                   </i>                   
+<div align="center"><i>-{\frac \partial {\partial x^i}} (a^1_{ij} {\frac {\partial
+u^1} {\partial x^j}}) + c^1_i u^i = f^1</i><br>
+                                     
+<div align="left">with Dirichlet boundary condition as<br>
+                                     
+<div align="center"><i>u^0 = u^0_b, on \partial \Omega<br>
+                   u^1 = u^1_b, on \partial \Omega</i><br>
+                                     
+<div align="left">We assume that $<i>\Omega</i>$ is a 2D domain and $<i>c^0</i>$, 
+         $<i>c^1</i>$ can guarantee that the whole system have a uniqe solution. 
+       If  the coefficients in the divergence operator are discontinuous and
+   $<i>a^0</i>$      has different irregularity as $<i>a^1</i>$ - "different" 
+   here means the    discontinuity  of the functions are at different location 
+   of the domain,   the solution $<i>u^0</i>$  and $<i>u^1</i>$ will have 
+different   irregularity   as well as the coefficients.  A mesh adaptation 
+algorithm  should find out   the discontinuity and give a suitable mesh for 
+$<i>u^0</i>$  and $<i>u^1</i>$   respectively. The weak formation of this 
+problem is as<br>
+                                     
+<div align="center"><i>A^0(u^0, \phi) + C^0(u^1, \phi) = (f^0, \phi)<br>
+                   C^1(u^0, \psi) + A^1(u^1, \psi) = (f^1, \psi)</i><br>
+                   </div>
+                   in which<i><br>
+                   </i>                   
+<div align="center"><i>A^n(\phi, \psi) = \int_\Omega a^n \nabla \phi \nabla 
+         \psi + c^n_n \phi \psi dx<br>
+                   C^n(\phi, \psi) = \int_\Omega c^n_{mod(n+1,2)} \phi \psi 
+ dx<br>
+                   (\phi, \psi) = \int_\Omega \phi \psi dx</i><br>
+                   </div>
+                   As able to be imagined, this is a comparative complex
+example     that   we  should  declare a new class to make the code more
+readable and    this example   will should the typical structure of a complete
+mesh adaptaion    algorithm.<br>
+                                     
+<blockquote>                                                   
+  <pre>// EllipticSystem.h<br><br>#ifndef _ELLIPTICSYSTEM_H_<br><br>#include &lt;AFEPack/Geometry.h&gt;<br>#include &lt;AFEPack/TemplateElement.h&gt;<br>#include &lt;AFEPack/FEMSpace.h&gt;<br>#include &lt;AFEPack/HGeometry.h&gt;<br>#include &lt;AFEPack/BilinearOperator.h&gt;<br>#include &lt;AFEPack/Operator.h&gt;<br><br>#define DIM 2<br><br>class EllipticSystem {<br>public:<br>	// this class is used to construct matrix $<i>A^0</i>$ and $<i>A^1</i>$<br>	class Matrix_A : public StiffMatrix&lt;DIM,double&gt; {<br>	private:<br>		double (*a[DIM][DIM])(const double *);<br>		double (*c)(const double *);<br>	public:<br>		Matrix_A(double (*a00)(const double *), double (*a01)(const double *),<br>			double (*a10)(const double *), double (*a11)(const double *),<br>			double (*c0)(const double *), FEMSpace&lt;double,DIM&gt;&amp; sp) :<br>				StiffMatrix&lt;DIM,double&gt;(sp) {<br>			a[0][0] = a00;<br>			a[0][1] = a01;<br>			a[1][0] = a10;<br>			a[1][1] = a11;<br>			c = c0;<br>		};<br>		virtual ~Matrix_A() {};<br>	public:<br>		virtual void getElementMatrix(const Element&lt;value_type0,DIM&gt;&amp;,<br>			const Element&lt;value_type1,DIM&gt;&amp;,<br>			const ActiveElementPairIterator&lt;DIM&gt;::State state = ActiveElementPairIterator&lt;DIM&gt;::EQUAL);<br> 	};<br><br>	// this class is used to construct matrix $<i>C^0</i>$ and $<i>C^1</i>$<br>	class Matrix_C : public L2InnerProduct&lt;DIM,double&gt; {<br>	private:<br>		double (*c)(const double *);<br>	public:<br>		Matrix_C(double (*c1)(const double *), FEMSpace&lt;double,DIM&gt;&amp; sp0, FEMSpace&lt;double,DIM&gt;&amp; sp1) :<br>				c(c1), L2InnerProduct&lt;DIM,double&gt;(sp0, sp1) {};<br>		~Matrix_C() {};<br>	public:<br>		virtual void getElementMatrix(const Element&lt;value_type0,DIM&gt;&amp;,<br>  			const Element&lt;value_type1,DIM&gt;&amp;,<br>			const ActiveElementPairIterator&lt;DIM&gt;::State state = ActiveElementPairIterator&lt;DIM&gt;::EQUAL);<br>	};<br><br>private:<br>	std::string			mesh_file;			// file name of mesh<br>	HGeometryTree&lt;DIM&gt;		h_geometry_tree;		// the geometry tree<br>	IrregularMesh&lt;DIM&gt;		irregular_mesh[DIM];		// the meshes<br>	FEMSpace&lt;double,DIM&gt;		fem_space[DIM];			// the finite element space<br>	FEMFunction&lt;double,DIM&gt;		solution[DIM];			// the solution<br><br>	Indicator&lt;DIM&gt;			indicator[DIM];			// indicator to adapt the meshes<br><br>	// variables used to contruct template elements<br>	std::vector&lt;TemplateElement&lt;double,DIM,DIM&gt; &gt;	template_element;<br>	TemplateGeometry&lt;DIM&gt;				triangle_template_geometry;<br>	CoordTransform&lt;DIM,DIM&gt;				triangle_coord_transform;<br>	TemplateDOF&lt;DIM&gt;				triangle_1_template_dof;<br>	BasisFunctionAdmin&lt;double,DIM,DIM&gt;		triangle_1_basis_function;<br>	TemplateGeometry&lt;DIM&gt;				twin_triangle_template_geometry;<br>	CoordTransform&lt;DIM,DIM&gt;				twin_triangle_coord_transform;<br>	TemplateDOF&lt;DIM&gt;				twin_triangle_1_template_dof;<br>	BasisFunctionAdmin&lt;double,DIM,DIM&gt;		twin_triangle_1_basis_function;<br>public: // contructors and destructor<br>	EllipticSystem(const std::string&amp; filename);<br>	~EllipticSystem() {};<br>public: //<br>	// initialize those memeber variables<br>	void init();<br>	// the engine to run the program<br>	void run();<br>	// adapt mesh<br>	void adaptMesh();<br>	// build finite element space<br>	void buildFEMSpace();<br>	// construct the linear system and solve it<br>	void solve();<br>	// calculate the indicator used to adapt the mesh using <i>Kelly</i> estimator<br>	void getIndicator();<br>	// calculate the error of the solution<br>	void getError();<br>	// save data<br>	void saveData();<br>};<br><br>#endif // _ELLIPTICSYSTEM_H_<br></pre>
+             </blockquote>
+              Such a header file is a very standard example to write an adaptive
+    program.   We need a main file to start the program as<br>
+                       
+<blockquote>                                    
+  <pre>// main.cpp<br><br>#include "EllipticSystem.h"<br><br>int main(int argc, char * argv[])<br>{<br>	if (argc != 2) {<br>		std::cout &lt;&lt; "Usage: " <br>			&lt;&lt; argv[0]<br>			&lt;&lt; " mesh_file_name"<br>			&lt;&lt; std::endl;<br>		return 1;<br>	}<br>	try {<br>		<b>EllipticSystem elliptic_system(argv[1]);<br>		elliptic_system.run();</b><br>	}<br>	catch(std::exception&amp; e) {<br>		std::cerr &lt;&lt; "Exception caughted:" &lt;&lt; std::endl<br>			&lt;&lt; e.what ()<br>			&lt;&lt; std::endl;<br>	}<br>	catch(...) {<br>		std::cerr &lt;&lt; "Exception caughted:" &lt;&lt; std::endl<br>			&lt;&lt; "unknown exception caughted."<br>			&lt;&lt; std::endl;<br>	}<br>};<br><br>// end of file<br></pre>
+            </blockquote>
+            The following is the implementation of the <i>class EllipticSystem</i><br>
+                     
+<blockquote>                                 
+  <pre>// EllipticSystem.cpp<br><br>EllipticSystem::EllipticSystem(const std::string&amp; filename) :<br>	mesh_file(filename)<br>{<br>	init();<br>};<br><br>void EllipticSystem::run()<br>{<br>	do {<br>		buildFEMSpace();<br>		solve();<br>		saveData();<br>		getError();<br><br>		getIndicator();<br>		adaptMesh();<br>	} while (1);<br>};<br><br>void EllipticSystem::init()<br>{<br>	// read in the mesh data file to construct the hierarchy geometry tree. the mesh data is assumed to<br>	// be easymesh format<br>	h_geometry_tree.readEasyMesh(mesh_file);<br><br>	// construct the irregular meshes based on the hierarchy geometry tree<br>	for (int i = 0;i &lt; DIM;i ++)<br>		irregular_mesh[i].reinit(h_geometry_tree);<br><br>	// construct the piecewise linear triangle element<br>	triangle_template_geometry.readData("triangle.tmp_geo");<br>	triangle_coord_transform.readData("triangle.crd_trs");<br>	triangle_1_template_dof.reinit(triangle_template_geometry);<br>	triangle_1_template_dof.readData("triangle.1.tmp_dof");<br>	triangle_1_basis_function.reinit(triangle_1_template_dof);<br>	triangle_1_basis_function.readData("triangle.1.bas_fun");<br><br>	// construct the piecewise linear twin triangle element. this element is special for this adaptive<br>	// package which is in fact the combination of two piecewise linear triangle element<br>	twin_triangle_template_geometry.readData("twin_triangle.tmp_geo");<br>	twin_triangle_coord_transform.readData("twin_triangle.crd_trs");<br>	twin_triangle_1_template_dof.reinit(twin_triangle_template_geometry);<br>	twin_triangle_1_template_dof.readData("twin_triangle.1.tmp_dof");<br>	twin_triangle_1_basis_function.reinit(twin_triangle_1_template_dof);<br>	twin_triangle_1_basis_function.readData("twin_triangle.1.bas_fun");<br><br>	// construct the two template elements using the information got by the last lines<br>	template_element.resize(2);<br>	template_element[0].reinit(triangle_template_geometry, <br>		triangle_1_template_dof, <br>		triangle_coord_transform, <br>		triangle_1_basis_function);<br>	template_element[1].reinit(twin_triangle_template_geometry, <br>		twin_triangle_1_template_dof, <br>		twin_triangle_coord_transform, <br>		twin_triangle_1_basis_function);<br>};<br><br>void EllipticSystem::buildFEMSpace()<br>{<br>	for (int n = 0;n &lt; DIM;n ++) {<br>		irregular_mesh[n].semiregularize();<br>		irregular_mesh[n].regularize();<br>		RegularMesh&lt;DIM&gt;&amp; regular_mesh = irregular_mesh[n].regularMesh();<br>		fem_space[n].reinit(regular_mesh, template_element);<br>		int n_element = regular_mesh.n_geometry(DIM);<br>		fem_space[n].element().resize(n_element);<br>		for (int i = 0;i &lt; n_element;i ++) {<br>			const GeometryBM&amp; geometry = regular_mesh.geometry(DIM, i);<br>			switch (geometry.n_vertex()) {<br>				case 3: // this is a triangle, we use the triangle template<br>					fem_space[n].element(i).reinit(fem_space[n],i,0);<br>					break;<br>				case 4: // this is a twin-triangle, we use the twin-triangle template<br>					fem_space[n].element(i).reinit(fem_space[n],i,1);<br>					break;<br>				default: // something must be wrong<br>					Assert(false, ExcNotImplemented());<br>			}<br>		}<br>		fem_space[n].buildElement();<br>		fem_space[n].buildDof();<br>		fem_space[n].buildDofBoundaryMark();<br>		solution[n].reinit(fem_space[n]);<br>	}<br>};<br><br>void EllipticSystem::adaptMesh()<br>{<br>	MeshAdaptor&lt;DIM&gt; mesh_adaptor;<br>	for (int i = 0;i &lt; DIM;i ++) {<br>		mesh_adaptor.reinit(irregular_mesh[i]);<br>		mesh_adaptor.convergenceOrder() = 1.;<br>		mesh_adaptor.refineStep() = 1;<br>		mesh_adaptor.setIndicator(indicator[i]);<br>		mesh_adaptor.tolerence() = 1.0e-8;<br>		mesh_adaptor.adapt();<br>	}<br><br>};<br><br>// as can be seen easily, under this standard frame of an adaptive program, the solver for the original<br>// problem is the certral part.<br>void EllipticSystem::solve()<br>{<br>	// for the first equation<br>	// build the matrix A0<br>	Matrix_A A0(&amp;_a0_00_, &amp;_a0_01_, &amp;_a0_10_, &amp;_a0_11_, &amp;_c0_0_, fem_space[0]);<br>	A0.algebricAccuracy() = 2;<br>	A0.build();<br><br>	// prepare the right hand side<br>	Vector&lt;double&gt; f0;<br>	Operator::L2Discretize(&amp;_f0_, fem_space[0], f0, 3);<br><br>	// prepare the boundary condition<br>	BoundaryFunction&lt;double,DIM&gt; u0_boundary(BoundaryConditionInfo::DIRICHLET, 1, &amp;_u0_);<br>	BoundaryConditionAdmin&lt;double,DIM&gt; u0_boundary_admin(fem_space[0]);<br>	u0_boundary_admin.add(u0_boundary);<br>	u0_boundary_admin.apply(A0, solution[0], f0);<br><br>	// prepare the linear solver for A0<br>	AMGSolver A0_solver(A0);<br><br>	// build the matrix C0<br>	Matrix_C C0(&amp;_c0_1_, fem_space[0], fem_space[1]);<br>	C0.algebricAccuracy() = 2;<br>	C0.build();<br><br>	// for the second equation<br>	// build the matrix A1<br>	Matrix_A A1(&amp;_a1_00_, &amp;_a1_01_, &amp;_a1_10_, &amp;_a1_11_, &amp;_c1_1_, fem_space[1]);<br>	A1.algebricAccuracy() = 2;<br>	A1.build();<br><br>	// prepare the right hand side<br>	Vector&lt;double&gt; f1;<br>	Operator::L2Discretize(&amp;_f1_, fem_space[1], f1, 3);<br><br>	// prepare the boundary condition<br>	BoundaryFunction&lt;double,DIM&gt; u1_boundary(BoundaryConditionInfo::DIRICHLET, 1, &amp;_u1_);<br>	BoundaryConditionAdmin&lt;double,DIM&gt; u1_boundary_admin(fem_space[1]);<br>	u1_boundary_admin.add(u1_boundary);<br>	u1_boundary_admin.apply(A1, solution[1], f1);<br><br>	// prepare the linear solver for A1<br>	AMGSolver A1_solver(A1);<br><br>	// build the matrix C1<br>	Matrix_C C1(&amp;_c1_0_, fem_space[1], fem_space[0]);<br>	C1.algebricAccuracy() = 2;<br>	C1.build();<br><br>	// we adopt the block Gauss-Sidle iteration as the solver because $<i>c^i</i>$ are small<br>	int i;<br>	double error;<br>	double tolerence = 1.0e-6;<br>	do {<br>		// backup the old solution<br>		FEMFunction&lt;double,DIM&gt; old_solution[DIM];<br>		for (i = 0;i &lt; DIM;i ++)<br>			old_solution[i] = solution[i];<br><br>		// update $<i>u^0</i>$<br>		Vector&lt;double&gt; C0xu1;<br>		C0.vmult(C0xu1, solution[1]);<br>		u0_boundary_admin.clearEntry(C0xu1);<br>		C0xu1.sadd(-1.0, f0);<br>		A0_solver.solve(solution[0], C0xu1);<br>	<br>		// update $<i>u^1</i>$<br>		Vector&lt;double&gt; C1xu0;<br>		C1.vmult(C1xu0, solution[0]);<br>		u1_boundary_admin.clearEntry(C1xu0);<br>		C1xu0.sadd(-1.0, f1);<br>		A1_solver.solve(solution[1], C1xu0);<br><br>		// calculate the error<br>		error = 0.0;<br>		for (i = 0;i &lt; DIM;i ++) {<br>			old_solution[i].add(-1.0, solution[i]);<br>			error += pow(Functional::L2Norm(old_solution[i],3), 2.0);<br>		}<br>		error = sqrt(error);<br>		std::cout &lt;&lt; "\r\terror = " &lt;&lt; error &lt;&lt; std::flush;<br>	} while (error &gt; tolerence);<br>	std::cout &lt;&lt; std::endl;<br>};<br><br>// we adopted only the leading term of the posteriori error estimator - saying the jump between the<br>// element boundary - to be calculated as the indicator. and the coefficient in the divergence operator<br>// is omitted, too, as this is only a very simple demonstration to show how to use the code.<br>void EllipticSystem::getIndicator()<br>{<br>	for (int n = 0;n &lt; DIM;n ++) {<br>		RegularMesh&lt;DIM&gt;&amp; regular_mesh = irregular_mesh[n].regularMesh();<br>		indicator[n].reinit(regular_mesh);<br>		int n_face = regular_mesh.n_geometry(DIM-1);<br>		std::vector&lt;bool&gt; flag(n_face, false);<br>		std::vector&lt;double&gt; jump(n_face);<br>		FEMSpace&lt;double,DIM&gt;::ElementIterator the_element = fem_space[n].beginElement();<br>		FEMSpace&lt;double,DIM&gt;::ElementIterator end_element = fem_space[n].endElement();<br>		for (;the_element != end_element;the_element ++) {<br>			const GeometryBM&amp; geometry = the_element-&gt;geometry();<br>			for (int i = 0;i &lt; geometry.n_boundary();i ++) {<br>				int j = geometry.boundary(i);<br>				const GeometryBM&amp; side = regular_mesh.geometry(1, j);<br>				const Point&lt;DIM&gt;&amp; p0 = regular_mesh.point(regular_mesh.geometry(0, side.boundary(0)).vertex(0));<br>				const Point&lt;DIM&gt;&amp; p1 = regular_mesh.point(regular_mesh.geometry(0, side.boundary(1)).vertex(0));<br>				std::vector&lt;double&gt; gradient = solution[n].gradient(midpoint(p0, p1), *the_element);<br>				if (flag[j]) {<br>					jump[j] -= gradient[0]*(p0[1] - p1[1]) + gradient[1]*(p1[0] - p0[0]);<br>					flag[j] = false;<br>				}<br>				else {<br>					jump[j] = gradient[0]*(p0[1] - p1[1]) + gradient[1]*(p1[0] - p0[0]);<br>					flag[j] = true;<br>				}<br>			}<br>		}<br>		the_element = fem_space[n].beginElement();<br>		for (int m = 0;the_element != end_element;the_element ++, m ++) {<br>			const GeometryBM&amp; geometry = the_element-&gt;geometry();<br>			indicator[n][m] = 0.0;<br>			for (int i = 0;i &lt; geometry.n_boundary();i ++) {<br>				int j = geometry.boundary(i);<br>				if (flag[j]) continue; // this side is on the boundary of the domain<br>				indicator[n][m] += jump[j]*jump[j];<br>			}<br>		}<br>	}<br>};<br><br>void EllipticSystem::getError()<br>{<br>	double error;<br><br>	error = Functional::L2Error(solution[0], FunctionFunction&lt;double&gt;(&amp;_u0_), 3);<br>	std::cout &lt;&lt; "|| u_0 - u_0h ||_L^2 = " &lt;&lt; error &lt;&lt; std::endl;<br><br>	error = Functional::L2Error(solution[1], FunctionFunction&lt;double&gt;(&amp;_u1_), 3);<br>	std::cout &lt;&lt; "|| u_1 - u_1h ||_L^2 = " &lt;&lt; error &lt;&lt; std::endl;<br>};<br><br>void EllipticSystem::saveData()<br>{<br>	solution[0].saveOpenDXData("u_0h.dx");<br>	solution[1].saveOpenDXData("u_1h.dx");<br>};<br><br>// end of file<br></pre>
+           </blockquote>
+     And we should give the function to calculate the element matrix for
+<i>class   Matrix_A</i> and <i>class Matrix_C</i> which is one of the kernel
+work in   the program, too. See following<br>
+         
+<blockquote>               
+  <pre>// this matrix is in fact a weighted sum of a stiff matrix and a mass matrix which is based in fact only on one<br>// mesh that it's very easy to be implemented. this is a very standard function for the package.<br>void EllipticSystem::Matrix_A::getElementMatrix(<br>		const Element&lt;double,DIM&gt;&amp; element0,<br>		const Element&lt;double,DIM&gt;&amp; element1,<br>		const ActiveElementPairIterator&lt;DIM&gt;::State state)<br>{<br>	int j, k, l, j1, k1;<br>	int n_element_dof0 = elementDof0().size();<br>	int n_element_dof1 = elementDof1().size();<br>	double volume = element0.templateElement().volume();<br>	const QuadratureInfo&lt;DIM&gt;&amp; quad_info = element0.findQuadratureInfo(algebricAccuracy());<br>	std::vector&lt;double&gt; jacobian = element0.local_to_global_jacobian(quad_info.quadraturePoint());<br>	int n_quadrature_point = quad_info.n_quadraturePoint();<br>	std::vector&lt;Point&lt;DIM&gt; &gt; q_point = element0.local_to_global(quad_info.quadraturePoint());<br>	std::vector&lt;std::vector&lt;double&gt; &gt; basis_value = element0.basis_function_value(q_point);<br>	std::vector&lt;std::vector&lt;std::vector&lt;double&gt; &gt; &gt; basis_gradient = element0.basis_function_gradient(q_point);<br>	for (int l = 0;l &lt; n_quadrature_point;l ++) {<br>		double Jxw = quad_info.weight(l)*jacobian[l]*volume;<br>		double a_value[DIM][DIM];<br>		for (j1 = 0;j1 &lt; DIM;j1 ++)<br>			for (k1 = 0;k1 &lt; DIM;k1 ++)<br>				a_value[j1][k1] = (*a[j1][k1])(q_point[l]);<br>		double c_value = (*c)(q_point[l]);<br>		for (j = 0;j &lt; n_element_dof0;j ++) {<br>			for (k = 0;k &lt; n_element_dof1;k ++) {<br>				for (j1 = 0;j1 &lt; DIM;j1 ++) {<br>					for (k1 = 0;k1 &lt; DIM;k1 ++) {<br>						elementMatrix(j, k) += Jxw * a_value[j1][k1] <br>							* basis_gradient[j][l][j1] * basis_gradient[k][l][k1];<br>					}<br>				}<br>				elementMatrix(j, k) += Jxw * c_value * basis_value[j][l] * basis_value[k][l];<br>			}<br>		}<br>	}<br>};<br><br>// this matrix is a weighted <i>L^2</i> inner product between two finite element spaces. this function is also a very<br>// standard example to calculate the matrix of a bilinear operator between two finite element spaces.<br>void EllipticSystem::Matrix_C::getElementMatrix(<br>		const Element&lt;double,DIM&gt;&amp; element0,<br>		const Element&lt;double,DIM&gt;&amp; element1,<br>		const ActiveElementPairIterator&lt;DIM&gt;::State state)<br>{<br>	int n_element_dof0 = elementDof0().size();<br>	int n_element_dof1 = elementDof1().size();<br>	if (state == ActiveElementPairIterator&lt;DIM&gt;::GREAT_THAN) {<br>		double volume = element1.templateElement().volume();<br>		const QuadratureInfo&lt;DIM&gt;&amp; quad_info = element1.findQuadratureInfo(algebricAccuracy());<br>		std::vector&lt;double&gt; jacobian = element1.local_to_global_jacobian(quad_info.quadraturePoint());<br>		int n_quadrature_point = quad_info.n_quadraturePoint();<br>		std::vector&lt;Point&lt;DIM&gt; &gt; q_point = element1.local_to_global(quad_info.quadraturePoint());<br>		std::vector&lt;std::vector&lt;double&gt; &gt; basis_value0 = element0.basis_function_value(q_point);<br>		std::vector&lt;std::vector&lt;double&gt; &gt; basis_value1 = element1.basis_function_value(q_point);<br>		for (int l = 0;l &lt; n_quadrature_point;l ++) {<br>			double Jxw = quad_info.weight(l)*jacobian[l]*volume;<br>			double c_value = (*c)(q_point[l]);<br>			for (int j = 0;j &lt; n_element_dof0;j ++) {<br>				for (int k = 0;k &lt; n_element_dof1;k ++) {<br>					elementMatrix(j,k) += Jxw * c_value * basis_value0[j][l] * basis_value1[k][l];<br>				}<br>			}<br>		}<br>	}<br>	else {<br>		double volume = element0.templateElement().volume();<br>		const QuadratureInfo&lt;DIM&gt;&amp; quad_info = element0.findQuadratureInfo(algebricAccuracy());<br>		std::vector&lt;double&gt; jacobian = element0.local_to_global_jacobian(quad_info.quadraturePoint());<br>		int n_quadrature_point = quad_info.n_quadraturePoint();<br>		std::vector&lt;Point&lt;DIM&gt; &gt; q_point = element0.local_to_global(quad_info.quadraturePoint());<br>		std::vector&lt;std::vector&lt;double&gt; &gt; basis_value0 = element0.basis_function_value(q_point);<br>		std::vector&lt;std::vector&lt;double&gt; &gt; basis_value1 = element1.basis_function_value(q_point);<br>		for (int l = 0;l &lt; n_quadrature_point;l ++) {<br>			double Jxw = quad_info.weight(l)*jacobian[l]*volume;<br>			double c_value = (*c)(q_point[l]);<br>			for (int j = 0;j &lt; n_element_dof0;j ++) {<br>				for (int k = 0;k &lt; n_element_dof1;k ++) {<br>					elementMatrix(j,k) += Jxw * c_value * basis_value0[j][l] * basis_value1[k][l];<br>				}<br>			}<br>		}<br>	}<br>};<br><br></pre>
+     </blockquote>
+     It's easy to see that we haven't give the formation of those coefficient 
+   functions. Their prototypes are all the same as<br>
+             
+<blockquote>                     
+  <pre>double foo(const double *);<br></pre>
+       </blockquote>
+       it's very convenient to give flexible coefficient functions as such
+ prototype   to solve an elliptic system. Have a try!<br>
+   The following figures are an example we got with data set as that $<i>u^0</i>$ 
+ have a circle discontinuity while $<i>u^1</i>$ have two straight line discontinuity 
+ (see the source code of this example in the package in <i>example/step-7</i>).<img
+ src="graphics/u0_mesh.jpg" alt="u0 mesh" width="998" height="699">
+   <br>
+  <img src="graphics/u0_surface.jpg" alt="u0 surface" width="998"
+ height="699">
+   <br>
+  <img src="graphics/u1_mesh.jpg" alt="u1 mesh" width="998" height="699">
+   <br>
+  <img src="graphics/u1_surface.jpg" alt="u1 surface" width="998"
+ height="699">
+   <br>
+   In this example, in fact we only used some simple facilities to operate
+ two meshes. After some understanding to the source code of the package,
+you  can make use of the multi-mesh mechanism of the package much more flexible.<br>
+                                     
+<h3><a name="Data_File_Format" &gt;</a="">3.2 Data File Format</a></h3>
+ The mesh data format please refer the document of those mesh generation
+software respestively. The following are the grammar for those data files
+to construct template element and the internal mesh data format. As we can
+see from the examples above, to construct a template element, we should write
+down two kinds of files - one are those C source files for the basis functions
+and for calculating element volume, the other are those data files. <br>
+In the following data formation description, the left column is the data
+using C syntax, and the right column is the comments which should not appear
+in the data file. The data file format for a mesh object <i>Mesh&lt;DIM,DOW&gt;</i>
+is as:<br>
+<blockquote>
+  <pre>int								# number of points (n_point)<br>double ... double						# the coordinate of the 0-th point<br>... ...								# ... ...<br>double ... double						# the coordinate of the n_point-1st point<br><br>int								# number of nodes (n_node), 0-dim geometry<br>geometry 0-dim							# information of the 0-th 0-dim geometry<br>... ...								# ... ...<br>geometry 0-dim							# information of the n_node-1st geometry<br><br>... ...								# ... ...<br><br>int								# number of DIM-dim geometry (n_DIM_geometry)<br>geometry DIM-dim						# information of the 0-th DIM-dim geometry<br>... ...								# ... ...<br>geometry DIM-dim						# information of the n_DIM_geometry-1st geometry<br></pre>
+</blockquote>
+ in which the geometry information format is as for 0-dim:<br>
+<blockquote>
+  <pre>int								# index of this node<br>int	int							# the first int is number of point for this node(should be 1), the second int is the index of that point<br>int	int							# the first int is number of boundary for this node(should be 1), the second int is the index of that boundary(meanless for node)<br>int								# boundary marker of this node<br></pre>
+</blockquote>
+for n-dim:<br>
+<blockquote>
+  <pre>int								# index of this geometry<br>int 	int ... int						# the first int is number of vertices, the followings are the index of those vertices<br>int	int ... int						# the first int is number of boundarys, the followings are the index of those boundarys((n-1)-dim)<br>int								# boundary marker of this geometry<br></pre>
+</blockquote>
+The data file format for a template element geometry is as:<br>
+<blockquote>
+  <pre>string								# the filename of the shared library to get the volume function<br>	string							# the function name of the volume function<br><br>mesh information						# mesh information for the element geometry, is a Mesh&lt;DIM,DIM&gt; object<br><br>quadrature information						# quadrature points and weights information, see following<br></pre>
+</blockquote>
+<h3><a name="Advanced_Techniques"></a>3.3 Advanced Techniques</h3>
+                             
+<h3><a name="Hacking_Source_Code"></a>3.4 Hacking Source Code</h3>
+                             
+<hr><a href="index-4.html">Next</a>                               <a
+ href="index-2.html">Previous</a>                               <a
+ href="index.html#toc3">Contents</a>                               <br>
+                    </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              <br>
+               <br>
+          <br>
+         <br>
+          <br>
+     <br>
+    <br>
+   <br>
+  <br>
+ <br>
+</body>
+</html>

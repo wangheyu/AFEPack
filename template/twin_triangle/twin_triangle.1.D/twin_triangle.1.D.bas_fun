@@ -1,0 +1,19 @@
+3
+
+2	0
+0.1666666667	0.1666666667
+1	0 0	0
+./twin_triangle.1.D.bas_fun.so
+	lambda_1	gradient_lambda_1
+
+2	0
+0.6666666667	0.1666666667
+1	0 0	0
+./twin_triangle.1.D.bas_fun.so
+	lambda_2	gradient_lambda_2
+
+2	0
+0.1666666667	0.6666666667
+1	0 0	0
+./twin_triangle.1.D.bas_fun.so
+	lambda_3	gradient_lambda_3

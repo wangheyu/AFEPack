@@ -1,0 +1,155 @@
+继续侃，希望您能够搞明白，:-)
+
+现在在库函数中，自动处理了狄氏边值的问题。处理的方式为：首先由用户提供
+在每种材料标识的情况下，解函数在自由度的插值点上的函数值的表达式；然后，
+库通过判断每个自由度的材料标识、以及使用自由度的插值点的坐标，获得自由
+度本身的值。从而，在需要求解的线性系统中，我们就已经知道了一部分解变量
+的值，于是，现在的问题就可以如下来说了：我们有一个线性方程组
+
+                  A x = b
+
+现在，我们可以将其分块为
+
+                [ A_11 A_12 ] [ x_1 ]   [ b_1 ]
+                [           ] [     ] = [     ]
+                [ A_21 A_22 ] [ x_2 ]   [ b_2 ]
+
+现在呢，我们已经知道了 x_2 的值了。于是，我们的手段就是用下面的线性系
+统来代替上面的：
+
+                [ A_11   0 ] [ x_1 ]   [ b_1 - A_12 x_2 ]
+                [          ] [     ] = [                ]
+                [  0     I ] [ x_2 ]   [       x_2      ]
+
+其中 I 是单位对角块，0 表示零块。可以看到，修改过的系统和原系统相比，
+具有完全相同的解，而且，整个矩阵的结构可以保持不必修改。在实际实现的时
+候，可以用 A_22 的对角线来代替 I 这块，效果更好一些。
+
+上面就是库中间处理狄氏边值的原理。但是，如果基函数不是正交的拉格朗日插
+值函数，库中的程序会给出错误的结果的。在事实上遇到这样的情况的时候，解
+决的方案也是有的，之所以能够解决的基本原理在于，狄氏边值是强制加上的，
+所以边值的处理可以和区域内部的求解解耦合，我们就不讨论这个话题了。
+
+下面我们来看看加上Neumann边值的方法。首先，对于Neumann边值问题，我们知
+道边值将会贡献一个边界积分到右端项上去，因此，我们需要能够做边界积分的
+功能；另外，Neumann边值问题的解具有一个自由度(假设单连通区域)，在解上
+加上一个常数的话还是解，因此，我们需要在线性系统中将这个因素带来的矩阵
+退化消掉，这个得我们手工做一下。
+
+我们先来看边界积分的问题。为了能够做边界积分，我们需要使用所谓的
+DGFEMSpace 类。这个类是后来加上去的，使得空间中不但有体单元，而且有面
+单元，只是面单元上不分配自由度而已。请看下面的代码示例：
+
+
+#define DIM 2 /// 考虑二维问题
+
+Mesh<DIM> mesh; /// 网格对象
+mesh.readData(data_file) /// 读入网格数据
+
+/**
+ * 三角形单元上的一阶参考单元
+ * 
+ */
+TemplateGeometry<DIM> triangle_template_geometry;
+CoordTransform<DIM,DIM> triangle_coord_transform;
+TemplateDOF<DIM> triangle_1_template_dof;
+BasisFunctionAdmin<double,DIM,DIM> triangle_1_basis_function;
+UnitOutNormal<DIM> triangle_unit_out_normal; /// 注意这一行
+
+triangle_template_geometry.readData("triangle.tmp_geo");
+triangle_coord_transform.readData("triangle.crd_trs");
+triangle_unit_out_normal.readData("triangle.out_nrm");
+
+triangle_1_template_dof.reinit(triangle_template_geometry);
+triangle_1_template_dof.readData("triangle.1.tmp_dof");
+triangle_1_basis_function.reinit(triangle_1_template_dof);
+triangle_1_basis_function.readData("triangle.1.bas_fun");
+
+/// 做体单元的参考单元
+std::vector<TemplateElement<double,DIM,DIM> > template_element(1);
+template_element[0].reinit(triangle_template_geometry, 
+                           triangle_1_template_dof, 
+                           triangle_coord_transform, 
+                           triangle_1_basis_function,
+                           triangle_unit_out_normal);
+/**
+ * 将一维的线变换到二维的线的模板几何信息
+ * 
+ */
+TemplateGeometry<DIM-1> interval_template_geometry;
+CoordTransform<DIM-1,DIM> interval_to2d_coord_transform;
+
+interval_template_geometry.readData("interval.tmp_geo");
+interval_to2d_coord_transform.readData("interval.to2d.crd_trs");
+
+/// 做面单元的模板单元
+std::vector<TemplateDGElement<DIM-1,DIM> > dg_template_element(1);
+dg_template_element[0].reinit(interval_template_geometry,
+                              interval_to2d_coord_transform);
+
+/// 声明有限元空间
+DGFEMSpace<double,DIM> fem_space(mesh, 
+                                 template_element,
+                                 dg_template_element);
+
+/// 建立有限元空间的体单元
+u_int n_ele = mesh.n_geometry(DIM);
+fem_space.element().resize(n_ele);
+for (u_int i = 0;i < n_ele;++ i) {
+  fem_space.element(i).reinit(fem_space,i,0);
+}
+fem_space.buildElement();
+fem_space.buildDof();
+fem_space.buildDofBoundaryMark();
+
+u_int n_side = mesh.n_geometry(DIM-1);
+u_int n_dg_ele = 0; /// 我们来统计一下边界上的边的个数
+for (u_int i = 0;i < n_side;++ i) {
+  if (mesh.geometry(DIM-1,i).boundaryMark() != 0) {
+    n_dg_ele += 1;
+  }
+}
+/// 建立有限元空间的面单元
+fem_space.dgElement().resize(n_dg_ele);
+for (u_int i = 0, j = 0;i < n_side;++ i) {
+  if (mesh.geometry(DIM-1,i).boundaryMark() != 0) {
+    fem_space.dgElement(j).reinit(fem_space, i, 0);
+    j += 1;
+  }
+}
+fem_space.buildDGElement();
+
+/// 哈哈，现在已经可以在面单元上积分了
+DGFEMSpace<double,DIM>::DGElementIterator
+  the_dgele = fem_space.beginDGElement(),
+  end_dgele = fem_space.endDGElement();
+for (;the_dgele != end_dgele;++ the_dgele) {
+
+  /// 参考单元的体积
+  double vol = the_dgele->templateElement().volume();
+
+  /// 积分公式，注意它的积分点的维数少一啊
+  const QuadratureInfo<DIM-1>& qi = the_dgele->findQuadratureInfo(3);
+  u_int n_q_pnt = qi.n_quadraturePoint();
+
+  /// 参考单元上的积分点的数组
+  const std::vector<Point<DIM-1> >& r_q_pnt = qi.quadraturePoint()
+
+  /// 变换的雅可比行列式
+  std::vector<double> jac = the_dgele->local_to_global_jacobian(r_q_pnt);
+
+  /// 积分点变换到网格中去
+  std::vector<Point<DIM> > q_pnt = the_dgele->local_to_global(r_q_pnt);
+
+  /// 和它邻接的两个体单元的指针
+  Element<double,DIM> * p_neigh0 = the_edge.p_neighbourElement(0);
+  Element<double,DIM> * p_neigh1 = the_edge.p_neighbourElement(1);
+
+  /// 法向单位向量，对 0 号邻居来说是外法向
+  std::vector<std::vector<double> > un = unitOutNormal(q_pnt, *p_neigh0, *the_dgele);
+
+  /// 我想下面的数值积分程序你应该会写了吧，不明白你还需要什么更多的信
+  /// 息了，;-)
+}
+
+太长了，太长了，下回分解吧... ...

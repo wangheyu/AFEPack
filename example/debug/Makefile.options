@@ -1,0 +1,19 @@
+MPICC=mpicxx
+CFLAGS=-g -O0 -D__SERIALIZATION__
+BOOST_LIBS=-lboost_serialization -L$(HOME)/lib
+LIBS=$(BOOST_LIBS) -lAFEPack -llac -lbase -ldl -pthread -L$(HOME)/src/AFEPack/library/lib 
+CC=g++
+
+MPILIBS=-lAFEPack_mpi $(LIBS)
+
+TRILINOS_HOME=/usr/local/Trilinos
+TRILINOS_INC=-I$(TRILINOS_HOME)/include
+TRILINOS_LIBS=-lml -lifpack -laztecoo -lepetraext -lepetra -lteuchos -ltriutils -lblas -llapack -L$(TRILINOS_HOME)/lib
+
+PETSC_DIR=/usr/local
+PETSC_INC=-I$(PETSC_DIR)/include
+PETSC_MPICC=$(MPICC)
+PETSC_LIBS=-lpetsc -L$(PETSC_DIR)/lib -lX11 
+
+HYPRE_MPICC=$(MPICC)
+HYPRE_LIBS=-lHYPRE

@@ -1,0 +1,19 @@
+3
+
+0	0
+-1.0
+2	0 	0
+./interval.2.bas_fun.so
+	lambda_1	gradient_lambda_1
+
+0	1
+1.0
+2	0 	0
+./interval.2.bas_fun.so
+	lambda_2	gradient_lambda_2
+
+1       0
+0.0
+2	0 	0
+./interval.2.bas_fun.so
+        lambda_3        gradient_lambda_3

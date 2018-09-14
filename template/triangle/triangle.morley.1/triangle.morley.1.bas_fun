@@ -1,0 +1,19 @@
+3
+
+1	0
+0.5	0.5
+1	0 0	0
+./triangle.morley.1.bas_fun.so
+	lambda_1	gradient_lambda_1
+
+1	1
+0.0	0.5
+1	0 0	0
+./triangle.morley.1.bas_fun.so
+	lambda_2	gradient_lambda_2
+
+1	2
+0.5	0.0
+1	0 0	0
+./triangle.morley.1.bas_fun.so
+	lambda_3	gradient_lambda_3

@@ -1,0 +1,62 @@
+10
+
+3	0
+0.0	0.0	0.0
+1	0 0 0	0
+./hexahedron.2.D.bas_fun.so
+	lambda_1	gradient_lambda_1
+
+3	0
+1.0	0.0	0.0
+1	0 0 0	0
+./hexahedron.2.D.bas_fun.so
+	lambda_2	gradient_lambda_2
+
+3	0
+0.0	1.0	0.0
+1	0 0 0	0
+./hexahedron.2.D.bas_fun.so
+	lambda_3	gradient_lambda_3
+
+3	0
+0.0	0.0	1.0
+1	0 0 0	0
+./hexahedron.2.D.bas_fun.so
+	lambda_4	gradient_lambda_4
+
+3	0
+0.0	0.0	1.0
+1	0 0 0	0
+./hexahedron.2.D.bas_fun.so
+	lambda_5	gradient_lambda_5
+
+3	0
+0.0	0.0	1.0
+1	0 0 0	0
+./hexahedron.2.D.bas_fun.so
+	lambda_6	gradient_lambda_6
+
+3	0
+0.0	0.0	1.0
+1	0 0 0	0
+./hexahedron.2.D.bas_fun.so
+	lambda_7	gradient_lambda_7
+
+3	0
+0.0	0.0	1.0
+1	0 0 0	0
+./hexahedron.2.D.bas_fun.so
+	lambda_8	gradient_lambda_8
+
+3	0
+0.0	0.0	1.0
+1	0 0 0	0
+./hexahedron.2.D.bas_fun.so
+	lambda_9	gradient_lambda_9
+
+3	0
+0.0	0.0	1.0
+1	0 0 0	0
+./hexahedron.2.D.bas_fun.so
+	lambda_10	gradient_lambda_10
+

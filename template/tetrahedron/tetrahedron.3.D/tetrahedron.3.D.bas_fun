@@ -1,0 +1,130 @@
+20
+
+# 常数
+3	0
+0.0	0.0	0.0
+1	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+	lambda_0 grad_lambda_0
+
+# 三个线性函数
+3	0
+1.0	0.0	0.0
+1	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+        lambda_1 grad_lambda_1
+
+3	0
+0.0	1.0	0.0
+1	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+	lambda_2 grad_lambda_2
+
+3	0
+0.0	0.0	1.0
+1	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+	lambda_3 grad_lambda_3
+
+# 六个二次函数
+3	0
+0.5	0.0	0.0
+2	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+	phi_01 grad_phi_01
+
+3	0
+0.0	0.5	0.0
+2	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+	phi_02 grad_phi_02
+
+3	0
+0.0	0.0	0.5
+2	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+	phi_03 grad_phi_03
+
+3	0
+0.5	0.5	0.0
+2	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+	phi_12 grad_phi_12
+
+3	0
+0.5	0.0	0.5
+2	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+        phi_13 grad_phi_13
+
+3	0
+0.0	0.5	0.5
+2	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+        phi_23 grad_phi_23
+
+# 十个三次函数
+3	0
+0.5	0.0	0.0
+3	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+	psi_01 grad_psi_01
+
+3	0
+0.0	0.5	0.0
+3	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+	psi_02 grad_psi_02
+
+3	0
+0.0	0.0	0.5
+3	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+	psi_03 grad_psi_03
+
+3	0
+0.5	0.5	0.0
+3	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+	psi_12 grad_psi_12
+
+3	0
+0.5	0.0	0.5
+3	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+        psi_13 grad_psi_13
+
+3	0
+0.0	0.5	0.5
+3	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+        psi_23 grad_psi_23
+
+3	0
+0.33	0.33	0.33
+3	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+        chi_123 grad_chi_123
+
+3	0
+0.0	0.33	0.33
+3	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+        chi_023 grad_chi_023
+
+3	0
+0.33	0.0	0.33
+3	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+        chi_013 grad_chi_013
+
+3	0
+0.33	0.33	0.0
+3	0 0 0	1
+./tetrahedron.3.D.bas_fun.so
+        chi_012 grad_chi_012
+
+
+
+
+

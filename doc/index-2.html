@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+                          
+  <meta name="GENERATOR" content="SGML-Tools 1.0.9">
+  <title>The AFEPack Handbook: Installation</title>
+                                              
+  <link href="index-3.html" rel="next">
+                          
+  <link href="index-1.html" rel="previous">
+                          
+  <link href="index.html#toc2" rel="contents">
+</head>
+  <body>
+    <a href="index-3.html">Next</a>  <a href="index-1.html">Previous</a>
+ <a href="index.html#toc2">Contents</a>     
+<hr>    
+<h2><a name="s2">2. Installation</a>  </h2>
+       
+<h2><a name="ss2.1">2.1 How to obtain AFEPack</a>  </h2>
+      The package can be obtained from the homepage of the software     
+ <a
+ href="http://www.ukc.ac.uk/cbs/staff/homepage/wbl/data/AFELAB-AFEPACK.htm"> 
+        http://www.ukc.ac.uk/cbs/staff/homepage/wbl/data/AFELAB-AFEPACK.htm</a>. The
+users in P.R.China perhaps feel more convenient to download it from <a
+ href="http://circus.math.pku.edu.cn/index.html/source_code/AFEPack.tar.gz">http://circus.math.pku.edu.cn/index.html/source_code/AFEPack.tar.gz</a>.<br>
+       
+<h2><a name="ss2.2">2.2 Requirements</a>  </h2>
+       
+<ul type="circle">
+      <li>The standard template library is needed at first.</li>
+       
+</ul>
+       
+<ul type="circle">
+      <li>The package is based on the linear algebric library of the  deal.II 
+   library. So you should have the head file and library of the base  part 
+ and  lac part of deal.II. </li>
+       
+</ul>
+       
+<ul type="circle">
+      <li>The package adopt dynamic library operation, so you may have  
+the  C library development package installed, such as the glibc-devel package 
+  on Linux system.</li>
+       
+</ul>
+  Now AFEPack can't work on HP-UX because the uncompatibility in shared library
+ loading from HP-UX to other systems. Note: in fact the package before version 
+1.5 is only tested on Linux system.<br>
+       
+<h2><a name="ss2.3">2.3 Compilation and installation</a>  </h2>
+       
+<p>In order to compile and install AFEPack on your system, you need<br>
+  </p>
+   
+<ol>
+    <li>Download the AFEPack tar package file;</li>
+    <li>Uncompress the package in certain directory you like, saying "/usr/local/AFEPack",
+ as</li>
+   
+</ol>
+   
+<blockquote>      
+  <pre>% cd /usr/local<br>% gzip -d AFEPack-1.2.tar.gz<br>% tar xvf AFEPack-1.2.tar<br>% cd AFEPack<br></pre>
+  </blockquote>
+   
+<ol start="3">
+    <li>Compile the library as</li>
+   
+</ol>
+       
+<blockquote>      
+  <pre>% ./configure<br>% make<br></pre>
+  </blockquote>
+           
+<ol start="4">
+    <li>Build symbolic links for the library file and the head file to where
+ you want to keep them as<br>
+    </li>
+   
+</ol>
+   
+<blockquote>      
+  <pre>% ln -s /usr/local/AFEPack/library/include /usr/local/include/AFEPack<br>% ln -s /usr/local/AFEPack/library/lib/lib* /usr/local/lib<br></pre>
+  </blockquote>
+   
+<ol start="5">
+    <li>Set environment variable. AFEPack using an environment variable to
+ tell the library where to find those shared library and information of those
+ template element, that is "AFEPACK_TEMPLATE_PATH". &nbsp;We assume that
+in  your application, you will use triangle and rectangle elements, then
+you can set (in bash)</li>
+   
+</ol>
+   
+<blockquote>      
+  <pre>% export AFEPACK_TEMPLATE_PATH=/usr/local/AFEPack/template/triangle:/usr/local/AFEPack/template/rectangle<br></pre>
+  </blockquote>
+   
+<ol start="6">
+    <li>Write your own application and link it with the library.<br>
+    </li>
+   
+</ol>
+  Since AFEPack uses GNU build tool set(except for Libtool), you should have
+ no trouble compiling it. Should you run into problems   please report them
+ to the the author at  <a href="mailto:rli@math.pku.edu.cn">    Robert Lie</a> 
+      .  
+<hr><a href="index-3.html">Next</a>    <a href="index-1.html">Previous</a> 
+    <a href="index.html#toc2">Contents</a>       <br>
+  <br>
+ <br>
+</body>
+</html>

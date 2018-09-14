@@ -1,0 +1,19 @@
+Anyone who would like to help can contribute in the following
+aspects:
+
+doc:
+ - writing the document;
+
+template:
+ - adding more template elements;
+
+library:
+ - writing comments for the source code;
+
+README:
+INSTALL:
+ - better end-user documentation;
+
+Any applications of the package on some interesting problems are
+highly expected.
+

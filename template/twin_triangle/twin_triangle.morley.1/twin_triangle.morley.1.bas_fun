@@ -1,0 +1,31 @@
+5 # 本文件由北京大学赵伟波同学提供
+
+1	0
+0.5	0.5
+1	0 0	0
+./twin_triangle.morley.1.bas_fun.so
+	lambda_1	gradient_lambda_1
+
+1	1
+0.0	0.5
+1	0 0	0
+./twin_triangle.morley.1.bas_fun.so
+	lambda_2	gradient_lambda_2
+
+1	2
+0.0	-0.5
+1	0 0	0
+./twin_triangle.morley.1.bas_fun.so
+	lambda_3	gradient_lambda_3
+
+1	3
+0.5	-0.5
+1	0 0	0
+./twin_triangle.morley.1.bas_fun.so
+	lambda_4	gradient_lambda_4
+
+2	0
+0.5	0.0
+1	0 0	0
+./twin_triangle.morley.1.bas_fun.so
+	lambda_5	gradient_lambda_5

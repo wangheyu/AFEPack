@@ -1,0 +1,30 @@
+# by R.Lie, Nov 01, 2002
+
+include ../Make.global_options
+include make.ofiles
+include make.dep
+
+ifeq ($(enable_shared), yes)
+  library_ext = .so
+else
+  library_ext = .a
+endif
+library = lib/libAFEPack$(debug_ext)$(library_ext)
+
+default: all
+
+all: $(library)
+
+ifeq ($(enable_shared), yes)
+  $(library): $(OBJECTS)
+	$(CXX) -shared -o $@ $^
+else
+  $(library): $(OBJECTS)
+	$(AR) ruv -o $@ $^
+endif
+
+obj/%.o: src/%.cpp
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
+
+.PHONY: default all 
+

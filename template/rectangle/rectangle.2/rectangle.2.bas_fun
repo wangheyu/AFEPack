@@ -1,0 +1,56 @@
+9
+
+0	0
+-1.0	-1.0
+2	0 0 	0
+./rectangle.2.bas_fun.so
+	lambda_mm	gradient_lambda_mm
+
+0	1
+1.0	-1.0
+2	0 0 	0
+./rectangle.2.bas_fun.so
+	lambda_pm	gradient_lambda_pm
+
+0	2
+1.0	1.0
+2	0 0 	0
+./rectangle.2.bas_fun.so
+	lambda_pp	gradient_lambda_pp
+
+0       3
+-1.0    1.0
+2	0 0 	0
+./rectangle.2.bas_fun.so
+        lambda_mp        gradient_lambda_mp
+
+1	0
+0.0	-1.0
+2	0 0	0
+./rectangle.2.bas_fun.so
+	lambda_0m	gradient_lambda_0m
+
+1	1
+1.0	0.0
+2	0 0	0
+./rectangle.2.bas_fun.so
+	lambda_p0	gradient_lambda_p0
+
+1	2
+0.0	1.0
+2	0 0	0
+./rectangle.2.bas_fun.so
+	lambda_0p	gradient_lambda_0p
+
+1	3
+-1.0	0.0
+2	0 0	0
+./rectangle.2.bas_fun.so
+	lambda_m0	gradient_lambda_m0
+
+2	0
+0.0	0.0
+2	0 0	0
+./rectangle.2.bas_fun.so
+	lambda_00	gradient_lambda_00
+

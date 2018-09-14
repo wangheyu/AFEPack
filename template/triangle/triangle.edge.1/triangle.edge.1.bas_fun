@@ -1,0 +1,19 @@
+3
+
+1	0
+0.5	0.5
+1	0 0	0
+./triangle.edge.1.bas_fun.so
+	psi_1	gradient_psi_1
+
+1	1
+0.0	0.5
+1	0 0	0
+./triangle.edge.1.bas_fun.so
+	psi_2	gradient_psi_2
+
+1	2
+0.5	0.0
+1	0 0	0
+./triangle.edge.1.bas_fun.so
+	psi_3	gradient_psi_3

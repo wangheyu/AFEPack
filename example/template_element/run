@@ -1,0 +1,7 @@
+#! /bin/sh
+
+export AFEPACK_PATH="/usr/local/AFEPack"
+export AFEPACK_TEMPLATE_PATH="$AFEPACK_PATH/template/triangle:$AFEPACK_PATH/template/rectangle"
+
+exec ./main $*
+

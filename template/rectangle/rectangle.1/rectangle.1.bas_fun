@@ -1,0 +1,26 @@
+4
+
+0	0
+-1.0	-1.0
+1	0 0 	0
+./rectangle.1.bas_fun.so
+	lambda_1	gradient_lambda_1
+
+0	1
+1.0	-1.0
+1	0 0 	0
+./rectangle.1.bas_fun.so
+	lambda_2	gradient_lambda_2
+
+0	2
+1.0	1.0
+1	0 0 	0
+./rectangle.1.bas_fun.so
+	lambda_3	gradient_lambda_3
+
+0       3
+-1.0    1.0
+1	0 0 	0
+./rectangle.1.bas_fun.so
+        lambda_4        gradient_lambda_4
+

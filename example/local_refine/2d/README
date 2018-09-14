@@ -1,0 +1,11 @@
+This example will generate a local refined mesh from the original
+easymesh generated data. The obtained mesh is saved in file "D.dx".
+
+Usage:
+	1. compile with make [-e debug=no];
+	2. generate the original mesh with easymesh as:
+	     easymesh D
+	3. run ./run, press ENTER to next refine round or CTRL+C
+	   to stop;
+	4. view the obtained mesh with OpenDX;
+

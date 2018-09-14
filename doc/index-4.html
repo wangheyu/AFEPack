@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+                              
+  <meta name="GENERATOR" content="SGML-Tools 1.0.9">
+  <title>The AFEPack Handbook: Understanding the Library</title>
+                                                     
+  <link href="index-5.html" rel="next">
+                              
+  <link href="index-3.html" rel="previous">
+                              
+  <link href="index.html#toc4" rel="contents">
+</head>
+  <body>
+ <a href="index-5.html">Next</a> <a href="index-3.html">Previous</a> <a
+ href="index.html#toc4">Contents</a> 
+<hr> 
+<h2><a name="s4">4. Understanding the Library</a> </h2>
+ 
+<h3><a name="Finite_Element_Level"></a>    4.1 Finite Element Level</h3>
+      We try to design the library on a complete abstraction of the finite
+ element   method. To describe clear the structure of the library, we should
+ talk about   more mathematics than programming. According our point of view,
+ a finite  element space is a mapping from those element geometries of a
+triangulation   to a set of template elements. Then the main tasks in the
+library is to manage   the triangulation and the template element. <br>
+ 
+<h4><a name="Triangulation"></a>    Triangulation</h4>
+      Generally, a triangulation can be described into different style, while 
+  the most extreme cases of them are the simplest description and the most 
+ complete description. The simplest description will store only the necessary 
+ data, and from which we generate other data when needed by some iterative 
+ algorithms. The mose complete description will, on the contrary, try to store
+ all data maybe needed. We should balance between them because in the implementation
+  of a finite element space, information used are not both cases.<br>
+     A triangulation is in fact a set of points with coordinate, and many 
+relationships   between the geometries, such relationship tell which geomtry 
+is the component of another geometry. &nbsp;In this library, we choose the 
+following information to construct a geometry:<br>
+ 
+<blockquote><tt>class Geometry {<br>
+  private:<br>
+  &nbsp;&nbsp;&nbsp; int&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+ &nbsp;&nbsp;&nbsp; &nbsp;ind; // the index of the geometry<br>
+  &nbsp;&nbsp;&nbsp; std::vector&lt;int&gt;&nbsp;&nbsp;&nbsp; vtx; // the 
+index of the vertex geometries<br>
+  &nbsp;&nbsp;&nbsp; std::vector&lt;int&gt;&nbsp;&nbsp;&nbsp; bnd; // the 
+index of the boundary geometries<br>
+  ... ...<br>
+  };<br>
+   </tt></blockquote>
+  For the node(0-dimensional) geometry, the index of the vertex and boundary 
+is the index of the corresponding point. Generally, it's not required that 
+the index of the node geometry is the same as the index of the point though 
+in most cases, they are the same. Such mechanism is kept for future. As we 
+can see, the most efficient operation is then to find all the components of
+a geometry. That looks enough for most of the finite element application. 
+       
+<h4><a name="Template_Element"></a>    Template Element</h4>
+   
+<ul>
+     <li><a href="#Geometry_Information">1. Geometry Information</a>    
+  </li>
+     <li><a href="#Coordinate_Transformation">2. Coordinate Transformation</a> 
+    </li>
+     <li><a href="#Degree_of_Freedom_Distribution">3. Degree of Freedom</a> 
+    </li>
+     <li><a href="#Basis_Function">4. Basis Function</a>       <br>
+     </li>
+   
+</ul>
+   <br>
+     A template element includes several parts of information. Those parts
+ are  depdent each other in certain degree. We adopt the following division
+ in the code:<br>
+   
+<h5>1.<a name="Geometry_Information"></a>    Geometry Information</h5>
+     The geometry information is in fact a triangulation, a very simple triangulation 
+  with only one element. The geometry information of a template element is 
+ comparatively complete than that of a real element in a triangulation. With 
+ the geometry information of the template element, we can construct a image 
+ of the geometry information of a real element. The order of the vertices 
+of the real element is very important because the construction is mainly depended
+on the information of the vertices. And the numerical quadrature information
+is also include in the geometry information in the library, though we believe
+that it can be took out as an independent part. Generally we don't know the
+algebraic accuracy of the application before the problem has been given.
+You can look up for the correct quadrature information in a table if you
+give the required algebraic accuracy. It's very convenient for programmer 
+ to code with different quadrature formulas in different occasion.<br>
+   
+<h5>2.<a name="Coordinate_Transformation"></a>    Coordinate Transformation</h5>
+     This coordinate transformation is used to map a point in the template
+ element  to a real element, and vice visa. It's constructed according the
+ coordinate  of the vertices of the template element and the real element,
+ too. With this  coordinate transformation, and given a point on the template
+ element, you  can get the coordinate of the corresponding point in the real
+ element and  the jacibian determinant at that point, and vice visa.<br>
+   
+<h5>3.<a name="Degree_of_Freedom_Distribution"></a>    Degree of Freedom
+Distribution</h5>
+     This is the information to appoint the degrees of freedom of any geometry 
+  in the template element. With the map from the template element geometry, 
+  we can then obtain the degree of freedom on any geometry in the real triangulation. 
+  Of course, on a geometry in the real triangulation shared by several element, 
+  the appointment of degree of freedom should be coincide on it. The code 
+will  check if the data are correct when build the freedom of degree for the
+finite  element space. It's obvious that with this information, the code can
+manipulate  the degree of freedom of the whole finite element space for you
+automatically.<br>
+   
+<h5>4.<a name="Basis_Function"></a>    Basis Function</h5>
+     A basis function is related with a degree of freedom. It's a function
+ defined  on a real element, and can calculate its value and gradient at
+a  point provided  the coordinate of the vertices of the element. More roughly,
+ it can only be called a shape function from the finite element point of
+view.  And it's only appointed to related with a certain geometry of the
+template  element. The code will relate it with a degree of freedom automatically
+and  connect it with other shape functions on the neighbours of the real
+element  to construct  a REAL basis function. So for those shape function
+related with the same geometry in the triangulation, an identification is
+needed to connect them each other as a complete basis function correctly.
+The user of the library should guarantee that the basis functions with the
+same identification are continuous enough as your designment, because the
+library will only judge  if the shape functions are belong to the same basis
+function according the  identification but not accoding the expression of
+the shape function.<br>
+   <br>
+     The four parts of the template element are taken as data in the library, 
+  which means the library can be extended very freely as the user's willing. 
+  That's why we declare that we can build the finite element space for you, 
+  only if you can provide the template elements of the finite element space.<br>
+   
+<h3><a name="Mesh_Adaptation_Level"></a>    4.2 Mesh Adaptation Level</h3>
+     Because the mesh adaptation module in this library is designed at the
+ beginning  to operate on different finite element spaces on different meshes,
+ the implementation  is very different with other libraries. We adopted a
+hierarchy tree structure  to store the geometries of all the meshes. This
+hierarchy is a infinitely  refined mesh on the whole domain in mind. Every
+real mesh is a "cross section"  of the hierarchy tree. We give the concept
+"semiregular", to make the real  mesh uniquely determined by a semiregular
+mesh. It's very convienient to calculate the intersect and the union of two
+semiregular meshes, which makes it possible to analysis the relationship
+of two different finite element space on these two meshes. And such structure
+is very convienient for mesh adaptation, too. Though there have already been
+several successful implementations of mesh adaptation, especially of mesh
+coarsement, the mesh adaptation in this library is different with all of
+them. The mesh adaptation is implemented as "semiregularization" of an arbitrary
+mesh, the operation to turn an arbitrary mesh into a semiregular mesh. Then
+we have no clear difference in refinement and coarsement. With the given
+indicator, the refinement and coarsement are all a semiregularization operation.
+As mentioned, with a given semiregular mesh, we can construct a regular mesh
+and pass it to the finite element level. We can then construct finite element
+space on the regular mesh as required.<br>
+   
+<h3><a name="Application_Level"></a>    4.3 Application Level</h3>
+This level is called application because they are really   applications built
+on the former leverls. You needn't to care about this  level if you are not
+interest in our research at all. These applications can also be took as examples
+using the library. We have developped very efficient  solver for Possion
+equation, p-Laplacian problem, variational inequalities,&nbsp;   elliptic
+optimal control problem and parameter estimation problem. Those  applications
+are very good example to show how to use the library and how  powerful the
+library is.<br>
+   
+<hr><a href="index-5.html">Next</a>   <a href="index-3.html">Previous</a> 
+  <a href="index.html#toc4">Contents</a>   <br>
+</body>
+</html>
