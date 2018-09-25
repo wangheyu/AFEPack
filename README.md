@@ -40,7 +40,7 @@ sudo ln -s /usr/lib/x86_64-linux-gnu/libscotcherr-6.so /usr/lib/x86_64-linux-gnu
 
 deal.II/include/deal.II/lac/sparsity_pattern.h, 在最开始增加一行：
 
-#include <algorithm>
+`#include <algorithm>`
 
 deal.II/source/base/parameter_handler.cc, line 1278, 如下修改：
 
