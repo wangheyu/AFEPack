@@ -7,13 +7,21 @@
 
 安装如下包：
 sudo apt-get install cmake
+
 sudo apt-get install g++
+
 sudo apt-get install liblapack-dev
+
 sudo apt-get install libboost-all-dev
+
 sudo apt-get install libmumps-dev
+
 sudo apt-get install libtbb-dev
+
 sudo apt-get install trilinos-all-dev
+
 sudo apt-get install libsuitesparse-dev
+
 sudo apt-get install automake
 
 做如下链接修改， 这里不确定这样做是否最好， 但至少可以继续下去。
