@@ -26,6 +26,7 @@ sudo apt-get install libsuitesparse-dev
 sudo apt-get install automake
 
 做如下链接修改， 这里不确定这样做是否最好， 但至少可以继续下去。
+
 sudo ln -s /usr/lib/x86_64-linux-gnu/libscalapack-openmpi.so /usr/local/lib/libscalapack.so
 
 sudo ln -s /usr/lib/x86_64-linux-gnu/libptscotch-6.so /usr/lib/x86_64-linux-gnu/libptscotch.so
