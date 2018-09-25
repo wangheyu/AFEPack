@@ -20,9 +20,9 @@ AC_CHECK_TOOL(SED, sed, :)
 AC_CHECK_PROGS(MAKE, [gmake make])
 AC_LANG(C++)
 
-CPPFLAGS="$EXTRA_INCDIR -g -std=c++0x -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
-CFLAGS="$EXTRA_INCDIR -g -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/" 
-CXXFLAGS="$EXTRA_INCDIR -g -std=c++0x  -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
+CPPFLAGS="$EXTRA_INCDIR -g -std=c++11 -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
+CFLAGS="$EXTRA_INCDIR -g -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/" 
+CXXFLAGS="$EXTRA_INCDIR -g -std=c++11  -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
 
 AC_ARG_ENABLE(optimized,
   AC_HELP_STRING([--enable-optimize], [if using -O3 optimizing compiling flags(default: yes)]),,
@@ -37,7 +37,7 @@ else
   AC_MSG_RESULT(no)
 fi
 
-LIBS="$EXTRA_LIBDIR -L/usr/local/dealii-8.1.0-mpi/lib -lmpi -lmpi_cxx -lm"
+LIBS="$EXTRA_LIBDIR -L/usr/local/dealii-8.1.0/lib -lmpi -lmpi_cxx -lm"
 
 AC_TRY_CPP([#include <dlfcn.h>],
   dl_header=yes, dl=no)
