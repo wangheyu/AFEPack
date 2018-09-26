@@ -3,7 +3,7 @@
 
 按照作者李若教授的指示上传一个AFEPack的版本在Github。目前首先维持它在Ubuntu 18.04+deal.II-8.1.0平台上稳定运行。然后逐步将边界条件处理用iterator操作代替指针操作，使得8.1.0以后的deal.II版本可以继续支持。欢迎有能力的同学参与维护和修改。
 
-总结一下目前在Ubuntu 18.04上的安装方案， dealii采用8.1.0， 并行库依赖openmpi和trilinos. 首先建议将源改成aliyun.
+总结一下目前在Ubuntu 18.04上的安装方案， dealii采用8.1.0， 并行库依赖openmpi和trilinos. 首先建议将源改成aliyun. 请注意这里的安装方案基于这个源提供的AFEPack包，而不是李若老师的CVS-snapshot。二者的主要区别在安装配置文件，也就是configure.in中。接下去如果有我处理不了的bug，我也会忽悠李老师亲自来处理。
 
 安装如下包：
 
