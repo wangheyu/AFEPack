@@ -50,7 +50,9 @@ return (p.get_optional<std::string>("value")); -> return bool(p.get_optional<std
 然后在deal.II的目录：
 
 mkdir build
+
 cd build
+
 cmake -DCMAKE_INSTALL_PREFIX=/usr/local/dealii-8.1.0 -DCMAKE_C_COMPILER="mpicc" -DCMAKE_CXX_COMPILER="mpicxx" -DCMAKE_Fortran_COMPILER="mpif90" -DDEAL_II_WITH_PETSC=OFF ..
 
 这里屏蔽了PETSC，因为最新的PETSC和之前变化太大，除非你自己安装一个很低版本的。 反正源里的这个不行。 同理， 如果你有P4EST， 也屏蔽掉。 继续：
