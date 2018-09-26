@@ -110,3 +110,7 @@ sudo ldconfig
 2. 目前AFEPack中的Boundary部分是不能使用的，所以example下的Poisson例子已经不能运行。 我增加了一个withoutBilinearOperator的例子， 只要手工设置边界条件，暂时都不会有问题。 之前包的设置和安装的一主要目的是能使用Trilinos做并行，同时可以用它的AMGPreconditioner做二次元的AMG预处理（李老师的AMGSolver暂时只能处理一次元， 但效率很高）。等我有空写一个例子。
 
 3. 此方案未经严格测试， 大家小心使用， 有问题及时反馈给我，谢谢！
+
+examples下增加了一个Poisson_withTrilinos，演示如何对接Trilinos的AMG preconditioner. 此外， 在
+
+git@github.com:vickor/Navier_Stokes下有一个用Taylor-Hood元计算NS方程的例子。
