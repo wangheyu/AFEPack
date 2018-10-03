@@ -166,8 +166,9 @@ static_cast<bool>
 AFEPack 依赖为 deal.II 和 boost，编译 MPI 版本的 AFEPack 时需要任意一种 MPI
 实现。
 ```
-./configure --prefix=/path/to/install --with-boost=/path/to/boost/install \
-            --with-dealii=/path/to/dealii/install
+CC=mpicc CXX=mpicxx ./configure --prefix=/path/to/install \
+    --with-boost=/path/to/boost/install \
+    --with-dealii=/path/to/dealii/install
 make
 # 根据情况决定是否需要 sudo
 sudo make install
