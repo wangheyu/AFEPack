@@ -592,7 +592,7 @@ LTLIBOBJS
 LIBOBJS
 EGREP
 GREP
-enable_threadd
+enable_thread
 enable_shared
 CXXCPP
 MAKE
@@ -709,6 +709,8 @@ ac_user_opts='
 enable_option_checking
 enable_silent_rules
 enable_dependency_tracking
+with_boost
+with_dealii
 enable_optimized
 enable_shared
 enable_thread
@@ -1367,6 +1369,12 @@ Optional Features:
   --enable-shared         set compilier flags to generate shared
                           library(default: yes)
   --enable-thread         enable POSIX thread support(default: yes)
+
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-boost=PATH       Specify path to boost installation
+  --with-dealii=PATH      Specify path to deal.II installation
 
 Some influential environment variables:
   CC          C compiler command
@@ -2678,9 +2686,8 @@ fi
 
 
 # Define the identity of the package.
-
- PACKAGE=AFEPack
- VERSION=1.8
+ PACKAGE='afepack'
+ VERSION='1.8'
 
 
 cat >>confdefs.h <<_ACEOF
@@ -4766,31 +4773,10 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
-CPPFLAGS="$EXTRA_INCDIR -g -std=c++0x -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
-CFLAGS="$EXTRA_INCDIR -g -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
-CXXFLAGS="$EXTRA_INCDIR -g -std=c++0x  -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
+#CPPFLAGS="$EXTRA_INCDIR -g -std=c++11 -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
+#CFLAGS="$EXTRA_INCDIR -g -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
+#CXXFLAGS="$EXTRA_INCDIR -g -std=c++11  -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
 
-# Check whether --enable-optimized was given.
-if test "${enable_optimized+set}" = set; then :
-  enableval=$enable_optimized;
-else
-  enable_optimize=yes
-fi
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if optimize support was requested" >&5
-$as_echo_n "checking if optimize support was requested... " >&6; }
-if test "x$enable_optimize" != xno; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-  CFLAGS="-O3 $CFLAGS"
-  CXXFLAGS="-O3 $CXXFLAGS"
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-LIBS="$EXTRA_LIBDIR -L/usr/local/dealii-8.1.0-mpi/lib -lmpi -lmpi_cxx -lm"
 
 
 ac_ext=cpp
@@ -4934,7 +4920,7 @@ _ACEOF
 if ac_fn_cxx_try_cpp "$LINENO"; then :
   dl_header=yes
 else
-  dl=no
+  dl_header=no
 fi
 rm -f conftest.err conftest.i conftest.$ac_ext
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlfcn.h" >&5
@@ -4948,6 +4934,181 @@ $as_echo "no" >&6; }
   as_fn_error $? "dlfcn.h not found" "$LINENO" 5
 fi
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
+$as_echo_n "checking for dlopen in -ldl... " >&6; }
+if ${ac_cv_lib_dl_dlopen+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_dl_dlopen=yes
+else
+  ac_cv_lib_dl_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
+$as_echo "$ac_cv_lib_dl_dlopen" >&6; }
+if test "x$ac_cv_lib_dl_dlopen" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBDL 1
+_ACEOF
+
+  LIBS="-ldl $LIBS"
+
+else
+  as_fn_error $? "library -ldl not found" "$LINENO" 5
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sin in -lm" >&5
+$as_echo_n "checking for sin in -lm... " >&6; }
+if ${ac_cv_lib_m_sin+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lm  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char sin ();
+int
+main ()
+{
+return sin ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_m_sin=yes
+else
+  ac_cv_lib_m_sin=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_m_sin" >&5
+$as_echo "$ac_cv_lib_m_sin" >&6; }
+if test "x$ac_cv_lib_m_sin" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBM 1
+_ACEOF
+
+  LIBS="-lm $LIBS"
+
+else
+  as_fn_error $? "library -lm not found" "$LINENO" 5
+fi
+
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <mpi.h>
+int
+main ()
+{
+MPI_Init(NULL, NULL); MPI_Finalize()
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  mpi_lib=yes
+else
+  mpi_lib=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for MPI" >&5
+$as_echo_n "checking for MPI... " >&6; }
+if test "x$mpi_lib" != xno; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  as_fn_error $? "MPI not found" "$LINENO" 5
+fi
+
+
+# Check whether --with-boost was given.
+if test "${with_boost+set}" = set; then :
+  withval=$with_boost;
+else
+  with_boost=check
+fi
+
+if test "x$with_boost" != xcheck; then
+  CFLAGS="-I$with_boost/include $CFLAGS"
+  CXXFLAGS="-I$with_boost/include $CXXFLAGS"
+  CPPFLAGS="-I$with_boost/include $CPPFLAGS"
+fi
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <boost/serialization/array.hpp>
+_ACEOF
+if ac_fn_cxx_try_cpp "$LINENO"; then :
+  boost_header=yes
+else
+  boost_header=no
+fi
+rm -f conftest.err conftest.i conftest.$ac_ext
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for boost headers" >&5
+$as_echo_n "checking for boost headers... " >&6; }
+if test "x$dl_header" != xno; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  as_fn_error $? "boost headers not found" "$LINENO" 5
+fi
+
+
+# Check whether --with-dealii was given.
+if test "${with_dealii+set}" = set; then :
+  withval=$with_dealii;
+else
+  with_dealii=check
+fi
+
+if test "x$with_dealii" != xcheck; then
+  CFLAGS="-I$with_dealii/include -I$with_dealii/include/deal.II $CFLAGS"
+  CXXFLAGS="-I$with_dealii/include -I$with_dealii/include/deal.II $CXXFLAGS"
+  CPPFLAGS="-I$with_dealii/include -I$with_dealii/include/deal.II $CPPFLAGS"
+  LIBS="-L$with_dealii/lib -ldeal_II $LIBS"
+else
+  LIBS="-ldeal_II $LIBS"
+fi
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #define DEBUG
@@ -4968,6 +5129,57 @@ else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
   as_fn_error $? "deal.II header not found" "$LINENO" 5
+fi
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <base/exceptions.h>
+  #include <lac/vector.h>
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  deal_II_library=yes
+else
+  deal_II_library=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for deal.II library" >&5
+$as_echo_n "checking for deal.II library... " >&6; }
+if test "x$deal_II_library" != xno; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  as_fn_error $? "deal.II library not found" "$LINENO" 5
+fi
+
+
+# Check whether --enable-optimized was given.
+if test "${enable_optimized+set}" = set; then :
+  enableval=$enable_optimized;
+else
+  enable_optimize=yes
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if optimize support was requested" >&5
+$as_echo_n "checking if optimize support was requested... " >&6; }
+if test "x$enable_optimize" != xno; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+  CFLAGS="-O3 $CFLAGS"
+  CXXFLAGS="-O3 $CXXFLAGS"
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
 # Check whether --enable-shared was given.
@@ -5017,65 +5229,6 @@ CFLAGS="$CFLAGS -I$AFEPACK_PATH/library/include"
 CXXFLAGS="$CXXFLAGS -ftemplate-depth-128 -I$AFEPACK_PATH/library/include"
 
 
-
-LIBS="$LIBS -ldl"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <dlfcn.h>
-int
-main ()
-{
-dlopen("",0);
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  dl_library=yes
-else
-  dl_library=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library -ldl" >&5
-$as_echo_n "checking for library -ldl... " >&6; }
-if test "x$dl_library" != xno; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-  as_fn_error $? "library -ldl not found" "$LINENO" 5
-fi
-
-LIBS="-ldeal_II $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <base/exceptions.h>
-  #include <lac/vector.h>
-int
-main ()
-{
-deal_II_library=yes
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  deal_II_library=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for deal.II library" >&5
-$as_echo_n "checking for deal.II library... " >&6; }
-if test "x$deal_II_library" != xno; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-  as_fn_error $? "deal.II library not found" "$LINENO" 5
-fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for grep that handles long lines and -e" >&5
 $as_echo_n "checking for grep that handles long lines and -e... " >&6; }
@@ -5320,7 +5473,7 @@ $as_echo "#define STDC_HEADERS 1" >>confdefs.h
 fi
 
 
-ac_config_files="$ac_config_files Makefile template/Makefile example/Makefile example/local_refine/Makefile Make.global_options"
+ac_config_files="$ac_config_files Makefile template/Makefile example/Makefile example/local_refine/Makefile contrib/Makefile Make.global_options"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -6056,6 +6209,7 @@ do
     "template/Makefile") CONFIG_FILES="$CONFIG_FILES template/Makefile" ;;
     "example/Makefile") CONFIG_FILES="$CONFIG_FILES example/Makefile" ;;
     "example/local_refine/Makefile") CONFIG_FILES="$CONFIG_FILES example/local_refine/Makefile" ;;
+    "contrib/Makefile") CONFIG_FILES="$CONFIG_FILES contrib/Makefile" ;;
     "Make.global_options") CONFIG_FILES="$CONFIG_FILES Make.global_options" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

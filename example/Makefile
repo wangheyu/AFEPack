@@ -69,10 +69,10 @@ am__make_running_with_option = \
   test $$has_opt = yes
 am__make_dryrun = (target_option=n; $(am__make_running_with_option))
 am__make_keepgoing = (target_option=k; $(am__make_running_with_option))
-pkgdatadir = $(datadir)/AFEPack
-pkgincludedir = $(includedir)/AFEPack
-pkglibdir = $(libdir)/AFEPack
-pkglibexecdir = $(libexecdir)/AFEPack
+pkgdatadir = $(datadir)/afepack
+pkgincludedir = $(includedir)/afepack
+pkglibdir = $(libdir)/afepack
+pkglibexecdir = $(libexecdir)/afepack
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 install_sh_DATA = $(install_sh) -c -m 644
 install_sh_PROGRAM = $(install_sh) -c
@@ -90,7 +90,7 @@ host_triplet = x86_64-unknown-linux-gnu
 target_triplet = x86_64-unknown-linux-gnu
 subdir = example
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -181,7 +181,7 @@ am__relativize = \
   done; \
   reldir="$$dir2"
 ACLOCAL = aclocal-1.15
-AFEPACK_PATH = /usr/local/AFEPack.bak
+AFEPACK_PATH = /home/liuhy/src/AFEPack
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
 AR = ar
@@ -189,19 +189,19 @@ AUTOCONF = autoconf
 AUTOHEADER = autoheader
 AUTOMAKE = automake-1.15
 AWK = gawk
-CC = gcc
+CC = mpicc
 CCDEPMODE = depmode=none
-CFLAGS = -O3  -g -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/ -fPIC -D__SERIALIZATION__ -DMULTITHREAD -pthread -I/usr/local/AFEPack.bak/library/include
-CPP = gcc -E
-CPPFLAGS =  -g -std=c++0x -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/
-CXX = g++
-CXXCPP = g++ -E
+CFLAGS = -O3 -I/opt/deal.II/include -I/opt/deal.II/include/deal.II -I/opt/boost/include -g -O2 -fPIC -D__SERIALIZATION__ -DMULTITHREAD -pthread -I/home/liuhy/src/AFEPack/library/include
+CPP = mpicc -E
+CPPFLAGS = -I/opt/deal.II/include -I/opt/deal.II/include/deal.II -I/opt/boost/include 
+CXX = mpicxx
+CXXCPP = mpicxx -E
 CXXDEPMODE = depmode=none
-CXXFLAGS = -O3  -g -std=c++0x  -I/usr/include/deal.II -I/usr/local/dealii-8.1.0-mpi/include/deal.II/ -I/usr/local/dealii-8.1.0-mpi/include/ -I/usr/include/mpi -I/usr/include/trilinos/ -fPIC -D__SERIALIZATION__ -DMULTITHREAD -pthread -ftemplate-depth-128 -I/usr/local/AFEPack.bak/library/include
+CXXFLAGS = -O3 -I/opt/deal.II/include -I/opt/deal.II/include/deal.II -I/opt/boost/include -g -O2 -fPIC -D__SERIALIZATION__ -DMULTITHREAD -pthread -ftemplate-depth-128 -I/home/liuhy/src/AFEPack/library/include
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
-DOCGEN = doxygen
+DOCGEN = :
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
@@ -215,14 +215,14 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
-LIBS = -ldeal_II  -L/usr/local/dealii-8.1.0-mpi/lib -lmpi -lmpi_cxx -lm -pthread -ldl
+LIBS = -L/opt/deal.II/lib -ldeal_II -lm -ldl  -pthread
 LN_S = ln -s
 LTLIBOBJS = 
 MAKE = make
 MAKEINFO = makeinfo
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
-PACKAGE = AFEPack
+PACKAGE = afepack
 PACKAGE_BUGREPORT = rli@math.pku.edu.cn
 PACKAGE_NAME = AFEPack
 PACKAGE_STRING = AFEPack 1.8
@@ -236,12 +236,12 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = 
 VERSION = 1.8
-abs_builddir = /usr/local/AFEPack.bak/example
-abs_srcdir = /usr/local/AFEPack.bak/example
-abs_top_builddir = /usr/local/AFEPack.bak
-abs_top_srcdir = /usr/local/AFEPack.bak
-ac_ct_CC = gcc
-ac_ct_CXX = g++
+abs_builddir = /home/liuhy/src/AFEPack/example
+abs_srcdir = /home/liuhy/src/AFEPack/example
+abs_top_builddir = /home/liuhy/src/AFEPack
+abs_top_srcdir = /home/liuhy/src/AFEPack
+ac_ct_CC = mpicc
+ac_ct_CXX = 
 am__include = include
 am__leading_dot = .
 am__quote = 
@@ -259,7 +259,7 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 enable_shared = yes
-enable_threadd = 
+enable_thread = yes
 exec_prefix = ${prefix}
 host = x86_64-unknown-linux-gnu
 host_alias = 
@@ -269,7 +269,7 @@ host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /usr/local/AFEPack.bak/install-sh
+install_sh = ${SHELL} /home/liuhy/src/AFEPack/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -278,7 +278,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /usr/local
+prefix = /home/liuhy/tmp
 program_transform_name = s,x,x,
 psdir = ${docdir}
 runstatedir = ${localstatedir}/run
@@ -299,7 +299,8 @@ SUBDIRS = possion_equation \
 	local_refine \
 	step-7 \
 	moving_mesh \
-	tools
+	tools \
+	withoutBilinearOperator
 
 all: all-recursive
 

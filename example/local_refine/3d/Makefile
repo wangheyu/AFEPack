@@ -4,7 +4,7 @@ include ../../../Make.global_options
 
 source = $(wildcard *.cpp)
 object = $(patsubst %.cpp, %.o, $(source))
-LDFLAGS += -L../../library/lib -lAFEPack
+LDFLAGS += -L../../../library/lib -lAFEPack
 
 all : main
 
