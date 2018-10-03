@@ -90,7 +90,7 @@ host_triplet = @host@
 target_triplet = @target@
 subdir = example/local_refine
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -259,7 +259,7 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 enable_shared = @enable_shared@
-enable_threadd = @enable_threadd@
+enable_thread = @enable_thread@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@

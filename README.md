@@ -114,3 +114,68 @@ sudo ldconfig
 此外， 在
 
 git@github.com:vickor/Navier_Stokes下有一个用Taylor-Hood元计算NS方程的例子。
+
+## Debian / Ubuntu
+此方案已经在 Debian 9.5 和 Ubuntu 18.04 测试过。
+
+首先安装如下依赖
+```
+sudo apt install liblapack-dev cmake gcc gcc-c++ automake autoconf mpich
+```
+
+AFEPack 依赖特定版本的 boost 和 deal.II，以下说明如下安装。
+
+### boost-1.50.0
+```
+wget https://phoenixnap.dl.sourceforge.net/project/boost/boost/1.50.0/boost_1_50_0.tar.bz2
+tar -xjf boost_1_50_0.tar.bz2
+cd boost_1_50_0 && ./bootstrap.sh --prefix=/path/to/install
+# 根据设置的安装目录决定是否需要 sudo
+./b2 && sudo ./b2 install
+```
+
+### deal.II-8.1.0
+配置 deal.II 为启用 MPI，关闭 threads（目前用不到）。
+```
+tar -xzf dealii-8.1.0.tar.gz
+cd deal.II
+mkdir build && cd build
+
+# 根据 boost 安装路径修改
+export BOOST_DIR=/path/to/boost/install
+cmake -DCMAKE_INSTALL_PREFIX=/path/to/install \
+      -DDEAL_II_WITH_MPI=on \
+      -DDEAL_II_WITH_THREADS=off \
+      -DCMAKE_C_COMPILER=/usr/bin/mpicc \
+      -DCMAKE_CXX_COMPILER=/usr/bin/mpicxx \
+      -DCMAKE_Fortran_COMPILER=/usr/bin/mpifort \
+      ..
+
+make -j 4
+# 根据设置的安装目录决定是否需要 sudo
+sudo make install
+```
+
+**若 deal.II 报 boost 的编译错误，请在出错的语句 return 后加上**
+
+```
+static_cast<bool>
+```
+
+### AFEPack
+AFEPack 依赖为 deal.II 和 boost，编译 MPI 版本的 AFEPack 时需要任意一种 MPI
+实现。
+```
+./configure --prefix=/path/to/install --with-boost=/path/to/boost/install \
+            --with-dealii=/path/to/dealii/install
+make
+# 根据情况决定是否需要 sudo
+sudo make install
+```
+`make install` 会将头文件，库文件，所有 template 安装到目标文件夹。随 AFEPack
+还附赠一个 easymesh。
+
+在 `examples` 文件夹下可以继续编译测试例子，直接使用 `make` 即可 。
+```
+cd examples && make
+```

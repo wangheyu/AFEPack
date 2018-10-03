@@ -15,7 +15,7 @@ symbolic:
 
 install:
 	$(mkinstalldirs) $(prefix)/share/AFEPack
-	$(CP_R) ./* $(prefix)/share/AFEPack
+	cp -r ./* $(prefix)/share/AFEPack
 	@echo "Remember to set the environment varible"
 	@echo ""
 	@echo "  AFEPACK_TEMPLATE_PATH"

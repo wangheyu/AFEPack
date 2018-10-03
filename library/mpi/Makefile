@@ -25,10 +25,7 @@ all:
 	$(MAKE) -f Makefile.1 default
 
 install:
-	cd $(prefix)/include/AFEPack && $(LN_S) $(AFEPACK_PATH)/library/mpi/include mpi
-	cd $(prefix)/lib && $(LN_S) $(AFEPACK_PATH)/library/lib/libAFEPack_mpi.so .
-	cd $(prefix)/lib && $(LN_S) libAFEPack_mpi.so libAFEPack_mpi.g.so
-	/sbin/ldconfig -n $(prefix)/lib
+	cd include && cp *.h $(prefix)/include/AFEPack/mpi
 	echo "Please add the path $(prefix)/lib in LD_LIBRARY_PATH"
 	echo "if the library can not be found automatically."
 
