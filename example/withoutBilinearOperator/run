@@ -1,7 +1,9 @@
 #! /bin/sh
 
-export AFEPACK_PATH="/usr/local/AFEPack"
+export AFEPACK_PATH="$HOME/src/AFEPack"
 export AFEPACK_TEMPLATE_PATH="$AFEPACK_PATH/template/triangle"
+
+export LD_LIBRARY_PATH=$AFEPACK_PATH/library/lib:/opt/deal.II/lib:$LD_LIBRARY_PATH
 
 exec ./main $*
 

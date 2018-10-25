@@ -3,7 +3,7 @@
 include ../../Make.global_options
 
 install-dir = $(prefix)
-lib = -lAFEPack $(LDFLAGS) $(LIBS)
+lib = -L../../library/lib -lAFEPack $(LDFLAGS) $(LIBS)
 
 with_script = \
   2d_vecfun_dxdata2tecplotdata.bin \

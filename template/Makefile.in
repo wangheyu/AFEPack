@@ -90,7 +90,7 @@ host_triplet = @host@
 target_triplet = @target@
 subdir = template
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -258,7 +258,7 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 enable_shared = @enable_shared@
-enable_threadd = @enable_threadd@
+enable_thread = @enable_thread@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -625,7 +625,7 @@ symbolic:
 
 install:
 	$(mkinstalldirs) $(prefix)/share/AFEPack
-	$(CP_R) ./* $(prefix)/share/AFEPack
+	cp -r ./* $(prefix)/share/AFEPack
 	@echo "Remember to set the environment varible"
 	@echo ""
 	@echo "  AFEPACK_TEMPLATE_PATH"

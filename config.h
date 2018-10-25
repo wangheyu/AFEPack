@@ -1,8 +1,14 @@
 /* config.h.  Generated from config.h.in by configure.  */
-/* config.h.in.  Generated from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define to 1 if you have the `dl' library (-ldl). */
+#define HAVE_LIBDL 1
+
+/* Define to 1 if you have the `m' library (-lm). */
+#define HAVE_LIBM 1
 
 /* Name of package */
-#define PACKAGE "AFEPack"
+#define PACKAGE "afepack"
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "rli@math.pku.edu.cn"
@@ -23,7 +29,7 @@
 #define PACKAGE_VERSION "1.8"
 
 /* Define to 1 if you have the ANSI C header files. */
-#define STDC_HEADERS 1
+/* #undef STDC_HEADERS */
 
 /* Version number of package */
 #define VERSION "1.8"

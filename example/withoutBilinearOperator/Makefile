@@ -1,10 +1,10 @@
 # by R.Lie, Nov 01, 2002
 
-include /usr/local/AFEPack/Make.global_options
+include ../..//Make.global_options
 
 source = $(wildcard *.cpp)
 object = $(patsubst %.cpp, %.o, $(source))
-LDFLAGS += -lAFEPack
+LDFLAGS += -L../../library/lib -lAFEPack
 
 all : main
 
