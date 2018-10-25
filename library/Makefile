@@ -27,11 +27,9 @@ all:
 	cd mpi && make
 
 install:
-	mkdir -p $(prefix)/include $(prefix)/lib
-	cd $(prefix)/include && $(LN_S) $(AFEPACK_PATH)/library/include AFEPack
-	cd $(prefix)/lib && $(LN_S) $(AFEPACK_PATH)/library/lib/libAFEPack.so .
-	cd $(prefix)/lib && $(LN_S) libAFEPack.so libAFEPack.g.so
-	/sbin/ldconfig -n $(prefix)/lib
+	mkdir -p $(prefix)/include/AFEPack $(prefix)/include/AFEPack/mpi $(prefix)/lib
+	cp -r $(AFEPACK_PATH)/library/include/*.h $(prefix)/include/AFEPack
+	cd $(AFEPACK_PATH)/library/lib && cp *.so $(prefix)/lib
 	cd mpi && make install
 	echo "Please add the path $(prefix)/lib in LD_LIBRARY_PATH"
 	echo "if the library can not be found automatically."
@@ -45,6 +43,8 @@ clean:
 	-rm -rf obj
 	-rm -rf lib
 	cd mpi && make clean
+
+distclean:
 
 distdir: $(DISTFILES)
 	@list='$(DISTFILES)'; for file in $$list; do \
@@ -69,5 +69,5 @@ distdir: $(DISTFILES)
 	done
 
 
-.PHONY: default all install clean
+.PHONY: default all install clean distclean
 
