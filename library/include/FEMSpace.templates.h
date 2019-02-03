@@ -1335,40 +1335,74 @@ template <class value_type, int DIM, int DOW, int TDIM, typename Number>
 }
 
 template <class value_type, int DIM, int DOW, int TDIM, typename Number>
-  void BoundaryConditionAdmin<value_type,DIM,DOW,TDIM,Number>::apply(SparseMatrix<double>& A, 
-								     Vector<double>& u, 
-								     Vector<double>& f, 
-								     bool preserve_symmetry)
+void BoundaryConditionAdmin<value_type,DIM,DOW,TDIM,Number>::apply(SparseMatrix<double>& A, 
+								   Vector<double>& u, 
+								   Vector<double>& f, 
+								   bool preserve_symmetry)
 {
-  unsigned int i, j, k, l, n_dof;
-  n_dof = fem_space->n_dof();
-  Assert (A.n() == A.m(), ExcDimensionMismatch(A.n(), A.m()));
-  Assert (A.n() == f.size(), ExcDimensionMismatch(A.n(), f.size()));
-  Assert (A.n() == u.size(), ExcDimensionMismatch(A.n(), u.size()));
-  Assert (A.n() == n_dof, ExcDimensionMismatch(A.n(), n_dof));
-  typename FEMSpace<double,DIM,DOW,TDIM>::bmark_t bm;
-  const SparsityPattern& spA = A.get_sparsity_pattern();
-  const std::size_t * row_start = spA.get_rowstart_indices();
-  const unsigned int * column_index = spA.get_column_numbers();
-  for (i = 0;i < n_dof;i ++) {
-    bm = fem_space->dofBoundaryMark(i);
-    const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>& bc = find(bm);
-    if (!isValid(bc)) continue;
-    f(i) = A.diag_element(i)*bc.value(fem_space->dofInfo(i).interp_point);
-    for (j = row_start[i]+1;j < row_start[i+1];j ++) A.global_entry(j) = 0.0;
-    if (preserve_symmetry) {
-      for (j = row_start[i]+1;j < row_start[i+1];j ++) {
-	k = column_index[j];
-	const unsigned int * p = std::find(&column_index[row_start[k]+1],
-					   &column_index[row_start[k+1]], i);
-	if (p != &column_index[row_start[k+1]]) {
-	  l = p - &column_index[row_start[0]];
-	  f(k) -= A.global_entry(l) * f(i) / A.diag_element(i);
-	  A.global_entry(l) = 0.;
+    unsigned int i, j, k, l, n_dof;
+    n_dof = fem_space->n_dof();
+    Assert (A.n() == A.m(), ExcDimensionMismatch(A.n(), A.m()));
+    Assert (A.n() == f.size(), ExcDimensionMismatch(A.n(), f.size()));
+    Assert (A.n() == u.size(), ExcDimensionMismatch(A.n(), u.size()));
+    Assert (A.n() == n_dof, ExcDimensionMismatch(A.n(), n_dof));
+    typename FEMSpace<double,DIM,DOW,TDIM>::bmark_t bm;
+//  const SparsityPattern& spA = A.get_sparsity_pattern();
+//  const std::size_t * row_start = spA.get_rowstart_indices();
+//  const unsigned int * column_index = spA.get_column_numbers();
+    for (i = 0;i < n_dof;i ++)
+    {
+	bm = fem_space->dofBoundaryMark(i);
+	const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>& bc = find(bm);
+//	if (!isValid(bc)) continue;
+	if (bm == 0) continue;
+
+	SparseMatrix<double>::iterator row_iterator = A.begin(i);
+	SparseMatrix<double>::iterator row_end = A.end(i);
+	double diag = row_iterator->value();
+	double bnd_value = bc.value(fem_space->dofInfo(i).interp_point);
+	f(i) = diag * bnd_value;
+	for (++row_iterator; row_iterator != row_end; ++row_iterator)
+	{
+	    row_iterator->value() = 0.0;
 	}
-      }
+
+	if (preserve_symmetry)
+	{
+	    row_iterator = A.begin(i);
+	    for (++row_iterator; row_iterator != row_end; ++row_iterator)
+	    {
+		k = row_iterator->column();
+		SparseMatrix<double>::iterator col_iterator = A.begin(k);
+		SparseMatrix<double>::iterator col_end = A.end(k);
+		for (++col_iterator; col_iterator != col_end; ++col_iterator)
+		    if (col_iterator->column() == i)
+			break;
+		if (col_iterator == col_end)
+		{
+		    std::cerr << "Boundary condition applying error!" << std::endl;
+		    exit(-1);
+		}
+		f(k) -= col_iterator->value() * bnd_value;
+		col_iterator->value() = 0.0;
+	    }
+	}
+    
+	// f(i) = A.diag_element(i)*bc.value(fem_space->dofInfo(i).interp_point);
+	// for (j = row_start[i]+1;j < row_start[i+1];j ++) A.global_entry(j) = 0.0;
+	// if (preserve_symmetry) {
+	//   for (j = row_start[i]+1;j < row_start[i+1];j ++) {
+	// 	k = column_index[j];
+	// 	const unsigned int * p = std::find(&column_index[row_start[k]+1],
+	// 					   &column_index[row_start[k+1]], i);
+	// 	if (p != &column_index[row_start[k+1]]) {
+	// 	  l = p - &column_index[row_start[0]];
+	// 	  f(k) -= A.global_entry(l) * f(i) / A.diag_element(i);
+	// 	  A.global_entry(l) = 0.;
+	// 	}
+	//   }
+	// }
     }
-  }
 }
 
 
