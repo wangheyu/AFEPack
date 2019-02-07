@@ -59,7 +59,8 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM>
   std::vector<int> dof_index; /**< Information of degree of freedom on this element. */
   std::vector<std::vector<int> > geo_img; /**< Geometry image built according template geometry. */
   public:
-  explicit Element(fe_space_t& = *((fe_space_t *)NULL)); /**< Default contructor. */
+  Element() {}
+  explicit Element(fe_space_t&); /**< Default contructor. */
   Element(const element_t&);  /**< Copy constructor. */
   ~Element(); /**< Destructor. */
   public:
@@ -178,9 +179,8 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM>
   u_int effi_flag;		/**< the flag is used for efficiency */
 
   public:
-  explicit FEMSpace(mesh_t& = *((mesh_t *)NULL),
-                    std::vector<template_t>& 
-                    = *((std::vector<template_t> *)NULL)); /**< Default constructor. */
+  FEMSpace() : effi_flag(0xFFFF) {};  /**< Default constructor. */
+  explicit FEMSpace(mesh_t&, std::vector<template_t>&); 
   FEMSpace(const fe_space_t&); /**< Copy constructor. */
   virtual ~FEMSpace(); /**< Destructor. */
   public:
@@ -295,7 +295,8 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, typename Number=
   private:
   fe_space_t * sp; /**< Finite element space. */
   public:
-  FEMFunction(fe_space_t & = *((fe_space_t *)NULL)); /**< Default constructor. */
+  FEMFunction() {}
+  FEMFunction(fe_space_t&); /**< Default constructor. */
   virtual ~FEMFunction(); /**< Destructor. */
   public:
   fe_space_t& femSpace(); /**< Finite element space, obsolete */
@@ -355,7 +356,8 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, typename Number=
   private:
   Element<value_type,DIM,DOW,TDIM> * ele;
   public:
-  LocalFEMFunction(Element<value_type,DIM,DOW,TDIM> & = *((Element<value_type,DIM,DOW,TDIM> *)NULL));
+  LocalFEMFunction() {}
+  LocalFEMFunction(Element<value_type,DIM,DOW,TDIM> &);
   virtual ~LocalFEMFunction() {};
   public:
   Element<value_type,DIM,DOW,TDIM>& element();
@@ -506,11 +508,11 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, typename Number=
   bool isValid(const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>& bc) const {
     return (&bc != NULL);
   };
-  const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>& find(const bmark_t& bm) const {
+  const BoundaryCondition<value_type,DIM,DOW,TDIM,Number> * find(const bmark_t& bm) const {
     if ((unsigned int)bm >= index_map.size() || index_map[bm] == -1)
-      return *((const BoundaryCondition<value_type,DIM,DOW,TDIM,Number> *)NULL);
+      return ((const BoundaryCondition<value_type,DIM,DOW,TDIM,Number> *)NULL);
     else
-      return *((*this)[index_map[bm]]);
+      return ((*this)[index_map[bm]]);
   };
   };
 
