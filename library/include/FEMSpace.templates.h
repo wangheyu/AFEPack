@@ -1353,9 +1353,9 @@ void BoundaryConditionAdmin<value_type,DIM,DOW,TDIM,Number>::apply(SparseMatrix<
     for (i = 0;i < n_dof;i ++)
     {
 	bm = fem_space->dofBoundaryMark(i);
-	const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>& bc = find(bm);
+	const BoundaryCondition<value_type,DIM,DOW,TDIM,Number> * bc = find(bm);
 //	if (!isValid(bc)) continue;
-	if (bm == 0) continue;
+	if (bm == NULL) continue;
 
 	SparseMatrix<double>::iterator row_iterator = A.begin(i);
 	SparseMatrix<double>::iterator row_end = A.end(i);
