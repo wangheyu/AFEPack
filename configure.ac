@@ -20,9 +20,11 @@ AC_CHECK_TOOL(SED, sed, :)
 AC_CHECK_PROGS(MAKE, [gmake make])
 AC_LANG(C++)
 
-#CPPFLAGS="$EXTRA_INCDIR -g -std=c++11 -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
-#CFLAGS="$EXTRA_INCDIR -g -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/" 
-#CXXFLAGS="$EXTRA_INCDIR -g -std=c++11  -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
+CPPFLAGS="$EXTRA_INCDIR -g -std=c++11 -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
+CFLAGS="$EXTRA_INCDIR -g -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/" 
+CXXFLAGS="$EXTRA_INCDIR -g -std=c++11  -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
+
+LIBS="-L/usr/local/dealii-8.1.0/lib -lmpi -lmpi_cxx -ldeal_II $LIBS"
 
 
 dnl libdl
