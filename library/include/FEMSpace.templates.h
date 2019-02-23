@@ -1354,13 +1354,13 @@ void BoundaryConditionAdmin<value_type,DIM,DOW,TDIM,Number>::apply(SparseMatrix<
     {
 	bm = fem_space->dofBoundaryMark(i);
 	const BoundaryCondition<value_type,DIM,DOW,TDIM,Number> * bc = find(bm);
-//	if (!isValid(bc)) continue;
-	if (bm == NULL) continue;
+	//if (!isValid(bc)) continue;
+	if (bc == NULL) continue;
 
 	SparseMatrix<double>::iterator row_iterator = A.begin(i);
 	SparseMatrix<double>::iterator row_end = A.end(i);
 	double diag = row_iterator->value();
-	double bnd_value = bc.value(fem_space->dofInfo(i).interp_point);
+	double bnd_value = bc->value(fem_space->dofInfo(i).interp_point);
 	f(i) = diag * bnd_value;
 	for (++row_iterator; row_iterator != row_end; ++row_iterator)
 	{
