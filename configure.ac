@@ -20,13 +20,6 @@ AC_CHECK_TOOL(SED, sed, :)
 AC_CHECK_PROGS(MAKE, [gmake make])
 AC_LANG(C++)
 
-CPPFLAGS="$EXTRA_INCDIR -g -std=c++11 -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
-CFLAGS="$EXTRA_INCDIR -g -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/" 
-CXXFLAGS="$EXTRA_INCDIR -g -std=c++11  -I/usr/include/deal.II -I/usr/local/dealii-8.1.0/include/deal.II/ -I/usr/local/dealii-8.1.0/include/ -I/usr/include/mpi -I/usr/include/trilinos/"
-
-LIBS="-L/usr/local/dealii-8.1.0/lib -lmpi -lmpi_cxx -ldeal_II $LIBS"
-
-
 dnl libdl
 AC_TRY_CPP([#include <dlfcn.h>],
   dl_header=yes, dl_header=no)
@@ -46,18 +39,40 @@ AC_CHECK_LIB([m], [sin], [], [AC_ERROR([library -lm not found])])
 dnl ----------------------
 
 dnl MPI library
-AC_TRY_LINK([#include <mpi.h>],
-  [MPI_Init(NULL, NULL); MPI_Finalize()], mpi_lib=yes, mpi_lib=no)
 AC_MSG_CHECKING([for MPI])
-if test "x$mpi_lib" != xno; then
-  AC_MSG_RESULT(yes)
-  CFLAGS="-DDEAL_II_WITH_MPI $CFLAGS"
-  CXXFLAGS="-DDEAL_II_WITH_MPI $CXXFLAGS"
-  CPPFLAGS="-DDEAL_II_WITH_MPI $CPPFLAGS"
-else
-  AC_MSG_RESULT(no)
-  AC_ERROR([MPI not found])
+AC_ARG_WITH([mpi], AC_HELP_STRING([--with-mpi={yes|no|PATH}], [Specify if MPI is enabled or path to mpi installation]), [], [with_mpi=check])
+if test "x$with_mpi" = xno; then
+  with_mpi=check
 fi
+if test "x$with_mpi" != xcheck; then
+  if test "$with_mpi" = yes; then
+    MPICC=`which mpicc`
+    MPICXX=`which mpicxx`
+  else
+    MPICC="$with_mpi/bin/mpicc"
+    MPICXX="$with_mpi/bin/mpicxx"
+  fi
+  CXX_backup=$CXX
+  CXX=$MPICXX
+  AC_TRY_LINK([#include <mpi.h>],
+    [MPI_Init(NULL, NULL); MPI_Finalize()], mpi_lib=yes, mpi_lib=no)
+  CXX=$CXX_backup
+  if test "x$mpi_lib" != xno; then
+    AC_MSG_RESULT(yes)
+    CFLAGS="-DDEAL_II_WITH_MPI $CFLAGS"
+    CXXFLAGS="-DDEAL_II_WITH_MPI $CXXFLAGS"
+    CPPFLAGS="-DDEAL_II_WITH_MPI $CPPFLAGS"
+  else
+   AC_MSG_RESULT(no)
+   AC_ERROR([MPI not found])
+  fi
+else
+  AC_MSG_RESULT(not enabled)
+  MPICC=""
+  MPICXX=""
+fi
+AC_SUBST(MPICC)
+AC_SUBST(MPICXX)
 dnl ----------------------
 
 dnl boost headers
