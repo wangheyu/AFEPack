@@ -49,6 +49,9 @@ AC_TRY_LINK([#include <mpi.h>],
 AC_MSG_CHECKING([for MPI])
 if test "x$mpi_lib" != xno; then
   AC_MSG_RESULT(yes)
+  CFLAGS="-DDEAL_II_WITH_MPI $CFLAGS"
+  CXXFLAGS="-DDEAL_II_WITH_MPI $CXXFLAGS"
+  CPPFLAGS="-DDEAL_II_WITH_MPI $CPPFLAGS"
 else
   AC_MSG_RESULT(no)
   AC_ERROR([MPI not found])
@@ -79,9 +82,7 @@ if test "x$with_dealii" != xcheck; then
   CFLAGS="-I$with_dealii/include -I$with_dealii/include/deal.II $CFLAGS"
   CXXFLAGS="-I$with_dealii/include -I$with_dealii/include/deal.II $CXXFLAGS"
   CPPFLAGS="-I$with_dealii/include -I$with_dealii/include/deal.II $CPPFLAGS"
-  LIBS="-L$with_dealii/lib -ldeal_II $LIBS"
-else
-  LIBS="-ldeal_II $LIBS"
+  LIBS="-L$with_dealii/lib $LIBS"
 fi
 AC_TRY_CPP([#define DEBUG
   #include <base/exceptions.h>],
@@ -94,28 +95,39 @@ else
   AC_ERROR([deal.II header not found])
 fi
 
+AC_MSG_CHECKING([for deal.II library])
+LIBS_backup=$LIBS
+LIBS="-ldeal_II $LIBS_backup"
 AC_TRY_LINK([#include <base/exceptions.h>
   #include <lac/vector.h>],[],
   deal_II_library=yes, deal_II_library=no)
-AC_MSG_CHECKING([for deal.II library])
 if test "x$deal_II_library" != xno; then
   AC_MSG_RESULT(yes)
 else
-  AC_MSG_RESULT(no)
-  AC_ERROR([deal.II library not found])
+  LIBS="-llac -lbase -ltbb $LIBS_backup"
+  AC_TRY_LINK([#include <base/exceptions.h>
+  #include <lac/vector.h>],[],
+  deal_II_library=yes, deal_II_library=no)
+  if test "x$deal_II_library" != xno; then
+    AC_MSG_RESULT(yes)
+  else
+    AC_MSG_RESULT(no)
+    AC_ERROR([deal.II library not found])
+  fi
 fi
 dnl -----------------------
 
 
 AC_ARG_ENABLE(optimized,
-  AC_HELP_STRING([--enable-optimize], [if using -O3 optimizing compiling flags(default: yes)]),,
+  AC_HELP_STRING([--enable-optimize], [if using -O2 optimizing compiling flags(default: yes)]),,
   [enable_optimize=yes])
 
 AC_MSG_CHECKING([if optimize support was requested])
 if test "x$enable_optimize" != xno; then
   AC_MSG_RESULT(yes)
-  CFLAGS="-O3 $CFLAGS"
-  CXXFLAGS="-O3 $CXXFLAGS"
+  CFLAGS="-O2 $CFLAGS"
+  CXXFLAGS="-O2 $CXXFLAGS"
+  CPPFLAGS="-O2 $CPPFLAGS"
 else
   AC_MSG_RESULT(no)
 fi
@@ -130,6 +142,7 @@ if test "x$enable_shared" != xno; then
   AC_MSG_RESULT(yes)
   CFLAGS="$CFLAGS -fPIC"
   CXXFLAGS="$CXXFLAGS -fPIC"
+  CPPFLAGS="$CPPFLAGS -fPIC"
 else
   AC_MSG_RESULT(no)
 fi
@@ -145,6 +158,7 @@ if test "x$enable_thread" != xno; then
   AC_MSG_RESULT(yes)
   CFLAGS="$CFLAGS -D__SERIALIZATION__ -DMULTITHREAD -pthread"
   CXXFLAGS="$CXXFLAGS -D__SERIALIZATION__ -DMULTITHREAD -pthread"
+  CPPFLAGS="$CPPFLAGS -D__SERIALIZATION__ -DMULTITHREAD -pthread"
   LIBS="$LIBS -pthread"
 else
   AC_MSG_RESULT(no)
@@ -153,8 +167,11 @@ AC_SUBST(enable_thread)
 
 CFLAGS="$CFLAGS -I$AFEPACK_PATH/library/include"
 CXXFLAGS="$CXXFLAGS -ftemplate-depth-128 -I$AFEPACK_PATH/library/include"
+CPPFLAGS="$CPPFLAGS -ftemplate-depth-128 -I$AFEPACK_PATH/library/include"
+
 AC_SUBST(CFLAGS)
 AC_SUBST(CXXFLAGS)
+AC_SUBST(CPPFLAGS)
 
 dnl Checks for header files.
 AC_HEADER_STDC

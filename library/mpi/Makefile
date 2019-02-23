@@ -22,7 +22,9 @@ all:
 	cat make.dep | $(SED) -e "s/\.o:/$(OBJ_EXT):/g" > tmp.file
 	mv tmp.file make.dep
 	mkdir -p obj
-	$(MAKE) -f Makefile.1 default
+	if test "$(MPICC)" != ""; then \
+	  $(MAKE) -f Makefile.1 default ; \
+	fi
 
 install:
 	cd include && cp *.h $(prefix)/include/AFEPack/mpi
