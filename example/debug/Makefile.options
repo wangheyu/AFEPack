@@ -1,5 +1,5 @@
 CXXFLAGS:=-DDEAL_II_WITH_MPI $(CXXFLAGS)
-LIBS:=-lboost_serialization $(LIBS)
+LIBS:=-lAFEPack -lboost_serialization $(LIBS)
 MPILIBS:=-lAFEPack_mpi $(LIBS)
 
 TRILINOS_HOME=/usr/local/Trilinos
