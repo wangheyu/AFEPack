@@ -1,7 +1,6 @@
-include ../../Make.global_options
-
 CXXFLAGS:=-DDEAL_II_WITH_MPI $(CXXFLAGS)
-LIBS:=-lAFEPack_mpi -lboost_serialization $(LIBS)
+LIBS:=-lboost_serialization $(LIBS)
+MPILIBS:=-lAFEPack_mpi $(LIBS)
 
 TRILINOS_HOME=/usr/local/Trilinos
 TRILINOS_INC=-I$(TRILINOS_HOME)/include
