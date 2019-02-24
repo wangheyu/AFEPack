@@ -2,14 +2,16 @@ CXXFLAGS:=-DDEAL_II_WITH_MPI $(CXXFLAGS)
 LIBS:=-lAFEPack -lboost_serialization $(LIBS)
 MPILIBS:=-lAFEPack_mpi $(LIBS)
 
-TRILINOS_HOME=/usr/local/Trilinos
-TRILINOS_INC=-I$(TRILINOS_HOME)/include
-TRILINOS_LIBS=-lml -lifpack -laztecoo -lepetraext -lepetra -lteuchos -ltriutils -lblas -llapack -L$(TRILINOS_HOME)/lib
+TRILINOS_HOME=/usr
+TRILINOS_INC=-I$(TRILINOS_HOME)/include/trilinos
+TRILINOS_LIBS=-ltrilinos_ml -ltrilinos_ifpack -ltrilinos_aztecoo -ltrilinos_epetraext -ltrilinos_epetra -ltrilinos_teuchoscore -ltrilinos_triutils -lblas -llapack -L$(TRILINOS_HOME)/lib
 
-PETSC_DIR=/usr/local
-PETSC_INC=-I$(PETSC_DIR)/include
-PETSC_MPICC=$(MPICC)
+PETSC_DIR=/usr
+PETSC_INC=-I$(PETSC_DIR)/include/petsc
+PETSC_MPICXX=$(MPICXX)
 PETSC_LIBS=-lpetsc -L$(PETSC_DIR)/lib -lX11 
 
-HYPRE_MPICC=$(MPICC)
+HYPRE_DIR=/usr
+HYPRE_MPICXX=$(MPICXX)
+HYPRE_INC=-I$(HYPRE_DIR)/include/hypre
 HYPRE_LIBS=-lHYPRE

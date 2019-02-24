@@ -10,11 +10,15 @@
  *   - 构造 PETSc 的稀疏矩阵和分布式向量；
  *   - 调用 PETSc 的求解器求解线性系统；
  *
+ * 运行语法：
+ *
+ *   mpiexec -np # ./ex26 mesh_dir refine_round
  * 
  */
 
 #include <AFEPack/DGFEMSpace.h>
 #include <AFEPack/mpi/MPI_DOF.h>
+#include <AFEPack/mpi/MPI_ULoadBalance.h>
 #include <petscksp.h>
 
 #define DIM 2
@@ -29,16 +33,16 @@ static char help[] = "Solving an elliptic equation.";
 
 int main(int argc, char * argv[])
 {
-  typedef MPI::HGeometryForest<DIM,DOW> forest_t;
-  typedef MPI::BirdView<forest_t> ir_mesh_t;
-  typedef FEMSpace<double,DIM,DOW> fe_space_t;  
-  typedef MPI::DOF::GlobalIndex<forest_t, fe_space_t> global_index_t;
+  typedef AFEPack::MPI::HGeometryForest<DIM,DOW> forest_t;
+  typedef AFEPack::MPI::BirdView<forest_t> ir_mesh_t;
+  typedef AFEPack::FEMSpace<double,DIM,DOW> fe_space_t;  
+  typedef AFEPack::MPI::DOF::GlobalIndex<forest_t, fe_space_t> global_index_t;
 
   PetscInitialize(&argc, &argv, (char *)NULL, help);
 
   forest_t forest(PETSC_COMM_WORLD);
-  forest.readMesh(argv[1]);
-  ir_mesh_t ir_mesh(forest);
+  ir_mesh_t ir_mesh;
+  AFEPack::MPI::load_mesh(argv[1], forest, ir_mesh); /// 从一个目录中读入网格数据
 
   int round = 0;
   if (argc >= 3) round = atoi(argv[2]);
@@ -80,10 +84,10 @@ int main(int argc, char * argv[])
   std::cout << "Building the linear system ... " << std::flush;
   Mat A;
   Vec x, b;
-  MatCreateMPIAIJ(PETSC_COMM_WORLD,
-                  global_index.n_primary_dof(), global_index.n_primary_dof(),
-                  PETSC_DECIDE, PETSC_DECIDE, 
-                  0, PETSC_NULL, 0, PETSC_NULL, &A);
+  MatCreateAIJ(PETSC_COMM_WORLD,
+	       global_index.n_primary_dof(), global_index.n_primary_dof(),
+	       PETSC_DECIDE, PETSC_DECIDE, 
+	       0, PETSC_NULL, 0, PETSC_NULL, &A);
   VecCreateMPI(PETSC_COMM_WORLD, global_index.n_primary_dof(), PETSC_DECIDE, &b);
   fe_space_t::ElementIterator
     the_ele = fem_space.beginElement(),
@@ -154,31 +158,31 @@ int main(int argc, char * argv[])
     printf("\n");
   }
 
-  MatDestroy(A);
-  VecDestroy(b);
-  KSPDestroy(solver);
+  MatDestroy(&A);
+  VecDestroy(&b);
+  KSPDestroy(&solver);
 
   /// 准备解函数
   FEMFunction<double,DIM> u_h(fem_space);
   Vec X;
-  VecCreateSeqWithArray(PETSC_COMM_SELF, global_index.n_local_dof(), &u_h(0), &X);
+  VecCreateSeqWithArray(PETSC_COMM_SELF, 1, global_index.n_local_dof(), &u_h(0), &X);
 
   /// 将 PETSc 解出来的向量取出到有限元函数 u_h 中来
   std::vector<int> primary_idx(global_index.n_primary_dof());
   global_index.build_primary_index(&primary_idx[0]);
   IS is;
-  ISCreateGeneralWithArray(forest.communicator(), global_index.n_local_dof(),
-                           &global_index(0), &is);
+  ISCreateGeneral(forest.communicator(), global_index.n_local_dof(),
+		  &global_index(0), PETSC_USE_POINTER, &is);
   VecScatter scatter;
   VecScatterCreate(x, is, X, PETSC_NULL, &scatter);
   VecScatterBegin(scatter, x, X, INSERT_VALUES, SCATTER_FORWARD);
   VecScatterEnd(scatter, x, X, INSERT_VALUES, SCATTER_FORWARD);
 
   /// 清理 PETSc 的变量
-  VecDestroy(x);
-  VecDestroy(X);
-  VecScatterDestroy(scatter);
-  ISDestroy(is);
+  VecDestroy(&x);
+  VecDestroy(&X);
+  VecScatterDestroy(&scatter);
+  ISDestroy(&is);
 
   char filename[1024];
   sprintf(filename, "u_h%d.dx", forest.rank());

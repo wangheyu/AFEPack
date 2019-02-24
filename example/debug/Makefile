@@ -108,10 +108,10 @@ ex30 : ex30.cpp
 	$(MPICXX) -o $@ $< $(CXXFLAGS) $(MPILIBS)
 
 ex38 : ex38.cpp
-	$(HYPRE_MPICXX) -o $@ $< -fPIC $(CXXFLAGS) $(HYPRE_LIBS) $(MPILIBS) 
+	$(HYPRE_MPICXX) -o $@ $< -fPIC $(CXXFLAGS) $(HYPRE_LIBS) $(HYPRE_INC) $(MPILIBS) 
 
 ex39 : ex39.cpp
-	$(HYPRE_MPICXX) -o $@ $< -fPIC $(CXXFLAGS) $(HYPRE_LIBS) $(MPILIBS) 
+	$(HYPRE_MPICXX) -o $@ $< -fPIC $(CXXFLAGS) $(HYPRE_LIBS) $(HYPRE_INC) $(MPILIBS) 
 
 ex41 : ex41.cpp
 	$(MPICXX) -o $@ $< $(CXXFLAGS) $(MPILIBS)
