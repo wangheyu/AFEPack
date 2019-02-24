@@ -1,12 +1,13 @@
+include ../../../Make.global_options
 include ../Makefile.options
 
 default : save load
 
 save : save.cpp
-	$(MPICC) -g -o $@ $< $(MPILIBS)
+	$(MPICXX) -g -o $@ $< $(MPILIBS) $(CXXFLAGS)
 
-load : load.cpp
-	$(MPICC) -g -o $@ $< $(MPILIBS)
+./load : load.cpp
+	$(MPICXX) -g -o $@ $< $(MPILIBS) $(CXXFLAGS)
 
 clean :
 	-rm -rf *~
@@ -15,3 +16,4 @@ clean :
 	-rm *.dx
 
 .PHONY : default clean
+
