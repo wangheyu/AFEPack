@@ -24,7 +24,7 @@ else
 endif
 
 obj/%.o: src/%.cpp
-	$(MPICC) -c -o $@ $< $(CXXFLAGS)
+	$(MPICC) -c -o $@ $< -DDEAL_II_WITH_MPI $(CXXFLAGS)
 
 .PHONY: default all 
 

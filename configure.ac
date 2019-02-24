@@ -38,6 +38,31 @@ dnl lib math
 AC_CHECK_LIB([m], [sin], [], [AC_ERROR([library -lm not found])])
 dnl ----------------------
 
+THIS_FLAG="$EXTRA_INCDIR"
+CFLAGS="$THIS_FLAG $CFLAGS"
+CXXFLAGS="$THIS_FLAG $CXXFLAGS"
+CPPFLAGS="$THIS_FLAG $CPPFLAGS"
+
+enable_shared=yes
+AC_SUBST(enable_shared)
+LIBS="$EXTRA_LIBS $LIBS -shared"
+
+dnl multi-thread option
+AC_ARG_ENABLE(thread,
+  AC_HELP_STRING([--enable-thread], [enable POSIX thread support(default: yes)]),,
+  [enable_thread=yes])
+AC_MSG_CHECKING([if thread support was requested])
+if test "x$enable_thread" != xno; then
+  AC_MSG_RESULT(yes)
+  THIS_FLAG="-D__SERIALIZATION__ -DMULTITHREAD -pthread -fPIC"
+  CFLAGS="$CFLAGS $THIS_FLAG"
+  CXXFLAGS="$CXXFLAGS $THIS_FLAG"
+  CPPFLAGS="$CPPFLAGS $THIS_FLAG"
+else
+  AC_MSG_RESULT(no)
+fi
+AC_SUBST(enable_thread)
+
 dnl MPI library
 AC_MSG_CHECKING([for MPI])
 AC_ARG_WITH([mpi], AC_HELP_STRING([--with-mpi={yes|no|PATH}], [Specify if MPI is enabled or path to mpi installation]), [], [with_mpi=check])
@@ -59,9 +84,6 @@ if test "x$with_mpi" != xcheck; then
   CXX=$CXX_backup
   if test "x$mpi_lib" != xno; then
     AC_MSG_RESULT(yes)
-    CFLAGS="-DDEAL_II_WITH_MPI $CFLAGS"
-    CXXFLAGS="-DDEAL_II_WITH_MPI $CXXFLAGS"
-    CPPFLAGS="-DDEAL_II_WITH_MPI $CPPFLAGS"
   else
    AC_MSG_RESULT(no)
    AC_ERROR([MPI not found])
@@ -78,9 +100,10 @@ dnl ----------------------
 dnl boost headers
 AC_ARG_WITH([boost], AC_HELP_STRING([--with-boost=PATH], [Specify path to boost installation]), [], [with_boost=check])
 if test "x$with_boost" != xcheck; then
-  CFLAGS="-I$with_boost/include $CFLAGS"
-  CXXFLAGS="-I$with_boost/include $CXXFLAGS"
-  CPPFLAGS="-I$with_boost/include $CPPFLAGS"
+  THIS_FLAG="-I$with_boost/include"
+  CFLAGS="$THIS_FLAG $CFLAGS"
+  CXXFLAGS="$THIS_FLAG $CXXFLAGS"
+  CPPFLAGS="$THIS_FLAG $CPPFLAGS"
 fi
 AC_TRY_CPP([#include <boost/serialization/array.hpp>],
   boost_header=yes, boost_header=no)
@@ -93,13 +116,13 @@ else
 fi
 dnl ----------------------
 
-dnl Libraries for deal.II
+dnl Header for deal.II
 AC_ARG_WITH([dealii], AC_HELP_STRING([--with-dealii=PATH], [Specify path to deal.II installation]), [], [with_dealii=check])
 if test "x$with_dealii" != xcheck; then
-  CFLAGS="-I$with_dealii/include -I$with_dealii/include/deal.II $CFLAGS"
-  CXXFLAGS="-I$with_dealii/include -I$with_dealii/include/deal.II $CXXFLAGS"
-  CPPFLAGS="-I$with_dealii/include -I$with_dealii/include/deal.II $CPPFLAGS"
-  LIBS="-L$with_dealii/lib $LIBS"
+  THIS_FLAG="-I$with_dealii/base/include -I$with_dealii/lac/include -I$with_dealii/include -I$with_dealii/include/deal.II"
+  CFLAGS="$THIS_FLAG $CFLAGS"
+  CXXFLAGS="$THIS_FLAG $CXXFLAGS"
+  CPPFLAGS="$THIS_FLAG $CPPFLAGS"
 fi
 AC_TRY_CPP([#define DEBUG
   #include <base/exceptions.h>],
@@ -112,7 +135,9 @@ else
   AC_ERROR([deal.II header not found])
 fi
 
-AC_MSG_CHECKING([for deal.II library])
+dnl Libraries for deal.II
+AC_MSG_CHECKING([for deal.II library (-ldeal_II)])
+LIBS="-L$with_dealii/lib $LIBS"
 LIBS_backup=$LIBS
 LIBS="-ldeal_II $LIBS_backup"
 AC_TRY_LINK([#include <base/exceptions.h>
@@ -121,6 +146,8 @@ AC_TRY_LINK([#include <base/exceptions.h>
 if test "x$deal_II_library" != xno; then
   AC_MSG_RESULT(yes)
 else
+  AC_MSG_RESULT(not found)
+  AC_MSG_CHECKING([for deal.II library (-llac -lbase -ltbb)])
   LIBS="-llac -lbase -ltbb $LIBS_backup"
   AC_TRY_LINK([#include <base/exceptions.h>
   #include <lac/vector.h>],[],
@@ -128,67 +155,22 @@ else
   if test "x$deal_II_library" != xno; then
     AC_MSG_RESULT(yes)
   else
-    AC_MSG_RESULT(no)
+    AC_MSG_RESULT(not found)
     AC_ERROR([deal.II library not found])
   fi
 fi
 dnl -----------------------
 
 
-AC_ARG_ENABLE(optimized,
-  AC_HELP_STRING([--enable-optimize], [if using -O2 optimizing compiling flags(default: yes)]),,
-  [enable_optimize=yes])
-
-AC_MSG_CHECKING([if optimize support was requested])
-if test "x$enable_optimize" != xno; then
-  AC_MSG_RESULT(yes)
-  CFLAGS="-O2 $CFLAGS"
-  CXXFLAGS="-O2 $CXXFLAGS"
-  CPPFLAGS="-O2 $CPPFLAGS"
-else
-  AC_MSG_RESULT(no)
-fi
-
-dnl shared option
-AC_ARG_ENABLE(shared,
-  AC_HELP_STRING([--enable-shared], [set compilier flags to generate shared library(default: yes)]),,
-  [enable_shared=yes])
-
-AC_MSG_CHECKING([if shared support was requested])
-if test "x$enable_shared" != xno; then
-  AC_MSG_RESULT(yes)
-  CFLAGS="$CFLAGS -fPIC"
-  CXXFLAGS="$CXXFLAGS -fPIC"
-  CPPFLAGS="$CPPFLAGS -fPIC"
-else
-  AC_MSG_RESULT(no)
-fi
-AC_SUBST(enable_shared)
-
-dnl multi-thread option
-AC_ARG_ENABLE(thread,
-  AC_HELP_STRING([--enable-thread], [enable POSIX thread support(default: yes)]),,
-  [enable_thread=yes])
-
-AC_MSG_CHECKING([if thread support was requested])
-if test "x$enable_thread" != xno; then
-  AC_MSG_RESULT(yes)
-  CFLAGS="$CFLAGS -D__SERIALIZATION__ -DMULTITHREAD -pthread"
-  CXXFLAGS="$CXXFLAGS -D__SERIALIZATION__ -DMULTITHREAD -pthread"
-  CPPFLAGS="$CPPFLAGS -D__SERIALIZATION__ -DMULTITHREAD -pthread"
-  LIBS="$LIBS -pthread"
-else
-  AC_MSG_RESULT(no)
-fi
-AC_SUBST(enable_thread)
-
-CFLAGS="$CFLAGS -I$AFEPACK_PATH/library/include"
-CXXFLAGS="$CXXFLAGS -ftemplate-depth-128 -I$AFEPACK_PATH/library/include"
-CPPFLAGS="$CPPFLAGS -ftemplate-depth-128 -I$AFEPACK_PATH/library/include"
-
+THIS_FLAG="-ftemplate-depth-128 -I$AFEPACK_PATH/library/include"
+CFLAGS="$CFLAGS $THIS_FLAG"
+CXXFLAGS="$CXXFLAGS $THIS_FLAG"
+CPPFLAGS="$CPPFLAGS $THIS_FLAG"
 AC_SUBST(CFLAGS)
 AC_SUBST(CXXFLAGS)
 AC_SUBST(CPPFLAGS)
+
+AC_SUBST(LIBS)
 
 dnl Checks for header files.
 AC_HEADER_STDC
