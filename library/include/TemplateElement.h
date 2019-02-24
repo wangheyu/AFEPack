@@ -292,12 +292,13 @@ class TemplateDOF : public DegreeOfFreedom
  private:
   TemplateGeometry<DIM> * geometry; /**< Pointer to the template element geometry. */
  public:
-  TemplateDOF(TemplateGeometry<DIM>& = *((TemplateGeometry<DIM> *)NULL)); /**< Default constructor. */
+  TemplateDOF() : geometry(NULL) {}
+  TemplateDOF(TemplateGeometry<DIM>&); /**< Default constructor. */
   TemplateDOF(const TemplateDOF<DIM>&); /**< Copy Contructor. */
   ~TemplateDOF(); /**< Destructor. */
  public:
   TemplateDOF<DIM>& operator=(const TemplateDOF<DIM>&); /**< Copy operator. */
-  void reinit(TemplateGeometry<DIM>& = *((TemplateGeometry<DIM> *)NULL)); /**< Reinitialization. */
+  void reinit(TemplateGeometry<DIM>&); /**< Reinitialization. */
   void readData(const std::string&); /**< Read in the information from a file. */
   void writeData(const std::string&) const; /**< Write out the information to a file. */
  public:
@@ -641,19 +642,20 @@ template <class value_type, int DIM, int TDIM=DIM>
   basis_func_admin_t * bf; /**< Basis functions. */
   unit_normal_t * uon; /**< Unit Our Normal. */
   public:
-  TemplateElement(geometry_t& = *((geometry_t*)NULL),
-                  TemplateDOF<TDIM>& = *((TemplateDOF<TDIM> *)NULL), 
-                  coord_trans_t& = *((coord_trans_t *)NULL),
-                  basis_func_admin_t& = *((basis_func_admin_t *)NULL),
-                  unit_normal_t& = *((unit_normal_t *)NULL)); /**< Default constructor. */
+  TemplateElement() {} /**< Default constructor. */
+  TemplateElement(geometry_t&, 
+                  TemplateDOF<TDIM>&, 
+                  coord_trans_t&, 
+                  basis_func_admin_t&, 
+                  unit_normal_t& = *((unit_normal_t *)NULL)); 
   TemplateElement(const template_t&); /**< Copy constructor. */
   ~TemplateElement(); /**< Destructor. */
   public:
   template_t& operator=(const template_t&); /**< Copy operator. */
-  void reinit(geometry_t& = *((geometry_t*)NULL),
-              TemplateDOF<TDIM>& = *((TemplateDOF<TDIM> *)NULL), 
-              coord_trans_t& = *((coord_trans_t *)NULL),
-              basis_func_admin_t& = *((basis_func_admin_t *)NULL),
+  void reinit(geometry_t&, 
+              TemplateDOF<TDIM>&,
+              coord_trans_t&,
+              basis_func_admin_t&,
               unit_normal_t& = *((unit_normal_t *)NULL)); /**< Reinitialization. */
   /** Template element geometry. */
   const geometry_t& geometry() const {return *geo;}

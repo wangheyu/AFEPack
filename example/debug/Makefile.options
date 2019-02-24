@@ -1,10 +1,7 @@
-MPICC=mpicxx
-CFLAGS=-g -O0 -D__SERIALIZATION__
-BOOST_LIBS=-lboost_serialization -L$(HOME)/lib
-LIBS=$(BOOST_LIBS) -lAFEPack -llac -lbase -ldl -pthread -L$(HOME)/src/AFEPack/library/lib 
-CC=g++
+include ../../Make.global_options
 
-MPILIBS=-lAFEPack_mpi $(LIBS)
+CXXFLAGS:=-DDEAL_II_WITH_MPI $(CXXFLAGS)
+LIBS:=-lAFEPack_mpi -lboost_serialization $(LIBS)
 
 TRILINOS_HOME=/usr/local/Trilinos
 TRILINOS_INC=-I$(TRILINOS_HOME)/include

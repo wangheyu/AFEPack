@@ -56,7 +56,7 @@ if test "x$enable_thread" != xno; then
   AC_MSG_RESULT(yes)
   THIS_FLAG="-D__SERIALIZATION__ -DMULTITHREAD -pthread -fPIC"
   CFLAGS="$CFLAGS $THIS_FLAG"
-  CXXFLAGS="$CXXFLAGS $THIS_FLAG"
+  CXXFLAGS="$CXXFLAGS $THIS_FLAG -std=c++11"
   CPPFLAGS="$CPPFLAGS $THIS_FLAG"
 else
   AC_MSG_RESULT(no)
@@ -162,7 +162,7 @@ fi
 dnl -----------------------
 
 
-THIS_FLAG="-ftemplate-depth-128 -I$AFEPACK_PATH/library/include"
+THIS_FLAG="-ftemplate-depth-256 -I$AFEPACK_PATH/library/include"
 CFLAGS="$CFLAGS $THIS_FLAG"
 CXXFLAGS="$CXXFLAGS $THIS_FLAG"
 CPPFLAGS="$CPPFLAGS $THIS_FLAG"

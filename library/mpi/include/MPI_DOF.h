@@ -12,6 +12,7 @@
 #define __MPI_DOF_h__
 
 #include "MPI_HGeometry.h"
+#include "MPI_SyncProp.h"
 
 AFEPACK_OPEN_NAMESPACE
 
@@ -147,7 +148,7 @@ namespace MPI {
     //@}
 
     /// 查询一个自由度是否在主几何体上
-    bool is_dof_on_mininal_geometry(u_int i) const;
+    bool is_dof_on_minimal_geometry(u_int i) const;
 
     /// 查询一个自由度的首秩
     int get_dof_minimal_rank(u_int i) const;

@@ -36,7 +36,7 @@ namespace boost {
      */
     template <class AR, int DOW> void
       serialize(AR& ar, 
-                Point<DOW>& pnt, 
+                AFEPack::Point<DOW>& pnt, 
                 const u_int version) {
       for (int i = 0;i < DOW;++ i) {
         ar & pnt[i];
@@ -80,7 +80,7 @@ namespace boost {
                 const u_int version) {
       ar & hg.buffer;
 
-      ar & boost::serialization::base_object<Point<DOW> >(hg);
+      ar & boost::serialization::base_object<AFEPack::Point<DOW> >(hg);
       ar & hg.index;
       ar & hg.bmark;
     }
