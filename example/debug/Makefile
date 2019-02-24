@@ -1,3 +1,4 @@
+include ../../Make.global_options
 include Makefile.options
 
 # ex17 ex19, ex20, ex31 ex32 ex33: 守恒律有限体积并行例子
