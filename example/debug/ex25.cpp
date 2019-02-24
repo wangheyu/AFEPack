@@ -92,7 +92,7 @@ int main(int argc, char * argv[])
   std::cout << "OK!" << std::endl;
 
   Epetra_MpiComm comm(forest.communicator());
-  Epetra_Map map(global_index.n_global_dof(), global_index.n_primary_dof(), 0, comm);
+  Epetra_Map map((int)global_index.n_global_dof(), global_index.n_primary_dof(), 0, comm);
   global_index.build_epetra_map(map);
 
   /// 构造 Epetra 的分布式稀疏矩阵模板
@@ -126,7 +126,7 @@ int main(int argc, char * argv[])
   for (;the_ele != end_ele;++ the_ele) {
     double vol = the_ele->templateElement().volume();
     const QuadratureInfo<DIM>& qi = the_ele->findQuadratureInfo(5);
-    std::vector<Point<DIM> > q_pnt = the_ele->local_to_global(qi.quadraturePoint());
+    std::vector<AFEPack::Point<DIM> > q_pnt = the_ele->local_to_global(qi.quadraturePoint());
     int n_q_pnt = qi.n_quadraturePoint();
     std::vector<double> jac = the_ele->local_to_global_jacobian(qi.quadraturePoint());
     std::vector<std::vector<double> > bas_val = the_ele->basis_function_value(q_pnt);
@@ -170,7 +170,7 @@ int main(int argc, char * argv[])
   for (u_int i = 0;i < fem_space.n_dof();++ i) {
     if (fem_space.dofBoundaryMark(i) > 0) {
       /// 如果不是在主几何体上就不做
-      if (! global_index.is_dof_on_primary_geometry(i)) continue;
+      if (! global_index.is_dof_on_minimal_geometry(i)) continue;
 
       n_bnd_dof += 1;
     }
@@ -184,7 +184,7 @@ int main(int argc, char * argv[])
   for (u_int i = 0, j = 0;i < fem_space.n_dof();++ i) {
     if (fem_space.dofBoundaryMark(i) > 0) { /// 边界上的自由度?
       /// 如果不是在主几何体上就不做
-      if (! global_index.is_dof_on_primary_geometry(i)) continue;
+      if (! global_index.is_dof_on_minimal_geometry(i)) continue;
 
       const int& idx = global_index(i); /// 行的全局标号
       bnd_idx[j] = idx; 
