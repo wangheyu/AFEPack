@@ -1,9 +1,16 @@
 # AFEPack
 （Adaptive Finite Element Package）
 
-按照作者李若教授的指示上传一个AFEPack的版本在Github。目前首先维持它在Ubuntu 18.04+deal.II-8.1.0平台上稳定运行。然后逐步将边界条件处理用iterator操作代替指针操作，使得8.1.0以后的deal.II版本可以继续支持。欢迎有能力的同学参与维护和修改。
+自适应有限元计算软件包，是北京大学李若教授开发和长期维护，面向数值计算
+科研人员的计算软件包。它以C++编写，要求使用者具有Linux平台下C++编程能
+力。目前我们在李老师指导下，将主要维护工作转移到Github这里。目前首先维
+持它在Ubuntu 18.04+deal.II-8.1.0平台上稳定运行。然后逐步将边界条件处理
+用iterator操作代替指针操作，使得8.1.0以后的deal.II版本可以继续支持。欢
+迎有能力的朋友参与维护和修改（想成为合作者直接联系我）。
 
-总结一下目前在Ubuntu 18.04上的安装方案， dealii采用8.1.0， 并行库依赖openmpi和trilinos. 首先建议将源改成aliyun. 请注意这里的安装方案基于这个源提供的AFEPack包，而不是李若老师的CVS-snapshot。二者的主要区别在安装配置文件，也就是configure.in中。接下去如果有我处理不了的bug，我也会忽悠李老师亲自来处理。
+总结一下目前在Ubuntu 18.04上的安装方案， dealii采用8.1.0， 并行库依赖
+openmpi和trilinos.。首先建议将源改成aliyun。如果有任何困难或bug，欢迎
+提出，或直接联系李老师和我。
 
 安装如下包：
 
@@ -26,7 +33,7 @@ sudo apt-get install libsuitesparse-dev
 sudo apt-get install automake
 
 做如下链接修改， 这里不确定这样做是否最好， 但至少可以继续下去。
-
+（或者定义到你自己指定的一个目录下）
 sudo ln -s /usr/lib/x86_64-linux-gnu/libscalapack-openmpi.so /usr/local/lib/libscalapack.so
 
 sudo ln -s /usr/lib/x86_64-linux-gnu/libptscotch-6.so /usr/lib/x86_64-linux-gnu/libptscotch.so
@@ -107,7 +114,7 @@ make
 
 sudo ldconfig
 
-2. 目前AFEPack中的Boundary部分是不能使用的，所以example下的Poisson例子已经不能运行。 我增加了一个withoutBilinearOperator的例子， 只要手工设置边界条件，暂时都不会有问题。 之前包的设置和安装的一主要目的是能使用Trilinos做并行，同时可以用它的AMGPreconditioner做二次元的AMG预处理（李老师的AMGSolver暂时只能处理一次元， 但效率很高）。见examples下增加了一个Poisson_withTrilinos的例子。
+2. 在examples中增加了一个withoutBilinearOperator的例子， 只要手工设置边界条件，暂时都不会有问题。 之前包的设置和安装的一主要目的是能使用Trilinos做并行，同时可以用它的AMGPreconditioner做二次元的AMG预处理（李老师的AMGSolver暂时只能处理一次元， 但效率很高）。见examples下增加了一个Poisson_withTrilinos的例子。
 
 3. 此方案未经严格测试， 大家小心使用， 有问题及时反馈给我，谢谢！
 
