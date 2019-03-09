@@ -1,0 +1,8 @@
+#! /bin/sh
+
+rm -r ./data/*
+./easymesh $*
+make clean
+make
+exec ./main $*
+
