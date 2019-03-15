@@ -1,0 +1,10 @@
+This example will solve a Possion equation on an easymesh generated data. 
+The obtained solution is saved in file "u.dx".
+
+Usage:
+	1. compile with make [-e debug=no];
+	2. generate the mesh with easymesh as:
+	     easymesh D
+	3. run with ./run;
+	4. view the obtained numerical solution with OpenDX;
+

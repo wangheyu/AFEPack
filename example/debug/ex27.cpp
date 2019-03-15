@@ -31,10 +31,10 @@ static char help[] = "Solving an elliptic equation.";
 
 int main(int argc, char * argv[])
 {
-  typedef MPI::HGeometryForest<DIM,DOW> forest_t;
-  typedef MPI::BirdView<forest_t> ir_mesh_t;
-  typedef FEMSpace<double,DIM,DOW> fe_space_t;  
-  typedef MPI::DOF::GlobalIndex<forest_t, fe_space_t> global_index_t;
+  typedef AFEPack::MPI::HGeometryForest<DIM,DOW> forest_t;
+  typedef AFEPack::MPI::BirdView<forest_t> ir_mesh_t;
+  typedef AFEPack::FEMSpace<double,DIM,DOW> fe_space_t;  
+  typedef AFEPack::MPI::DOF::GlobalIndex<forest_t, fe_space_t> global_index_t;
 
   PetscInitialize(&argc, &argv, (char *)NULL, help);
 
@@ -82,10 +82,10 @@ int main(int argc, char * argv[])
   std::cout << "Building the linear system ... " << std::flush;
   Mat A;
   Vec x, b;
-  MatCreateMPIAIJ(PETSC_COMM_WORLD, 
-                  global_index.n_primary_dof(), global_index.n_primary_dof(),
-                  PETSC_DECIDE, PETSC_DECIDE,
-                  0, PETSC_NULL, 0, PETSC_NULL, &A);
+  MatCreateAIJ(PETSC_COMM_WORLD, 
+	       global_index.n_primary_dof(), global_index.n_primary_dof(),
+	       PETSC_DECIDE, PETSC_DECIDE,
+	       0, PETSC_NULL, 0, PETSC_NULL, &A);
   VecCreateMPI(PETSC_COMM_WORLD, global_index.n_primary_dof(), PETSC_DECIDE, &b);
   fe_space_t::ElementIterator
     the_ele = fem_space.beginElement(),
@@ -175,9 +175,9 @@ int main(int argc, char * argv[])
   VecScatterCreate(rhs_bnd, PETSC_NULL, b, is_bnd, &bnd_scatter);
   VecScatterBegin(bnd_scatter, rhs_bnd, b, INSERT_VALUES, SCATTER_FORWARD);
   VecScatterEnd(bnd_scatter, rhs_bnd, b, INSERT_VALUES, SCATTER_FORWARD);
-  VecDestroy(rhs_bnd);
-  ISDestroy(is_bnd);
-  VecScatterDestroy(bnd_scatter);
+  VecDestroy(&rhs_bnd);
+  ISDestroy(&is_bnd);
+  VecScatterDestroy(&bnd_scatter);
   std::cout << "OK!" << std::endl;
 
   VecDuplicate(b, &x);
@@ -205,28 +205,28 @@ int main(int argc, char * argv[])
     printf("\n");
   }
 
-  MatDestroy(A);
-  VecDestroy(b);
-  KSPDestroy(solver);
+  MatDestroy(&A);
+  VecDestroy(&b);
+  KSPDestroy(&solver);
 
   FEMFunction<double,DIM> u_h(fem_space);
   Vec X;
-  VecCreateSeqWithArray(PETSC_COMM_SELF, global_index.n_local_dof(), &u_h(0), &X);
+  VecCreateSeqWithArray(PETSC_COMM_SELF, 1, global_index.n_local_dof(), &u_h(0), &X);
 
   std::vector<int> primary_idx(global_index.n_primary_dof());
   global_index.build_primary_index(&primary_idx[0]);
   IS is;
-  ISCreateGeneralWithArray(PETSC_COMM_WORLD, global_index.n_local_dof(),
-                           &global_index(0), &is);
+  ISCreateGeneral(PETSC_COMM_WORLD, global_index.n_local_dof(),
+		  &global_index(0), PETSC_USE_POINTER, &is);
   VecScatter scatter;
   VecScatterCreate(x, is, X, PETSC_NULL, &scatter);
   VecScatterBegin(scatter, x, X, INSERT_VALUES, SCATTER_FORWARD);
   VecScatterEnd(scatter, x, X, INSERT_VALUES, SCATTER_FORWARD);
 
-  VecDestroy(x);
-  VecDestroy(X);
-  VecScatterDestroy(scatter);
-  ISDestroy(is);
+  VecDestroy(&x);
+  VecDestroy(&X);
+  VecScatterDestroy(&scatter);
+  ISDestroy(&is);
 
   char filename[1024];
   sprintf(filename, "u_h%d.dx", forest.rank());

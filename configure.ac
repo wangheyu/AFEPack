@@ -56,7 +56,7 @@ if test "x$enable_thread" != xno; then
   AC_MSG_RESULT(yes)
   THIS_FLAG="-D__SERIALIZATION__ -DMULTITHREAD -pthread -fPIC"
   CFLAGS="$CFLAGS $THIS_FLAG"
-  CXXFLAGS="$CXXFLAGS $THIS_FLAG"
+  CXXFLAGS="$CXXFLAGS $THIS_FLAG -std=c++11"
   CPPFLAGS="$CPPFLAGS $THIS_FLAG"
 else
   AC_MSG_RESULT(no)
@@ -89,12 +89,13 @@ if test "x$with_mpi" != xcheck; then
    AC_ERROR([MPI not found])
   fi
 else
-  AC_MSG_RESULT(not enabled)
+  AC_MSG_RESULT(no)
   MPICC=""
   MPICXX=""
 fi
 AC_SUBST(MPICC)
 AC_SUBST(MPICXX)
+AC_SUBST(with_mpi)
 dnl ----------------------
 
 dnl boost headers
@@ -114,6 +115,7 @@ else
   AC_MSG_RESULT(no)
   AC_ERROR([boost headers not found])
 fi
+AC_SUBST(with_boost)
 dnl ----------------------
 
 dnl Header for deal.II
@@ -124,8 +126,7 @@ if test "x$with_dealii" != xcheck; then
   CXXFLAGS="$THIS_FLAG $CXXFLAGS"
   CPPFLAGS="$THIS_FLAG $CPPFLAGS"
 fi
-AC_TRY_CPP([#define DEBUG
-  #include <base/exceptions.h>],
+AC_TRY_CPP([#include <base/config.h>],
   deal_II_header=yes, deal_II_header=no)
 AC_MSG_CHECKING([for deal.II header files])
 if test "x$deal_II_header" != xno; then
@@ -140,8 +141,7 @@ AC_MSG_CHECKING([for deal.II library (-ldeal_II)])
 LIBS="-L$with_dealii/lib $LIBS"
 LIBS_backup=$LIBS
 LIBS="-ldeal_II $LIBS_backup"
-AC_TRY_LINK([#include <base/exceptions.h>
-  #include <lac/vector.h>],[],
+AC_TRY_LINK([#include <base/config.h>], [],
   deal_II_library=yes, deal_II_library=no)
 if test "x$deal_II_library" != xno; then
   AC_MSG_RESULT(yes)
@@ -149,8 +149,7 @@ else
   AC_MSG_RESULT(not found)
   AC_MSG_CHECKING([for deal.II library (-llac -lbase -ltbb)])
   LIBS="-llac -lbase -ltbb $LIBS_backup"
-  AC_TRY_LINK([#include <base/exceptions.h>
-  #include <lac/vector.h>],[],
+  AC_TRY_LINK([#include <base/config.h>], [],
   deal_II_library=yes, deal_II_library=no)
   if test "x$deal_II_library" != xno; then
     AC_MSG_RESULT(yes)
@@ -161,8 +160,7 @@ else
 fi
 dnl -----------------------
 
-
-THIS_FLAG="-ftemplate-depth-128 -I$AFEPACK_PATH/library/include"
+THIS_FLAG="-ftemplate-depth-256 -I$AFEPACK_PATH/library/include"
 CFLAGS="$CFLAGS $THIS_FLAG"
 CXXFLAGS="$CXXFLAGS $THIS_FLAG"
 CPPFLAGS="$CPPFLAGS $THIS_FLAG"

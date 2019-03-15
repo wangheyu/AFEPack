@@ -35,16 +35,16 @@ double _u_b_(const double * p) {
 
 int main(int argc, char * argv[])
 {
-  typedef MPI::HGeometryForest<DIM,DOW> forest_t;
-  typedef MPI::BirdView<forest_t> ir_mesh_t;
+  typedef AFEPack::MPI::HGeometryForest<DIM,DOW> forest_t;
+  typedef AFEPack::MPI::BirdView<forest_t> ir_mesh_t;
   typedef FEMSpace<double,DIM,DOW> fe_space_t;  
-  typedef MPI::DOF::GlobalIndex<forest_t, fe_space_t> global_index_t;
+  typedef AFEPack::MPI::DOF::GlobalIndex<forest_t, fe_space_t> global_index_t;
 
   MPI_Init(&argc, &argv);
 
   forest_t forest(MPI_COMM_WORLD);
   ir_mesh_t ir_mesh;
-  MPI::load_mesh(argv[1], forest, ir_mesh); /// 从一个目录中读入网格数据
+  AFEPack::MPI::load_mesh(argv[1], forest, ir_mesh); /// 从一个目录中读入网格数据
 
   int round = 0;
   if (argc >= 3) round = atoi(argv[2]);
@@ -104,7 +104,7 @@ int main(int argc, char * argv[])
   for (;the_ele != end_ele;++ the_ele) {
     double vol = the_ele->templateElement().volume();
     const QuadratureInfo<DIM>& qi = the_ele->findQuadratureInfo(5);
-    std::vector<Point<DIM> > q_pnt = the_ele->local_to_global(qi.quadraturePoint());
+    std::vector<AFEPack::Point<DIM> > q_pnt = the_ele->local_to_global(qi.quadraturePoint());
     int n_q_pnt = qi.n_quadraturePoint();
     std::vector<double> jac = the_ele->local_to_global_jacobian(qi.quadraturePoint());
     std::vector<std::vector<double> > bas_val = the_ele->basis_function_value(q_pnt);

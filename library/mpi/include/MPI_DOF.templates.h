@@ -30,7 +30,7 @@ THIS::get_dof_minimal_rank(u_int i) const {
 }
 
 TEMPLATE bool
-THIS::is_dof_on_mininal_geometry(u_int i) const {
+THIS::is_dof_on_minimal_geometry(u_int i) const {
   return _idopg[i];
 }
 
@@ -138,14 +138,14 @@ THIS::set_dof_minimal_rank() {
   typedef RegularMesh<fe_space_t::dim,fe_space_t::dow> mesh_t;
   const mesh_t& mesh = dynamic_cast<const mesh_t&>(_fe_sp->mesh());
   
-  std::vector<bool> has_dim_dof(4, false);
+  int rank_has_dim_dof[4] = {0, 0, 0, 0};
   u_int n_dof = _fe_sp->n_dof();
   for (u_int i = 0;i < n_dof;++ i) {
     const DOFIndex& dof_idx = _fe_sp->dofIndex(i);
     const int& dim = dof_idx.dimension;
     const int& gid = dof_idx.geometry_index;
     if (_forest->is_geometry_shared(mesh, dim, gid)) {
-      has_dim_dof[dim] = true;
+      rank_has_dim_dof[dim] = 1;
 
       int * p_min_rank = mesh.template get_property<int>(dim, gid,
 							 _pid_min_rank);
@@ -158,9 +158,11 @@ THIS::set_dof_minimal_rank() {
   }
 
   /// 交换最小秩
+  int has_dim_dof[4] = {0, 0, 0, 0};
+  MPI_Allreduce(rank_has_dim_dof, has_dim_dof, 4, MPI_INT, MPI_MAX, _forest->communicator());
   PropSyncer<forest_t,int> syncer(*_forest, _pid_min_rank);
   for (u_int dim = 0;dim <= 3;++ dim) {
-    if (has_dim_dof[dim]) {
+    if (has_dim_dof[dim] == 1) {
       syncer.template sync(dim, __details::min_rank());
     }
   }
@@ -222,7 +224,7 @@ THIS::build_primary_index(int * idx_ptr) const {
     the_idx = base_t::begin(),
     end_idx = base_t::end();
   for (u_int i = 0;the_idx != end_idx;++ the_idx) {
-    if (is_dof_on_mininal_geometry(i ++)) {
+    if (is_dof_on_minimal_geometry(i ++)) {
       *idx_ptr = *the_idx;
       ++ idx_ptr;
     }
@@ -237,7 +239,7 @@ THIS::build_epetra_map(MAP& map) const {
     the_idx = base_t::begin(),
     end_idx = base_t::end();
   for (u_int i = 0;the_idx != end_idx;++ the_idx) {
-    if (is_dof_on_mininal_geometry(i ++)) {
+    if (is_dof_on_minimal_geometry(i ++)) {
       *idx_ptr = *the_idx;
       ++ idx_ptr;
     }
@@ -252,7 +254,7 @@ THIS::build_epetra_map(MAP& map, INVMAP& inv_map) const {
     the_idx = base_t::begin(),
     end_idx = base_t::end();
   for (u_int i = 0, j = 0;the_idx != end_idx;++ the_idx) {
-    if (is_dof_on_mininal_geometry(i)) {
+    if (is_dof_on_minimal_geometry(i)) {
       *idx_ptr = *the_idx;
       inv_map[j ++] = i ++;
       ++ idx_ptr;
@@ -322,7 +324,7 @@ template <class INVEC, class OUTVEC>
   int n_ldof = n_local_dof();
   std::vector<std::list<std::pair<int,int> > > rdof(n_rank);
   for (int i = 0;i < n_ldof;++ i) {
-    if (is_dof_on_mininal_geometry(i)) continue;
+    if (is_dof_on_minimal_geometry(i)) continue;
     int remote_rank = get_dof_minimal_rank(i);
     rdof[remote_rank].push_back(std::pair<int,int>(i, (*this)(i)));
   }
@@ -401,7 +403,7 @@ template <class INVEC, class OUTVEC>
    * 射表。
    */
   for (u_int i = 0, j = 0;i < n_ldof;++ i) {
-    if (is_dof_on_mininal_geometry(i)) {
+    if (is_dof_on_minimal_geometry(i)) {
       HYPRE_IJVectorGetValues(iv, 1, &(*this)(i), &ov(i));
     }
   }

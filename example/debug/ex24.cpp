@@ -91,7 +91,7 @@ int main(int argc, char * argv[])
   std::cout << "OK!" << std::endl;
 
   Epetra_MpiComm comm(forest.communicator());
-  Epetra_Map map(global_index.n_global_dof(), global_index.n_primary_dof(), 0, comm);
+  Epetra_Map map((int)global_index.n_global_dof(), global_index.n_primary_dof(), 0, comm);
   global_index.build_epetra_map(map);
   
   /// 构造 Epetra 的分布式稀疏矩阵模板
@@ -125,7 +125,7 @@ int main(int argc, char * argv[])
   for (;the_ele != end_ele;++ the_ele) {
     double vol = the_ele->templateElement().volume();
     const QuadratureInfo<DIM>& qi = the_ele->findQuadratureInfo(5);
-    std::vector<Point<DIM> > q_pnt = the_ele->local_to_global(qi.quadraturePoint());
+    std::vector<AFEPack::Point<DIM> > q_pnt = the_ele->local_to_global(qi.quadraturePoint());
     int n_q_pnt = qi.n_quadraturePoint();
     std::vector<double> jac = the_ele->local_to_global_jacobian(qi.quadraturePoint());
     std::vector<std::vector<double> > bas_val = the_ele->basis_function_value(q_pnt);
