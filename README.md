@@ -3,8 +3,64 @@
 
 自适应有限元计算软件包，是北京大学李若教授开发和长期维护，面向数值计算科研人员的计算软件包。它以C++编写，要求使用者具有Linux平台下C++编程能力。目前我们在李老师指导下，将主要维护工作转移到Github这里。目前首先维持它在Ubuntu 18.04+deal.II-8.1.0平台上稳定运行。然后逐步将边界条件处理用iterator操作代替指针操作，使得8.1.0以后的deal.II版本可以继续支持。欢迎有能力的朋友参与维护和修改（想成为合作者直接联系我）。
 
-总结一下目前在Ubuntu 18.04上的安装方案， dealii采用8.1.0， 并行库依赖openmpi和trilinos.。首先建议将源改成aliyun。如果有任何困难或bug，欢迎
-提出，或直接联系李老师和我。
+## 缺省安装
+李老师修改了缺省安装策略以方便初学者。如果你用的是Ubuntu 16.04，可以直接采用源中的dealii-8.1.0，跳过下面编译dealii的部分。如果是Ubuntu 18.04及以上，那么你需要手工编译dealii-8.1.0，缺省编译也很简单：
+
+安装如下依赖包：
+
+sudo apt-get install cmake
+
+sudo apt-get install g++
+
+sudo apt-get install libboost-all-dev
+
+sudo apt-get install libtbb-dev
+
+sudo apt-get install automake
+
+对deal.II-8.1.0的代码做如下修改：
+
+deal.II/include/deal.II/lac/sparsity_pattern.h, 在最开始增加一行：
+
+`#include <algorithm>`
+
+deal.II/source/base/parameter_handler.cc, line 1278, 如下修改：
+
+return (p.get_optional<std::string>("value")); -> return bool(p.get_optional<std::string>("value"));
+
+然后在deal.II的目录：
+
+mkdir build
+
+cd build
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/dealii-8.1.0 ..
+
+可以自己选择安装目的地。
+
+make
+
+sudo make install
+
+然后可以编译AFEPack了， 将AFEPack在自己目录解开， sudo mv到安装目录（以下为/usr/local/AFEPack）：
+
+cd /usr/local/AFEPack
+
+aclocal
+
+autoconf
+
+automake
+
+./configure --with-dealii="/usr/local/dealii-8.1.0"
+
+make
+
+结束。
+
+## 带Trilinos接口的AFEPack
+
+Trilinos是一个并行计算包，它里面包含了大量的线性求解器和预处理器。如果在dealii中链接了trilinos，那么我们就可以在AFEPack中使用这些求解器，从而增加AFEPack的计算能力。这个操作稍微有点复杂，不建议初学者尝试。
 
 安装如下包：
 
@@ -23,6 +79,8 @@ sudo apt-get install libtbb-dev
 sudo apt-get install trilinos-all-dev
 
 sudo apt-get install libsuitesparse-dev
+
+sudo apt-get install libarpack2-dev
 
 sudo apt-get install automake
 
@@ -54,7 +112,7 @@ mkdir build
 
 cd build
 
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local/dealii-8.1.0 -DCMAKE_C_COMPILER="mpicc" -DCMAKE_CXX_COMPILER="mpicxx" -DCMAKE_Fortran_COMPILER="mpif90" -DDEAL_II_WITH_PETSC=OFF ..
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/dealii-8.1.0 -DCMAKE_C_COMPILER="mpicc" -DCMAKE_CXX_COMPILER="mpicxx" -DCMAKE_Fortran_COMPILER="mpif90" -DDEAL_II_WITH_PETSC=OFF -DHDF5=/usr/lib/x86_64-linux-gnu/hdf5/openmpi ..
 
 这里屏蔽了PETSC，因为最新的PETSC和之前变化太大，除非你自己安装一个很低版本的。 反正源里的这个不行。 同理， 如果你有P4EST， 也屏蔽掉。 继续：
 
@@ -76,41 +134,15 @@ autoconf
 
 automake
 
-./configure
-
-如果configure出问题， 自己再修改configure.in文件， 主要要检查一下deal.II库和头文件的位置， 以及c++的std标准。
-
-make
-
-中间会出错， 增加链接：
-
-sudo ln -s /usr/local/AFEPack/library/include/ /usr/local/include/AFEPack
-
-sudo ln -s /usr/local/AFEPack/library/lib/*.so /usr/local/lib/
-
-继续：
+CC="/usr/bin/mpicc" CXX="/usr/bin/mpic++" CFLAGS="-I/usr/include/trilinos" CPPFLAGS="-I/usr/include/trilinos" CXXFLAGS="-I/usr/include/trilinos" ./configure --with-mpi=yes --with-dealii="/usr/local/dealii-8.1.0"
 
 make
 
 结束。
 
-注意： 
+在examples中增加了一个withoutBilinearOperator的例子， 只要手工设置边界条件，暂时都不会有问题。 之前包的设置和安装的一主要目的是能使用Trilinos做并行，同时可以用它的AMGPreconditioner做二次元的AMG预处理（李老师的AMGSolver暂时只能处理一次元， 但效率很高）。见examples下增加了一个Poisson_withTrilinos的例子。
 
-1. 建议在/etc/ld.so.conf.d下增加一个.conf文件， 里面内容为：
-
-/usr/local/lib
-
-/usr/local/AFEPack/library
-
-/usr/local/dealii-8.1.0/lib
-
-或相应的库的位置。 然后
-
-sudo ldconfig
-
-2. 在examples中增加了一个withoutBilinearOperator的例子， 只要手工设置边界条件，暂时都不会有问题。 之前包的设置和安装的一主要目的是能使用Trilinos做并行，同时可以用它的AMGPreconditioner做二次元的AMG预处理（李老师的AMGSolver暂时只能处理一次元， 但效率很高）。见examples下增加了一个Poisson_withTrilinos的例子。
-
-3. 此方案未经严格测试， 大家小心使用， 有问题及时反馈给我，谢谢！
+此方案未经严格测试， 大家小心使用， 有问题及时反馈给我，谢谢！
 
 此外， 在
 
