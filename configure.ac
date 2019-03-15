@@ -45,7 +45,7 @@ CPPFLAGS="$THIS_FLAG $CPPFLAGS"
 
 enable_shared=yes
 AC_SUBST(enable_shared)
-LIBS="$EXTRA_LIBS $LIBS -shared"
+LIBS="$EXTRA_LIBS $LIBS"
 
 dnl multi-thread option
 AC_ARG_ENABLE(thread,
