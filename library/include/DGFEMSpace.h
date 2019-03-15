@@ -30,15 +30,16 @@ template <int TDIM, int DIM=TDIM+1>
   TemplateGeometry<TDIM> * geo;
   CoordTransform<TDIM,DIM> * ct;
   public:
-  TemplateDGElement(TemplateGeometry<TDIM>& _geo = *((TemplateGeometry<TDIM> *)NULL),
-                    CoordTransform<TDIM,DIM>& _ct = *((CoordTransform<TDIM,DIM> *)NULL)) :
+  TemplateDGElement() {}
+  TemplateDGElement(TemplateGeometry<TDIM>& _geo,
+                    CoordTransform<TDIM,DIM>& _ct) :
   geo(&_geo), ct(&_ct) {};
   TemplateDGElement(const TemplateDGElement<TDIM,DIM>& other) :
   geo(other.geo), ct(other.ct) {};
   ~TemplateDGElement() {};
   public:
-  void reinit(TemplateGeometry<TDIM>& _geo = *((TemplateGeometry<TDIM> *)NULL),
-              CoordTransform<TDIM,DIM>& _ct = *((CoordTransform<TDIM,DIM> *)NULL)) {geo = &_geo; ct = &_ct;};
+  void reinit(TemplateGeometry<TDIM>& _geo,
+              CoordTransform<TDIM,DIM>& _ct) {geo = &_geo; ct = &_ct;};
   const TemplateGeometry<TDIM>& geometry() const {return *geo;};
   TemplateGeometry<TDIM>& geometry() {return *geo;};
   const CoordTransform<TDIM,DIM>& coordTransform() const {return *ct;};
@@ -72,7 +73,8 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, int TDIM1=DIM-1>
   int bnd_idx[2]; /**< the index of this face as the boundary of the neighbour. */
 
   public:
-  DGElement(fe_space_t& = *((fe_space_t *)NULL)); /**< Default contructor. */
+  DGElement() {};  /**< Default contructor. */
+  DGElement(fe_space_t&);
   DGElement(const dg_element_t&);  /**< Copy constructor. */
   ~DGElement(); /**< Destructor. */
   public:
@@ -161,9 +163,10 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, int TDIM1=DIM-1>
   std::vector<dg_template_t> * tmp_dgele;
   std::vector<dg_element_t> dgele;
   public:
-  explicit DGFEMSpace(Mesh<DIM,DOW>& = *((Mesh<DIM,DOW> *)NULL),
-                      std::vector<template_t>& = *((std::vector<template_t> *)NULL),
-                      std::vector<dg_template_t>& = *((std::vector<dg_template_t> *)NULL));
+  DGFEMSpace() {}
+  DGFEMSpace(Mesh<DIM,DOW>&,
+	     std::vector<template_t>&,
+	     std::vector<dg_template_t>&);
   DGFEMSpace(const fe_space_t&);
   virtual ~DGFEMSpace();
   public:

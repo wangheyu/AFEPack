@@ -16,21 +16,21 @@ double initial_value(const double * x, const double& t)
   return sin(2*PI*(x[0] - t))*cos(2*PI*(x[1] - t));
 }
 
-std::vector<double> flux(const Point<DIM>& x, const double& u)
+std::vector<double> flux(const AFEPack::Point<DIM>& x, const double& u)
 {
   std::vector<double> val(DIM);
   val[0] = u*u; val[1] = exp(u);
   return val;
 }
 
-double velocity(const Point<DIM>& x, const double& u)
+double velocity(const AFEPack::Point<DIM>& x, const double& u)
 {
   std::vector<double> val(DIM);
   val[0] = 2*u; val[1] = exp(u);
   return sqrt(val[0]*val[0] + val[1]*val[1]);
 }
 
-void boundary_value(const Point<DIM>& x,
+void boundary_value(const AFEPack::Point<DIM>& x,
 		    double& u,
                     const std::vector<double>& n,
 		    const double& t,

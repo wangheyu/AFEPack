@@ -28,10 +28,10 @@ template <int DIM>
 struct GeometryCache 
 {
   int n_q_pnt;
-  Point<DIM> bc;
+  AFEPack::Point<DIM> bc;
   double vol;
   std::vector<double> Jxw;
-  std::vector<Point<DIM> > q_pnt;
+  std::vector<AFEPack::Point<DIM> > q_pnt;
 };
 
 template <typename value_type, int DIM>
@@ -55,7 +55,7 @@ template <typename value_type, int DIM>
   double& vol = dgele_cache.vol;                                        \
   std::vector<double>& Jxw = dgele_cache.Jxw;                           \
   int& n_q_pnt = dgele_cache.n_q_pnt;                                   \
-  std::vector<Point<DIM> >& q_pnt = dgele_cache.q_pnt;                  \
+  std::vector<AFEPack::Point<DIM> >& q_pnt = dgele_cache.q_pnt;                  \
   std::vector<std::vector<double> >& bas_val0 = dgele_cache.bas_val[0]; \
   std::vector<std::vector<double> >& bas_val1 = dgele_cache.bas_val[1]; \
   std::vector<std::vector<double> >& un = dgele_cache.un;               \
@@ -66,7 +66,7 @@ template <typename value_type, int DIM>
   double& vol = ele_cache.vol;                                         \
   std::vector<double>& Jxw = ele_cache.Jxw;                            \
   int& n_q_pnt = ele_cache.n_q_pnt;                                    \
-  std::vector<Point<DIM> >& q_pnt = ele_cache.q_pnt;                   \
+  std::vector<AFEPack::Point<DIM> >& q_pnt = ele_cache.q_pnt;                   \
   std::vector<std::vector<double> >& bas_val = ele_cache.bas_val;    \
   std::vector<double>& u_h_val = ele_cache.u_h_val;
 
@@ -102,9 +102,9 @@ class SCL
   double t;
   double end_t;
   double (*_u_0_)(const double *, const double&);
-  std::vector<double> (*_f_)(const Point<DIM>&, const double&);
-  double (*_v_)(const Point<DIM>&, const double&);
-  void (*_u_b_)(const Point<DIM>&, double&, const std::vector<double>&, const double&, const int&);
+  std::vector<double> (*_f_)(const AFEPack::Point<DIM>&, const double&);
+  double (*_v_)(const AFEPack::Point<DIM>&, const double&);
+  void (*_u_b_)(const AFEPack::Point<DIM>&, double&, const std::vector<double>&, const double&, const int&);
 
 
  private:
@@ -159,15 +159,15 @@ class SCL
 
   void buildMeshInfo(int, int);
   void get_rhs(fe_func_t&, vector_t&);
-  void bound_value(const Point<DIM>&, 
+  void bound_value(const AFEPack::Point<DIM>&, 
                    double&, 
                    const std::vector<double>&, 
                    const dg_element_t&); 
-  void bound_value(const std::vector<Point<DIM> >&, 
+  void bound_value(const std::vector<AFEPack::Point<DIM> >&, 
                    std::vector<double>&, 
                    const std::vector<std::vector<double> >&, 
                    const dg_element_t&);
-  double flux(const Point<DIM>&, double, double,
+  double flux(const AFEPack::Point<DIM>&, double, double,
               const std::vector<double>& n) const;
 };
 

@@ -260,7 +260,7 @@ void SCL::time_step_length()
   for (;the_ele != end_ele;++ the_ele) {
     double h = sqrt(2*element_cache[the_ele->index()].vol);
     const std::vector<int>& ele_dof = the_ele->dof();
-    double v = (*_v_)(Point<DIM>(), (*u_h)(ele_dof[0]));
+    double v = (*_v_)(AFEPack::Point<DIM>(), (*u_h)(ele_dof[0]));
     rank_dt = std::min(rank_dt, h/v);
   }
   MPI_Allreduce(&rank_dt, &dt, 1, MPI_DOUBLE, 
@@ -337,7 +337,7 @@ void SCL::update_edge_cache(fe_func_t& v_h)
   }
 }
 
-double SCL::flux(const Point<DIM>& p,
+double SCL::flux(const AFEPack::Point<DIM>& p,
                  double u_l, double u_r,
                  const std::vector<double>& n) const 
 {
@@ -389,7 +389,7 @@ void SCL::get_rhs(fe_func_t& v_h, vector_t& rhs)
   }
 }
 
-void SCL::bound_value(const Point<DIM>& q_point,
+void SCL::bound_value(const AFEPack::Point<DIM>& q_point,
                       double& v_h, 
                       const std::vector<double>& n,
                       const dg_element_t& dgele)
@@ -397,7 +397,7 @@ void SCL::bound_value(const Point<DIM>& q_point,
   (*_u_b_)(q_point, v_h, n, t, dgele.boundaryMark());
 }
 
-void SCL::bound_value(const std::vector<Point<DIM> >& q_point, 
+void SCL::bound_value(const std::vector<AFEPack::Point<DIM> >& q_point, 
                       std::vector<double>& v_h, 
                       const std::vector<std::vector<double> >& n,
                       const dg_element_t& dgele)
