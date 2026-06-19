@@ -1,0 +1,15 @@
+CPPFLAGS = -I$(HEADER_PATH)
+
+LDFLAGS = -L$(LIBRARY_PATH)
+
+LIBS = -lAFEPack
+
+CXXFLAGS = -O2 -g -fopenmp
+
+CXX = mpicxx
+
+main : main.o
+	$(CXX) -omain main.o $(LDFLAGS) $(LIBS) $(CXXFLAGS)
+
+clean:
+	rm -f main.o *~ D.dx D.[nse]

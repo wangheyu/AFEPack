@@ -1,0 +1,1626 @@
+\input texinfo    @c -*- texinfo -*-
+@c %**start of header
+@setfilename AFEPack.info
+@settitle The AFEPack Handbook
+@documentencoding UTF-8
+@documentlanguage en
+@c %**end of header
+
+@finalout
+@titlepage
+@title The AFEPack Handbook
+@author Robert Lie and Steve Liu
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top The AFEPack Handbook
+@end ifnottex
+
+@menu
+* Introduction::
+* Installation::
+* Usage::
+* Understanding the Library::
+* Copyright::
+
+@detailmenu
+--- The Detailed Node Listing ---
+
+Introduction
+
+* Why AFEPack?::
+* A first glance::
+
+Installation
+
+* How to obtain AFEPack::
+* Requirements::
+* Compilation and installation::
+
+Usage
+
+* Step by step tutorial::
+* Data File Format::
+* Advanced Techniques::
+* Hacking Source Code::
+
+Step by step tutorial
+
+* Mesh Data::
+* Construct a template element::
+* Construct a Finite Element Space::
+* Construct a Stiff Matrix::
+* Solve a Laplacian Equation::
+* Mesh Adaptation::
+* Multi-Mesh Operation::
+
+Understanding the Library
+
+* Finite Element Level::
+* Mesh Adaptation Level::
+* Application Level::
+
+Finite Element Level
+
+* Geometry Information: Geometry Information (1). 
+* Coordinate Transformation::
+* Degree of Freedom Distribution::
+* Basis Function::
+
+@end detailmenu
+@end menu
+
+@node Introduction
+@chapter Introduction
+
+@menu
+* Why AFEPack?::
+* A first glance::
+@end menu
+
+@node Why AFEPack?
+@section Why AFEPack?
+
+There are already a lot of finite element libraries provided until
+now, then why we develop AFEPack and who will use it?
+
+@itemize
+@item
+As can be seen, a very considerable part of existed finite element
+libraries are designed for practical application that they are very
+efficient but not ultimate flexible, I mean there are only kinds of
+very matured element types and common used finite element spaces. Of
+course, this can be enough for those practical user who want to
+write a program to solve a practical problem with matured
+scheme. But for those researcher in finite element scheme
+designment, such kind of library is not suitable for their work
+because they want to try those element types that have never been
+studied or they want to build a very strange finite element space to
+check its numerical characters. Now AFEPack comes to help you! You
+can build very flexible finite element spaces on any type of
+triangulation if you can provide the geometry information of the
+elements and the basis functions on them.
+@item
+To write a program to manage adaptive mesh is very time comsuming
+but fortunately, now there are some libraries as Albert or Deal.II
+can help you to do that in a very easy way. AFEPack is such a
+library that can handle adaptive mesh, too. And furthermore, AFEPack
+can build finite element spaces on multimesh, saying if you have
+several different adaptive meshes, AFEPack can build finite element
+spaces on those different meshes respectively and build the
+relationship between those finite element spaces as constructing the
+matrix of a bilinear operator. As the authors' knowledge, AFEPack is
+the only library until now that have such feather. If your problem
+have more than one variables, and the regularity of those variables
+are different, or even the irregular areas of those variables are at
+different locations, AFEPack will be your choice!
+@end itemize
+
+Then will you be the user of AFEPack?
+
+@node A first glance
+@section A first glance
+
+The AFEPack (Adaptive Finite Element PACKage) is a class library
+provided to develop finite element and adaptive finite element
+application. The package is divided into three levels:
+
+@itemize
+@item
+Finite Element Module: the base part to construct a finite element
+space, it help the user construct finite element space by only
+providing the template element and appointing template for every
+element in the mesh, such a mechanism is mainly for flexibility - to
+construct finite element space on elments with ANY geometry and ANY
+basis functions;
+
+@item
+Mesh Adaptation Module: mesh adpatation is based a so called
+hierarchy geometry tree, only on all those meshes constructed from
+the same hierarchy geometry tree we can build the inter-mesh
+relationship that the bilinear operator on two different finite
+element spaces on two different mesh can be implemented;
+
+@item
+Application Module: for developping;
+@end itemize
+
+Every level is based on the prior ones. The library is developed on
+the complete abstraction of the idea of finite element method. To
+understand the structure of the library, we should talk more about
+mathematics than programming. The main object of this package is to
+provide convenient tools to develop practical finite element
+application in very short time. The package now can provide the
+following feathers:
+
+@itemize
+@item
+To build a complex finite element space on an arbitrary mesh with
+given element templates:
+@itemize
+@item
+the package is element geometry independent, your element can be
+triangle, rectangle or any other geometry;
+@item
+the different geometries can be in the same finite element space;
+@item
+the element geometry can be in any dimension, including dimension
+1, 2, 3 and any;
+@item
+the basis functions on different elements of a finite element space
+are arbitrary;
+@item
+the administration of degree of freedom are completely automatic;
+@item
+boundary condition administration(only Dirichlet boundary until now);
+@end itemize
+
+@item
+To build the relationship of two different finite element spaces on
+the same mesh;
+@itemize
+@item
+to construct the matrix of a bilinear operator on the finite
+element spaces;
+@item
+to project a finite element function from one finite element space
+to another;
+@item
+to discritize a finite element function in one finite element space
+in another;
+@end itemize
+@item
+To build different adaptive mesh on the same geometry hierchary tree;
+@itemize
+@item
+to obtain adaptive mesh on the geometry hierchary tree;
+@item
+to adapt a mesh itself according an indicator;
+@item
+to adapt a mesh to another mesh;
+@end itemize
+@item
+To build the relationship of two different finite element spaces on
+two different meshes from the same geometry hierchary tree;
+@end itemize
+
+With AFEPack, you can code dimension independent and code on abstract
+finite element spaces, that means: you can save many time on coding
+because most of the codes are reusable, and you can devoted into
+problem solving without caring the detailed implementation of the
+finite element space.
+
+@node Installation
+@chapter Installation
+
+@menu
+* How to obtain AFEPack::
+* Requirements::
+* Compilation and installation::
+@end menu
+
+@node How to obtain AFEPack
+@section How to obtain AFEPack
+
+The package can be obtained from the homepage of the software
+@uref{http://www.ukc.ac.uk/cbs/staff/homepage/wbl/data/AFELAB-AFEPACK.htm}. The
+users in P.R.China perhaps feel more convenient to download it from
+@uref{http://circus.math.pku.edu.cn/index.html/source_code/AFEPack.tar.gz}.
+
+@node Requirements
+@section Requirements
+
+@itemize
+@item
+The standard template library is needed at first.
+@item
+The package is based on the linear algebric library of the deal.II
+library. So you should have the head file and library of the base
+part and lac part of deal.II@.
+@item
+The package adopt dynamic library operation, so you may have the C
+library development package installed, such as the glibc-devel
+package on Linux system.
+@end itemize
+
+Now AFEPack can't work on HP-UX because the uncompatibility in shared
+library loading from HP-UX to other systems. Note: in fact the package
+before version 1.5 is only tested on Linux system.
+
+@node Compilation and installation
+@section Compilation and installation
+
+In order to compile and install AFEPack on your system, you need
+@itemize
+@item
+Download the AFEPack tar package file;
+@item
+Uncompress the package in certain directory you like, saying
+"/usr/local/AFEPack", as
+@end itemize
+
+@example
+% cd /usr/local
+% gzip -d AFEPack-1.2.tar.gz
+% tar xvf AFEPack-1.2.tar
+% cd AFEPack
+@end example
+
+@itemize
+@item
+Compile the library as
+@end itemize
+
+@example
+% ./configure
+% make
+@end example
+
+
+@itemize
+@item
+Build symbolic links for the library file and the head file to where
+you want to keep them as
+@end itemize
+
+@example
+% ln -s /usr/local/AFEPack/library/include /usr/local/include/AFEPack
+% ln -s /usr/local/AFEPack/library/lib/lib* /usr/local/lib
+@end example
+
+
+@itemize
+@item
+Set environment variable. AFEPack using an environment variable to
+tell the library where to find those shared library and information
+of those template element, that is "AFEPACK@math{_TEMPLATE}@math{_PATH}".  We
+assume that in your application, you will use triangle and rectangle
+elements, then you can set (in bash)
+@end itemize
+@example
+% export AFEPACK_TEMPLATE_PATH=/usr/local/AFEPack/template/triangle:/usr/local/AFEPack/template/rectangle
+@end example
+
+@itemize
+@item
+Write your own application and link it with the library.
+@end itemize
+
+Since AFEPack uses GNU build tool set(except for Libtool), you should
+have no trouble compiling it. Should you run into problems please
+report them to the the author at Robert Lie .
+
+@node Usage
+@chapter Usage
+
+@menu
+* Step by step tutorial::
+* Data File Format::
+* Advanced Techniques::
+* Hacking Source Code::
+@end menu
+
+@node Step by step tutorial
+@section Step by step tutorial
+
+@menu
+* Mesh Data::
+* Construct a template element::
+* Construct a Finite Element Space::
+* Construct a Stiff Matrix::
+* Solve a Laplacian Equation::
+* Mesh Adaptation::
+* Multi-Mesh Operation::
+@end menu
+
+@node Mesh Data
+@subsection Mesh Data
+
+The library supports 4 kinds of mesh file data format now. One is the
+data file generated by easymesh , a 2d mesh generator developed by
+Bojan Niceno(Italy), easy to use. Class EasyMesh is designed for
+reading and writing this kind of data file. This data file save the
+data in three files: (1) filename.n : the data file to store the node
+information; (2) filename.s : the data file to store the side
+information; (3) filename.e : the data file to store the element
+information. See the following example:
+
+@example
+#include <AFEPack/EasyMesh.h>
+... ...
+EasyMesh easy_mesh; // construct a EasyMesh object named "easy_mesh"
+easy_mesh.readData("a"); // read in the mesh data in files "a.n", "a.s", "a.e"
+... ...
+easy_mesh.writeData("b"); // write the mesh data in files "b.n", "b.s", "b.e"
+@end example
+The hierarchy tree class HGeometryTree<2> can read in easymesh data
+file as its data source. Another class RegularMesh<2> also support
+outputting the data into these kind of file format. See the following
+example:
+@example
+#include <AFEPack/Geometry.h>
+#include <AFEPack/HGeometry.h>
+... ...
+HGeometryTree<2> h_geometry_tree; // construct a hierarchy geometry tree object named "h_geometry_tree"
+h_geometry_tree.readEasyMesh("a"); // read in easymesh data file as macro elements
+IrregularMesh<2> irregular_mesh(hierarchy_tree); // construct a irregular mesh object "irregular_mesh"
+irregular_mesh.globalRefine(2); // global refine the irregular mesh for 2 times
+irregular_mesh.semiregularize(); // turn the mesh into a semiregular one
+irregular_mesh.regularize(); // generate regular mesh from the irregular mesh
+RegularMesh<2>& regular_mesh = irregular_mesh.regularMesh(); // this is the regular mesh from the irregular mesh
+regular_mesh.writeEasyMesh("b")// write the data into files "b.n", "b.s", "b.e"
+@end example
+Another supported data file is generated by bamg , a very powerful
+mesh generator by Fridiric Hecht(France). Class DBMesh is designed for
+reading such mesh data file, can manipulate both triangle and
+quadrilaterial elements. Class DBMesh is derivated from the base class
+SimplestMesh<2,2>. See the following example:
+@example
+#include <AFEPack/DBMesh.h>
+... ...
+DBMesh dbmesh; // construct a DBMesh object named "dbmesh"
+dbmesh.readData("a_g.msh"); // read in the data file generated by bamg
+Mesh<2,2> mesh; // construct a Mesh<2,2> object named "mesh"
+dbmesh.generateMesh(mesh); // convert the dbmesh data file to the library internal data format
+@end example
+For 3D case, we provide the facility to read in data generated by
+gmsh. This is a free software that can generate comparative comple 3D
+mesh. Class GmshMesh is designed for such data, but we can only handle
+pure simplex data file now. Class GmshMesh is also derivated from
+class SimplestMesh<3,3>. See the following example:
+@example
+#include <AFEPack/GmshMesh.h>
+... ...
+GmshMesh gmshmesh; // construct a GmshMesh object named "gmshmesh"
+gmshmesh.readData("a.msh"); // read in the data file generated by gmsh
+Mesh<3,3> mesh; // construct a Mesh<3,3> object named "mesh"
+gmshmesh.generateMesh(mesh); // convert the gmsh data file to the library internal data format
+@end example
+Note that the member function generateMesh of class SimplestMesh is
+very time-comsuming that you should not use it for very large
+meshes. If you need a large mesh, you can get it by read a very coarse
+mesh and then global refine it with the library and then save it in
+the internal format.
+
+The last one is the data file format we defined. This format is in
+fact our internal data format, then is the fastest format for input
+and output, dimension independent, able to store geometry in any
+shape.
+@example
+#include <AFEPack/Geometry.h>
+... ...
+Mesh<2,2> mesh; // construct a mesh object
+mesh.readData("a.mesh"); // read data from file "a.mesh"
+... ...
+mesh.writeData("b.mesh"); // write the data to file "b.mesh"
+@end example
+It's clear that the supported data format can be extended very easily
+by writing more port if you can get the data format of other mesh data
+file.
+
+@node Construct a template element
+@subsection Construct a template element
+
+Now let's construct a template element, which is a main task to construct a
+finite element space. We will construct a linear Lagrangian element on a
+triangle, the most often used one in coding. Most of the work needed in this
+operation should be achieved by hand. We divide it into several steps:
+
+@enumerate
+@item
+@anchor{Geometry Information}Geometry Information
+
+
+The geometry information includes the shape description of the triangle, a function to calculate the volume of the triangle and the numerical quadrature information on the triangle. So the data file have three part. The following is an example to describe the geometry information on a triangle element. The texts following a "#" are comment(When you write such a file of yourself, please remove those comments because until now the library doesn't support comments in this file).
+@example
+# the information of the function to calculate the volume of the triangle
+./triangle.geometry.so                        # the function to calculate the volume of the triangle is in this shared library
+    triangle_volume                           # the name of the function to calculate the volume of the triangle
+
+# the geometry shape information of the triangle
+3                                             # there are 3 points in this geometry
+    0.0    0.0                                # these three lines are the cooridinate of the 3 points
+    1.0    0.0
+    0.0    1.0
+
+3                                             # there are 3 vertices in this geometry
+    0                                         # the information of number 0 vertex is
+        1    0                                # 1 point, that's the number 0 point
+        1    0                                # 1 boundary, that's the number 0 point
+    1
+        1    1
+        1    1
+    2
+        1    2
+        1    2
+
+3                                             # there are 3 sides in this geometry
+    0                                         # the information of number 0 side is
+        2    1    2                           # 2 vertices, saying the number 1 and number 2 vertices
+        2    1    2                           # 2 boundarys, saying the number 1 and number 2 vertices
+    1
+        2    0    2
+        2    0    2
+    2
+        2    0    1
+        2    0    1
+
+1                                             # there is 1 element in this geometry
+    0                                         # the information of number 0 element is
+        3    0    1    2                      # 3 vertices, saying the number 0, 1 and 2 vertices
+        3    0    1    2                      # 3 boundarys, saying the number 0, 1 and 2 boundarys
+
+# the numerical quadrature information on the triangle
+2                                             # there are 2 quadrature information on this geometry
+    2                                         # for the first one, algebraic accuracy is 2
+    1                                         # 1 quadrature point
+    0.333333    0.333333    1.0               # coordinate of the quadrature point is (0.333333, 0.333333), weight 1.0
+
+    3                                         # for the second one, algebric accuracy is 3
+    3                                         # 3 quadrature points
+    0.500000    0.000000    0.333333          # coordinate of the quadrature point is (0.500000, 0.000000), weight 0.333333
+    0.500000    0.500000    0.333333          # coordinate of the quadrature point is (0.500000, 0.500000), weight 0.333333
+    0.000000    0.500000    0.333333          # coordinate of the quadrature point is (0.000000, 0.500000), weight 0.333333
+@end example
+Let's save those information in a file named, such as "triangle.tmp@math{_geo}". Obviously, we need a C source code file for the shared library "triangle.geometry.so". That's easy. We edit such a source file as following:
+@example
+/* triangle.geometry.c */
+
+double triangle_volume(const double * vertex)
+@{
+   /* we know the volume of the triangle is 0.5 */
+    return 0.5;
+@}
+
+/* end of file */
+@end example
+Then we compile this file as following
+@example
+$ gcc -c triangle.geometry.c
+$ gcc -shared -o triangle.geometry.so triangle.geometry.
+@end example
+to obtain the shared library. Now we can construct a template geometry at first, which is the base of a template element. See the following example:
+@example
+#include <AFEPack/Geometry.h>
+... ...
+TemplateGeometry<2>    triangle_template_geometry;
+triangle_template_geometry.readData("triangle.tmp_geo");
+... ...
+@end example
+Note: if you want to compile this C source file with a C++ compiler, please use C style prototype declaration for the function as
+@example
+#ifdef __cplusplus
+extern "C" double triangle_volume(const double * vertex);
+#endif // __cplusplus
+@end example
+
+@item
+@anchor{Coordinate transformation}Coordinate transformation
+
+
+The coordinate transformation is the information to map the point from the template geometry to the real element, and vice visa. It's in fact four C function in a shared library. We need prepare a text file as
+@example
+./triangle.geometry.so                            # the shared library in which those functions included
+    local_to_global                               # the function to map a point from template to real element
+    global_to_local                               # the function to map a point from real to template element
+    local_to_global_jacobian                      # the jacobian determinant of the function to map a point from template to real element
+    global_to_local_jacobian                      # the jacobian determinant of the function to map a point from real to template element
+@end example
+Save this file, and give it a name as "triangle.crd@math{_trs}". The corresponding C source file is as:
+@example
+/* triangle.crd_trs.c */
+
+void local_to_global(const double * point_on_template_element,
+        const double ** vertices_of_template_element,
+        const double ** vertixes_of_real_element,
+        double * point_on_real_element)
+@{
+    /* write code here to map the point on the template element
+       to the point on the real element */
+@}
+
+void global_to_local(const double * point_on_real_element,
+        const double ** vertices_of_real_element,
+        const double ** vertices_of_template_element,
+        double * point_on_template_element)
+@{
+    /* write code here to map the point on the real element
+       to the point on the template element */
+@}
+
+double local_to_global_jacobian(const double * point_on_template_element,
+        const double ** vertices_of_template_element,
+        const double ** vertices_of_real_element)
+@{
+    /* calculate the jacobian determinant */
+    return jacobian_determinant;
+@}
+
+double global_to_local_jacobian(const double * point_on_real_element,
+        const double ** vertices_of_template_element,
+        const double ** vertices_of_real_element)
+@{
+    /* calculate the jacobian determinant */
+    return jacobian_determinant;
+@}
+
+/* end of file */
+@end example
+As before, we compile the file into shared library as
+@example
+$ gcc -c triangle.crd_trs.c
+$ gcc -shared -o triangle.geometry.so
+@end example
+Of course, you should not overwrite the shared library we prepared just now. Now we can construct a coordinate transformation object:
+@example
+#include <AFEPack/Geometry.h>
+... ...
+CoordTransform<2> triangle_coord_transform;
+triangle_coord_transform.readData("triangle.crd_trs");
+... ...
+@end example
+
+@item
+@anchor{Degree of Freedom}Degree of Freedom
+
+
+This is a very simple but important information. It's only a text file to tell how many degrees of freedom on certain geometries. Let's see the following example:
+@example
+3                                            # there are 3 lines of information in this file
+
+0    0    1                                  # there are 1 dof on the number 0 of 0 dimension geometries
+0    1    1                                  # there are 1 dof on the number 1 of 0 dimension geometries
+0    2    1                                  # there are 1 dof on the number 2 of 0 dimension geometries
+@end example
+Let's save it into a file named as "triangle.1.tmp@math{_dof}" and construct the degree of freedom object
+@example
+#include <AFEPack/Geometry.h>
+#include <AFEPack/TemplateElement.h>
+... ...
+TemplateDOF<2> triangle_template_dof(triangle_template_geometry); // the information of template geometry is needed
+triangle_template_dof.readData("triangle.1.tmp_dof");
+... ...
+@end example
+
+@item
+@anchor{Basis function}Basis function
+
+
+Because the basis function are very flexible, we provide certain mechanism to identify different basis functions and then build basis functions from shape functions and then distribute degree of freedom on the whole triangulation. We implemented the identification of basis functions as a protocol, though not very tough.
+4.1 Basis Function Identification Protocol(BFIP)
+In the impelmented basis functions in the library, we adopted the following format to identify different basis functions:
+@example
+template <int DIM>
+class BasisFunctionIdentity
+@{
+private:
+    unsigned int order;                // the order of the polynomial on the boundary of the element
+    int alpha[DIM];                    // the interpolation operator description
+    unsigned int flag;                 // additional flag, for special basis function
+@};
+@end example
+
+@example
+0        0                                 // the basis function rely on the 0-th 0-dim geometry
+0.0     0.0                                 // the interpolate point is (0.0, 0.0)
+1        0 0        0                         // its identity is: order=1, alpha=[0,0], flag=0
+./triangle.1.bas_fun.so                         // the filename of the shared library in which there are the functions needed
+        lambda_1   gradient_lambda_1     // the name of the value and gradient function of this basis function
+@end example
+Then you can write the implementation of the basis function in a C source file, saying "triangle.1.bas@math{_fun.c}", as
+@example
+void lambda_1(const double * p, const double ** v, void * value)
+@{
+        double * val = (double *)value;
+        double area = (v[1][0] - v[0][0])*(v[2][1] - v[0][1])
+                - (v[1][1] - v[0][1])*(v[2][0] - v[0][0]);
+        val[0] = (v[1][0] - p[0])*(v[2][1] - p[1])
+                - (v[1][1] - p[1])*(v[2][0] - p[0]);
+        val[0] /= area;
+@};
+
+void gradient_lambda_1(const double * p, const double ** v, void * value)
+@{
+        double * val = (double *)value;
+        double area = (v[1][0] - v[0][0])*(v[2][1] - v[0][1])
+                - (v[1][1] - v[0][1])*(v[2][0] - v[0][0]);
+        val[0] = (v[1][1] - v[2][1])/area;
+        val[1] = (v[2][0] - v[1][0])/area;
+@};
+@end example
+Note the prototype of the value and gradient function of a basis function are as
+@example
+void function_name(const double * p, const double ** v, void * value)
+    p: the coordinate of the point
+    v: the coordinate of the vertices of the element
+    value: the returned value will be stored here
+@end example
+Of course, you should write other basis functions to construct a complete template element. All basis functions on a template element is administrated by a struct "class BasisFunctionAdmin<value@math{_type}, DIM, TDIM>", it will read in information from a text file in which there are the information of all those basis function. The text file, assumed with name "triangle.1.bas@math{_fun}", is as
+@example
+3                                                        // there are total 3 basis functions
+
+0       0                                                // the information of the 1st basis function        
+0.0     0.0
+1       0 0     0
+./triangle.1.bas_fun.so
+        lambda_1        gradient_lambda_1
+
+0       1                                                // the information of the 2nd basis function
+1.0     0.0
+1       0 0     0
+./triangle.1.bas_fun.so
+        lambda_2        gradient_lambda_2
+
+0       2                                                // the information of the 3rd basis function
+0.0     1.0
+1       0 0     0
+./triangle.1.bas_fun.so
+        lambda_3        gradient_lambda_3
+@end example
+Now let's construct the basis functions for the template element as
+@example
+#include <AFEPack/Geometry.h>
+#include <AFEPack/TemplateElement.h>
+
+...
+BasisFunctionAdmin<double,2,2> triangle_basis_function(triangle_template_dof);
+triangle_basis_function.readData("triangle.1.bas_fun");
+@end example
+With all those steps, we at last can construct a template element for a finite element space. Let's collect those codes together as following:
+@example
+#include <AFEPack/Geometry.h>
+#include <AFEPack/TemplateElement.h>
+
+int main()
+@{
+        // construct template geometry
+        TemplateGeometry<2> triangle_template_geometry;
+        triangle_template_geometry.readData("triangle.tmp_geo");
+
+        // construct coordinate transformation
+        CoordTransform<2,2> triangle_coord_transform;
+        triangle_coord_transform.readData("triangle.crd_trs");
+
+        // construct template degree of freedom
+        TemplateDOF<2> triangle_template_dof(triangle_template_geometry);
+        triangle_template_dof.readData("triangle.1.tmp_dof");
+
+        // construct basis functions
+        BasisFunctionAdmin<double,2,2> triangle_basis_function(triangle_template_dof);
+        triangle_basis_function.readData("triangle.1.bas_fun");
+
+        // construct template element, 
+        // because to construct a finite element space, we general need a list of
+        // template elements that we store the template elements in a vector and
+        // provide it to a finite element space
+        std::vector<TemplateElement<double,2,2> > template_element(1);
+        template_element.reinit(triangle_template_geometry,
+                triangle_template_dof,
+                triangle_coord_transform,
+                triangle_basis_function);
+
+        ... ...
+@}
+@end example
+@end enumerate
+
+@node Construct a Finite Element Space
+@subsection Construct a Finite Element Space
+
+Now we already have mesh data and template elements, and the following is to build a finite element space. This is really easy now - the only thing you need to do is: appoint a template for every geometry element. Let's continue the codes in last example:
+@example
+// read in a mesh at first, assume that there are only triangles in the mesh
+Mesh<2,2> mesh;
+mesh.readData("mesh_data_file");
+
+// construct the finite element space on the mesh and the template element
+FEMSpace<double,2> fem_space(mesh, template_element);
+
+// this is the number of the geometry elements
+int n_element = mesh.n_geometry(2);
+// and set the number of elements in the finite element space the same as geometry elements
+fem_space.element().resize(n_element);
+// appoint that for every element, its template element is the 0-th one in the vector template_element
+for (int i = 0;i < n_element;i ++)
+        fem_space.element(i).reinit(fem_space,i,0);
+
+// build the element information in the finite element space
+fem_space.buildElement();
+fem_space.buildDof();
+fem_space.buildDofBoundaryMark();
+
+// done! now we get a finite element space but it looks that nothing happened though the library
+// in fact have done a lot of things for you, :-)
+@end example
+
+@node Construct a Stiff Matrix
+@subsection Construct a Stiff Matrix
+
+Now it's time to show that the library have done something for you. We will
+construct a stiff matrix on the finite element space. It's again very easy as a
+continuing of the last example:
+@example
+#include <AFEPack/BilinearOperator.h>
+
+        ... ...
+
+        StiffMatrix<2,double> stiff_matrix(fem_space);
+        stiff_matrix.build();
+
+        // done! now we output the sparsity pattern of this matrix to have a look
+        ofstream os("a_file_name");
+        stiff_matrix.get_sparsity_pattern().print_gnuplot(os);
+@end example
+Look, it really built a sparse matrix for you! (the figure is created by gnuplot.)
+
+@node Solve a Laplacian Equation
+@subsection Solve a Laplacian Equation
+
+With all those preparation, we can now try to solve a Laplacian equation on the
+mesh. We set the problem with Dirichlet boundary condition as
+
+and the right hand side is a constant function
+
+Now our problem is
+
+We have calculated the stiff matrix already, and in the following we need only calculate the right hand side and apply the boundary condition. See the following code:
+@example
+#include <AFEPack/AMGSolver.h>
+#include <AFEPack/Operator.h>
+
+          ... ...
+
+          // calculate the right hand side
+          Vector<double> right_hand_side;
+          Operator::L2Discretize(&f, right_hand_side, 3);
+
+          // construct the solution which is a finite element function
+          FEMFunction<double,2> solution(fem_space);
+
+          // construct the boundary condition for boundary with boundary marker 1,
+          // boundary type is Dirichlet
+          // and the value is decided by function u_b
+          BoundaryFunction<double,2> boundary(BoundaryConditionInfo::DIRICHLET, 1, &u_b);
+
+          // construct a boundary condition administrator to store boundary condition
+          BoundaryConditionAdmin<double,2> boundary_admin(fem_space);
+          // add the boundary condition to the administrator
+          boundary_admin.add(boundary);
+          // apply the boundary condition on the linear system
+          boundary_admin.apply(stiff_matrix, solution, right_hand_side);
+
+          // construct a algebraic multigrid solver for the linear system
+          AMGSolver solver(stiff_matrix);
+          // and solver it
+          solver.solve(solution, right_hand_side);
+          // save the solution in a OpenDX data file
+          solution.writeOpenDXData("a_file_name");
+@}
+@end example
+
+@example
+double f(const double * p)
+@{
+           return 1.0;
+@}
+
+double u_b(const double * p)
+@{
+           return sin(2*PI*p[0]) * sin(2*PI*p[1]);
+@}
+@end example
+Let's have a look at the solution
+
+hehe, it's really the solution except the mesh is too coarse(the figure is plotted by IBM Open Data Explorer).
+
+@node Mesh Adaptation
+@subsection Mesh Adaptation
+
+Mesh adaptation is only supported for simplex element in the package. The class
+Mesh<DOW,DIM> doesn't support mesh adaptation automaticly because the mesh
+adaptation is based on the finite element base part. A derived class
+RegularMesh<DIM> will support mesh adaptation. The mesh adaptation is designed
+to support multimesh machenism at the beginning that even you want to adapt one
+mesh, it will be taken as multiple mesh adaptation. Let's see how to write such
+code.
+
+@example
+#include <AFEPack/HGeometry.h>                // the head file declaring those class support mesh adaptation
+
+int main(void)
+@{
+// construct a hierarchy geometry tree for 2 dimensional case
+HGeometryTree<2> h_geometry_tree;
+// read in the macro mesh from easymesh formatted data files
+h_geometry_tree.readEasyMesh("mesh_file_name");
+// construct a irregular mesh based on the hierarchy geometry tree
+IrregularMesh<2> irregular_mesh(h_geometry_tree);
+// semiregularize the irregular mesh to a so called semi-regular mesh
+irregular_mesh.semiregularize();        // because the macro mesh from easymesh formatted data is always 
+                                        // semi-regular, we in fact can omit this line. but for a general
+                                        // irregular mesh, this line is essential.
+// regularize the mesh to get the regular mesh from the irregular mesh
+irregular_mesh.regularize(false);        // if the argument is true, the elements of the mesh will be sorted
+                                        // according certain principle to try to minimize the band width of
+                                        // the obtained matrix.
+// construct an indicator on the regular mesh from the irregular mesh
+Indicator<2> indicator(irregular_mesh.regularMesh());
+... ...         // you can set the value of the indicator to control how to adapt the mesh by certain way. 
+                // see example in the following part to see how to do that
+// construct a mesh adaptor which will provide facilities to implement the mesh adaptation
+MeshAdaptor<2> mesh_adaptor(irregular_mesh);
+// set the convergence order of the mesh adaptor as 1.0
+mesh_adaptor.convergenceOrder() = 1.;
+// and the refine step as 1
+mesh_adaptor.refineStep() = 1;
+// and the indicator is the one we gave just now
+mesh_adaptor.setIndicator(indicator);
+// the tolerence of the mesh adaptor is set as 1.0e-8
+mesh_adaptor.tolerence() = 1.0e-8;
+// implement the mesh adaption
+mesh_adaptor.adapt();
+
+// now the mesh is adapted. let's get the regular mesh from it to see what a mesh we get
+// this mesh is really not semiregular after the adaptation now. we semiregularize it at first
+irregular_mesh.semiregularize();
+// and then construct the regular mesh from it
+irregular_mesh.regularize(false);
+// save the regular mesh to certain data files
+irregular_mesh.regularMesh().writeEasyMesh("mesh_file_name");
+@};
+@end example
+This is a comparative complete example to show how to implement a mesh
+adaptation on a 2D mesh except there are no detail how to set the indicator. In
+the following figures there is a example we get to refine the meshes in two
+contacted circle. The first figure is the original macro mesh and the second one
+is the refined mesh and the third one is the local detail of the refined mesh.
+
+@node Multi-Mesh Operation
+@subsection Multi-Mesh Operation
+
+In this step, we will build two finite element spaces on two different meshes
+and then construct the matrix of a bilinear operator on this two finite element
+spaces to show how to code with the multi-mesh facilities in the package. Of
+course, again the two meshes should base on the same hierarchy geometry tree. We
+try to solve a elliptic system as
+
+As able to be imagined, this is a comparative complex example that we should
+declare a new class to make the code more readable and this example will should
+the typical structure of a complete mesh adaptaion algorithm.
+
+@example
+// EllipticSystem.h
+
+#ifndef _ELLIPTICSYSTEM_H_
+
+#include <AFEPack/Geometry.h>
+#include <AFEPack/TemplateElement.h>
+#include <AFEPack/FEMSpace.h>
+#include <AFEPack/HGeometry.h>
+#include <AFEPack/BilinearOperator.h>
+#include <AFEPack/Operator.h>
+
+#define DIM 2
+
+class EllipticSystem @{
+public:
+        // this class is used to construct matrix $A^0$ and $A^1$
+        class Matrix_A : public StiffMatrix<DIM,double> @{
+        private:
+                double (*a[DIM][DIM])(const double *);
+                double (*c)(const double *);
+        public:
+                Matrix_A(double (*a00)(const double *), double (*a01)(const double *),
+                        double (*a10)(const double *), double (*a11)(const double *),
+                        double (*c0)(const double *), FEMSpace<double,DIM>& sp) :
+                                StiffMatrix<DIM,double>(sp) @{
+                        a[0][0] = a00;
+                        a[0][1] = a01;
+                        a[1][0] = a10;
+                        a[1][1] = a11;
+                        c = c0;
+                @};
+                virtual ~Matrix_A() @{@};
+        public:
+                virtual void getElementMatrix(const Element<value_type0,DIM>&,
+                        const Element<value_type1,DIM>&,
+                        const ActiveElementPairIterator<DIM>::State state = ActiveElementPairIterator<DIM>::EQUAL);
+         @};
+
+        // this class is used to construct matrix $C^0$ and $C^1$
+        class Matrix_C : public L2InnerProduct<DIM,double> @{
+        private:
+                double (*c)(const double *);
+        public:
+                Matrix_C(double (*c1)(const double *), FEMSpace<double,DIM>& sp0, FEMSpace<double,DIM>& sp1) :
+                                c(c1), L2InnerProduct<DIM,double>(sp0, sp1) @{@};
+                ~Matrix_C() @{@};
+        public:
+                virtual void getElementMatrix(const Element<value_type0,DIM>&,
+                          const Element<value_type1,DIM>&,
+                        const ActiveElementPairIterator<DIM>::State state = ActiveElementPairIterator<DIM>::EQUAL);
+        @};
+
+private:
+        std::string                        mesh_file;                        // file name of mesh
+        HGeometryTree<DIM>                h_geometry_tree;                // the geometry tree
+        IrregularMesh<DIM>                irregular_mesh[DIM];                // the meshes
+        FEMSpace<double,DIM>                fem_space[DIM];                        // the finite element space
+        FEMFunction<double,DIM>                solution[DIM];                        // the solution
+
+        Indicator<DIM>                        indicator[DIM];                        // indicator to adapt the meshes
+
+        // variables used to contruct template elements
+        std::vector<TemplateElement<double,DIM,DIM> >        template_element;
+        TemplateGeometry<DIM>                                triangle_template_geometry;
+        CoordTransform<DIM,DIM>                                triangle_coord_transform;
+        TemplateDOF<DIM>                                triangle_1_template_dof;
+        BasisFunctionAdmin<double,DIM,DIM>                triangle_1_basis_function;
+        TemplateGeometry<DIM>                                twin_triangle_template_geometry;
+        CoordTransform<DIM,DIM>                                twin_triangle_coord_transform;
+        TemplateDOF<DIM>                                twin_triangle_1_template_dof;
+        BasisFunctionAdmin<double,DIM,DIM>                twin_triangle_1_basis_function;
+public: // contructors and destructor
+        EllipticSystem(const std::string& filename);
+        ~EllipticSystem() @{@};
+public: //
+        // initialize those memeber variables
+        void init();
+        // the engine to run the program
+        void run();
+        // adapt mesh
+        void adaptMesh();
+        // build finite element space
+        void buildFEMSpace();
+        // construct the linear system and solve it
+        void solve();
+        // calculate the indicator used to adapt the mesh using Kelly estimator
+        void getIndicator();
+        // calculate the error of the solution
+        void getError();
+        // save data
+        void saveData();
+@};
+
+#endif // _ELLIPTICSYSTEM_H_
+Such a header file is a very standard example to write an adaptive program. We need a main file to start the program as
+// main.cpp
+
+#include "EllipticSystem.h"
+
+int main(int argc, char * argv[])
+@{
+        if (argc != 2) @{
+                std::cout << "Usage: " 
+                        << argv[0]
+                        << " mesh_file_name"
+                        << std::endl;
+                return 1;
+        @}
+        try @{
+                EllipticSystem elliptic_system(argv[1]);
+                elliptic_system.run();
+        @}
+        catch(std::exception& e) @{
+                std::cerr << "Exception caughted:" << std::endl
+                        << e.what ()
+                        << std::endl;
+        @}
+        catch(...) @{
+                std::cerr << "Exception caughted:" << std::endl
+                        << "unknown exception caughted."
+                        << std::endl;
+        @}
+@};
+
+// end of file
+The following is the implementation of the class EllipticSystem
+// EllipticSystem.cpp
+
+EllipticSystem::EllipticSystem(const std::string& filename) :
+        mesh_file(filename)
+@{
+        init();
+@};
+
+void EllipticSystem::run()
+@{
+        do @{
+                buildFEMSpace();
+                solve();
+                saveData();
+                getError();
+
+                getIndicator();
+                adaptMesh();
+        @} while (1);
+@};
+
+void EllipticSystem::init()
+@{
+        // read in the mesh data file to construct the hierarchy geometry tree. the mesh data is assumed to
+        // be easymesh format
+        h_geometry_tree.readEasyMesh(mesh_file);
+
+        // construct the irregular meshes based on the hierarchy geometry tree
+        for (int i = 0;i < DIM;i ++)
+                irregular_mesh[i].reinit(h_geometry_tree);
+
+        // construct the piecewise linear triangle element
+        triangle_template_geometry.readData("triangle.tmp_geo");
+        triangle_coord_transform.readData("triangle.crd_trs");
+        triangle_1_template_dof.reinit(triangle_template_geometry);
+        triangle_1_template_dof.readData("triangle.1.tmp_dof");
+        triangle_1_basis_function.reinit(triangle_1_template_dof);
+        triangle_1_basis_function.readData("triangle.1.bas_fun");
+
+        // construct the piecewise linear twin triangle element. this element is special for this adaptive
+        // package which is in fact the combination of two piecewise linear triangle element
+        twin_triangle_template_geometry.readData("twin_triangle.tmp_geo");
+        twin_triangle_coord_transform.readData("twin_triangle.crd_trs");
+        twin_triangle_1_template_dof.reinit(twin_triangle_template_geometry);
+        twin_triangle_1_template_dof.readData("twin_triangle.1.tmp_dof");
+        twin_triangle_1_basis_function.reinit(twin_triangle_1_template_dof);
+        twin_triangle_1_basis_function.readData("twin_triangle.1.bas_fun");
+
+        // construct the two template elements using the information got by the last lines
+        template_element.resize(2);
+        template_element[0].reinit(triangle_template_geometry, 
+                triangle_1_template_dof, 
+                triangle_coord_transform, 
+                triangle_1_basis_function);
+        template_element[1].reinit(twin_triangle_template_geometry, 
+                twin_triangle_1_template_dof, 
+                twin_triangle_coord_transform, 
+                twin_triangle_1_basis_function);
+@};
+
+void EllipticSystem::buildFEMSpace()
+@{
+        for (int n = 0;n < DIM;n ++) @{
+                irregular_mesh[n].semiregularize();
+                irregular_mesh[n].regularize();
+                RegularMesh<DIM>& regular_mesh = irregular_mesh[n].regularMesh();
+                fem_space[n].reinit(regular_mesh, template_element);
+                int n_element = regular_mesh.n_geometry(DIM);
+                fem_space[n].element().resize(n_element);
+                for (int i = 0;i < n_element;i ++) @{
+                        const GeometryBM& geometry = regular_mesh.geometry(DIM, i);
+                        switch (geometry.n_vertex()) @{
+                                case 3: // this is a triangle, we use the triangle template
+                                        fem_space[n].element(i).reinit(fem_space[n],i,0);
+                                        break;
+                                case 4: // this is a twin-triangle, we use the twin-triangle template
+                                        fem_space[n].element(i).reinit(fem_space[n],i,1);
+                                        break;
+                                default: // something must be wrong
+                                        Assert(false, ExcNotImplemented());
+                        @}
+                @}
+                fem_space[n].buildElement();
+                fem_space[n].buildDof();
+                fem_space[n].buildDofBoundaryMark();
+                solution[n].reinit(fem_space[n]);
+        @}
+@};
+
+void EllipticSystem::adaptMesh()
+@{
+        MeshAdaptor<DIM> mesh_adaptor;
+        for (int i = 0;i < DIM;i ++) @{
+                mesh_adaptor.reinit(irregular_mesh[i]);
+                mesh_adaptor.convergenceOrder() = 1.;
+                mesh_adaptor.refineStep() = 1;
+                mesh_adaptor.setIndicator(indicator[i]);
+                mesh_adaptor.tolerence() = 1.0e-8;
+                mesh_adaptor.adapt();
+        @}
+
+@};
+
+// as can be seen easily, under this standard frame of an adaptive program, the solver for the original
+// problem is the certral part.
+void EllipticSystem::solve()
+@{
+        // for the first equation
+        // build the matrix A0
+        Matrix_A A0(&_a0_00_, &_a0_01_, &_a0_10_, &_a0_11_, &_c0_0_, fem_space[0]);
+        A0.algebricAccuracy() = 2;
+        A0.build();
+
+        // prepare the right hand side
+        Vector<double> f0;
+        Operator::L2Discretize(&_f0_, fem_space[0], f0, 3);
+
+        // prepare the boundary condition
+        BoundaryFunction<double,DIM> u0_boundary(BoundaryConditionInfo::DIRICHLET, 1, &_u0_);
+        BoundaryConditionAdmin<double,DIM> u0_boundary_admin(fem_space[0]);
+        u0_boundary_admin.add(u0_boundary);
+        u0_boundary_admin.apply(A0, solution[0], f0);
+
+        // prepare the linear solver for A0
+        AMGSolver A0_solver(A0);
+
+        // build the matrix C0
+        Matrix_C C0(&_c0_1_, fem_space[0], fem_space[1]);
+        C0.algebricAccuracy() = 2;
+        C0.build();
+
+        // for the second equation
+        // build the matrix A1
+        Matrix_A A1(&_a1_00_, &_a1_01_, &_a1_10_, &_a1_11_, &_c1_1_, fem_space[1]);
+        A1.algebricAccuracy() = 2;
+        A1.build();
+
+        // prepare the right hand side
+        Vector<double> f1;
+        Operator::L2Discretize(&_f1_, fem_space[1], f1, 3);
+
+        // prepare the boundary condition
+        BoundaryFunction<double,DIM> u1_boundary(BoundaryConditionInfo::DIRICHLET, 1, &_u1_);
+        BoundaryConditionAdmin<double,DIM> u1_boundary_admin(fem_space[1]);
+        u1_boundary_admin.add(u1_boundary);
+        u1_boundary_admin.apply(A1, solution[1], f1);
+
+        // prepare the linear solver for A1
+        AMGSolver A1_solver(A1);
+
+        // build the matrix C1
+        Matrix_C C1(&_c1_0_, fem_space[1], fem_space[0]);
+        C1.algebricAccuracy() = 2;
+        C1.build();
+
+        // we adopt the block Gauss-Sidle iteration as the solver because $c^i$ are small
+        int i;
+        double error;
+        double tolerence = 1.0e-6;
+        do @{
+                // backup the old solution
+                FEMFunction<double,DIM> old_solution[DIM];
+                for (i = 0;i < DIM;i ++)
+                        old_solution[i] = solution[i];
+
+                // update $u^0$
+                Vector<double> C0xu1;
+                C0.vmult(C0xu1, solution[1]);
+                u0_boundary_admin.clearEntry(C0xu1);
+                C0xu1.sadd(-1.0, f0);
+                A0_solver.solve(solution[0], C0xu1);
+        
+                // update $u^1$
+                Vector<double> C1xu0;
+                C1.vmult(C1xu0, solution[0]);
+                u1_boundary_admin.clearEntry(C1xu0);
+                C1xu0.sadd(-1.0, f1);
+                A1_solver.solve(solution[1], C1xu0);
+
+                // calculate the error
+                error = 0.0;
+                for (i = 0;i < DIM;i ++) @{
+                        old_solution[i].add(-1.0, solution[i]);
+                        error += pow(Functional::L2Norm(old_solution[i],3), 2.0);
+                @}
+                error = sqrt(error);
+                std::cout << "\r\terror = " << error << std::flush;
+        @} while (error > tolerence);
+        std::cout << std::endl;
+@};
+
+// we adopted only the leading term of the posteriori error estimator - saying the jump between the
+// element boundary - to be calculated as the indicator. and the coefficient in the divergence operator
+// is omitted, too, as this is only a very simple demonstration to show how to use the code.
+void EllipticSystem::getIndicator()
+@{
+        for (int n = 0;n < DIM;n ++) @{
+                RegularMesh<DIM>& regular_mesh = irregular_mesh[n].regularMesh();
+                indicator[n].reinit(regular_mesh);
+                int n_face = regular_mesh.n_geometry(DIM-1);
+                std::vector<bool> flag(n_face, false);
+                std::vector<double> jump(n_face);
+                FEMSpace<double,DIM>::ElementIterator the_element = fem_space[n].beginElement();
+                FEMSpace<double,DIM>::ElementIterator end_element = fem_space[n].endElement();
+                for (;the_element != end_element;the_element ++) @{
+                        const GeometryBM& geometry = the_element->geometry();
+                        for (int i = 0;i < geometry.n_boundary();i ++) @{
+                                int j = geometry.boundary(i);
+                                const GeometryBM& side = regular_mesh.geometry(1, j);
+                                const Point<DIM>& p0 = regular_mesh.point(regular_mesh.geometry(0, side.boundary(0)).vertex(0));
+                                const Point<DIM>& p1 = regular_mesh.point(regular_mesh.geometry(0, side.boundary(1)).vertex(0));
+                                std::vector<double> gradient = solution[n].gradient(midpoint(p0, p1), *the_element);
+                                if (flag[j]) @{
+                                        jump[j] -= gradient[0]*(p0[1] - p1[1]) + gradient[1]*(p1[0] - p0[0]);
+                                        flag[j] = false;
+                                @}
+                                else @{
+                                        jump[j] = gradient[0]*(p0[1] - p1[1]) + gradient[1]*(p1[0] - p0[0]);
+                                        flag[j] = true;
+                                @}
+                        @}
+                @}
+                the_element = fem_space[n].beginElement();
+                for (int m = 0;the_element != end_element;the_element ++, m ++) @{
+                        const GeometryBM& geometry = the_element->geometry();
+                        indicator[n][m] = 0.0;
+                        for (int i = 0;i < geometry.n_boundary();i ++) @{
+                                int j = geometry.boundary(i);
+                                if (flag[j]) continue; // this side is on the boundary of the domain
+                                indicator[n][m] += jump[j]*jump[j];
+                        @}
+                @}
+        @}
+@};
+
+void EllipticSystem::getError()
+@{
+        double error;
+
+        error = Functional::L2Error(solution[0], FunctionFunction<double>(&_u0_), 3);
+        std::cout << "|| u_0 - u_0h ||_L^2 = " << error << std::endl;
+
+        error = Functional::L2Error(solution[1], FunctionFunction<double>(&_u1_), 3);
+        std::cout << "|| u_1 - u_1h ||_L^2 = " << error << std::endl;
+@};
+
+void EllipticSystem::saveData()
+@{
+        solution[0].saveOpenDXData("u_0h.dx");
+        solution[1].saveOpenDXData("u_1h.dx");
+@};
+
+// end of file
+And we should give the function to calculate the element matrix for class Matrix_A and class Matrix_C which is one of the kernel work in the program, too. See following
+// this matrix is in fact a weighted sum of a stiff matrix and a mass matrix which is based in fact only on one
+// mesh that it's very easy to be implemented. this is a very standard function for the package.
+void EllipticSystem::Matrix_A::getElementMatrix(
+                const Element<double,DIM>& element0,
+                const Element<double,DIM>& element1,
+                const ActiveElementPairIterator<DIM>::State state)
+@{
+        int j, k, l, j1, k1;
+        int n_element_dof0 = elementDof0().size();
+        int n_element_dof1 = elementDof1().size();
+        double volume = element0.templateElement().volume();
+        const QuadratureInfo<DIM>& quad_info = element0.findQuadratureInfo(algebricAccuracy());
+        std::vector<double> jacobian = element0.local_to_global_jacobian(quad_info.quadraturePoint());
+        int n_quadrature_point = quad_info.n_quadraturePoint();
+        std::vector<Point<DIM> > q_point = element0.local_to_global(quad_info.quadraturePoint());
+        std::vector<std::vector<double> > basis_value = element0.basis_function_value(q_point);
+        std::vector<std::vector<std::vector<double> > > basis_gradient = element0.basis_function_gradient(q_point);
+        for (int l = 0;l < n_quadrature_point;l ++) @{
+                double Jxw = quad_info.weight(l)*jacobian[l]*volume;
+                double a_value[DIM][DIM];
+                for (j1 = 0;j1 < DIM;j1 ++)
+                        for (k1 = 0;k1 < DIM;k1 ++)
+                                a_value[j1][k1] = (*a[j1][k1])(q_point[l]);
+                double c_value = (*c)(q_point[l]);
+                for (j = 0;j < n_element_dof0;j ++) @{
+                        for (k = 0;k < n_element_dof1;k ++) @{
+                                for (j1 = 0;j1 < DIM;j1 ++) @{
+                                        for (k1 = 0;k1 < DIM;k1 ++) @{
+                                                elementMatrix(j, k) += Jxw * a_value[j1][k1] 
+                                                        * basis_gradient[j][l][j1] * basis_gradient[k][l][k1];
+                                        @}
+                                @}
+                                elementMatrix(j, k) += Jxw * c_value * basis_value[j][l] * basis_value[k][l];
+                        @}
+                @}
+        @}
+@};
+
+// this matrix is a weighted L^2 inner product between two finite element spaces. this function is also a very
+// standard example to calculate the matrix of a bilinear operator between two finite element spaces.
+void EllipticSystem::Matrix_C::getElementMatrix(
+                const Element<double,DIM>& element0,
+                const Element<double,DIM>& element1,
+                const ActiveElementPairIterator<DIM>::State state)
+@{
+        int n_element_dof0 = elementDof0().size();
+        int n_element_dof1 = elementDof1().size();
+        if (state == ActiveElementPairIterator<DIM>::GREAT_THAN) @{
+                double volume = element1.templateElement().volume();
+                const QuadratureInfo<DIM>& quad_info = element1.findQuadratureInfo(algebricAccuracy());
+                std::vector<double> jacobian = element1.local_to_global_jacobian(quad_info.quadraturePoint());
+                int n_quadrature_point = quad_info.n_quadraturePoint();
+                std::vector<Point<DIM> > q_point = element1.local_to_global(quad_info.quadraturePoint());
+                std::vector<std::vector<double> > basis_value0 = element0.basis_function_value(q_point);
+                std::vector<std::vector<double> > basis_value1 = element1.basis_function_value(q_point);
+                for (int l = 0;l < n_quadrature_point;l ++) @{
+                        double Jxw = quad_info.weight(l)*jacobian[l]*volume;
+                        double c_value = (*c)(q_point[l]);
+                        for (int j = 0;j < n_element_dof0;j ++) @{
+                                for (int k = 0;k < n_element_dof1;k ++) @{
+                                        elementMatrix(j,k) += Jxw * c_value * basis_value0[j][l] * basis_value1[k][l];
+                                @}
+                        @}
+                @}
+        @}
+        else @{
+                double volume = element0.templateElement().volume();
+                const QuadratureInfo<DIM>& quad_info = element0.findQuadratureInfo(algebricAccuracy());
+                std::vector<double> jacobian = element0.local_to_global_jacobian(quad_info.quadraturePoint());
+                int n_quadrature_point = quad_info.n_quadraturePoint();
+                std::vector<Point<DIM> > q_point = element0.local_to_global(quad_info.quadraturePoint());
+                std::vector<std::vector<double> > basis_value0 = element0.basis_function_value(q_point);
+                std::vector<std::vector<double> > basis_value1 = element1.basis_function_value(q_point);
+                for (int l = 0;l < n_quadrature_point;l ++) @{
+                        double Jxw = quad_info.weight(l)*jacobian[l]*volume;
+                        double c_value = (*c)(q_point[l]);
+                        for (int j = 0;j < n_element_dof0;j ++) @{
+                                for (int k = 0;k < n_element_dof1;k ++) @{
+                                        elementMatrix(j,k) += Jxw * c_value * basis_value0[j][l] * basis_value1[k][l];
+                                @}
+                        @}
+                @}
+        @}
+@};
+@end example
+
+It's easy to see that we haven't give the formation of those coefficient
+functions. Their prototypes are all the same as double foo(const double *);
+
+it's very convenient to give flexible coefficient functions as such prototype to
+solve an elliptic system. Have a try!
+
+In this example, in fact we only used some simple facilities to operate two
+meshes. After some understanding to the source code of the package, you can make
+use of the multi-mesh mechanism of the package much more flexible.
+
+@node Data File Format
+@section Data File Format
+
+The mesh data format please refer the document of those mesh generation software
+respestively. The following are the grammar for those data files to construct
+template element and the internal mesh data format. As we can see from the
+examples above, to construct a template element, we should write down two kinds
+of files - one are those C source files for the basis functions and for
+calculating element volume, the other are those data files.
+
+In the following data formation description, the left column is the data using C
+syntax, and the right column is the comments which should not appear in the data
+file. The data file format for a mesh object Mesh<DIM,DOW> is as:
+@example
+int                                                                # number of points (n_point)
+double ... double                                                # the coordinate of the 0-th point
+... ...                                                                # ... ...
+double ... double                                                # the coordinate of the n_point-1st point
+
+int                                                                # number of nodes (n_node), 0-dim geometry
+geometry 0-dim                                                        # information of the 0-th 0-dim geometry
+... ...                                                                # ... ...
+geometry 0-dim                                                        # information of the n_node-1st geometry
+
+... ...                                                                # ... ...
+
+int                                                                # number of DIM-dim geometry (n_DIM_geometry)
+geometry DIM-dim                                                # information of the 0-th DIM-dim geometry
+... ...                                                                # ... ...
+geometry DIM-dim                                                # information of the n_DIM_geometry-1st geometry
+in which the geometry information format is as for 0-dim:
+int                                                                # index of this node
+int        int                                                        # the first int is number of point for this node(should be 1), the second int is the index of that point
+int        int                                                        # the first int is number of boundary for this node(should be 1), the second int is the index of that boundary(meanless for node)
+int                                                                # boundary marker of this node
+for n-dim:
+int                                                                # index of this geometry
+int         int ... int                                                # the first int is number of vertices, the followings are the index of those vertices
+int        int ... int                                                # the first int is number of boundarys, the followings are the index of those boundarys((n-1)-dim)
+int                                                                # boundary marker of this geometry
+@end example
+The data file format for a template element geometry is as:
+@example
+string                                                                # the filename of the shared library to get the volume function
+        string                                                        # the function name of the volume function
+
+mesh information                                                # mesh information for the element geometry, is a Mesh<DIM,DIM> object
+
+quadrature information                                                # quadrature points and weights information, see following
+@end example
+
+@node Advanced Techniques
+@section Advanced Techniques
+
+@node Hacking Source Code
+@section Hacking Source Code
+
+@node Understanding the Library
+@chapter Understanding the Library
+
+@menu
+* Finite Element Level::
+* Mesh Adaptation Level::
+* Application Level::
+@end menu
+
+@node Finite Element Level
+@section Finite Element Level
+
+We try to design the library on a complete abstraction of the finite element
+method. To describe clear the structure of the library, we should talk about
+more mathematics than programming. According our point of view, a finite element
+space is a mapping from those element geometries of a triangulation to a set of
+template elements. Then the main tasks in the library is to manage the
+triangulation and the template element.
+
+Triangulation
+
+Generally, a triangulation can be described into different style, while the most
+extreme cases of them are the simplest description and the most complete
+description. The simplest description will store only the necessary data, and
+from which we generate other data when needed by some iterative algorithms. The
+mose complete description will, on the contrary, try to store all data maybe
+needed. We should balance between them because in the implementation of a finite
+element space, information used are not both cases.
+
+A triangulation is in fact a set of points with coordinate, and many
+relationships between the geometries, such relationship tell which geomtry is
+the component of another geometry.  In this library, we choose the following
+information to construct a geometry:
+
+@example
+class Geometry @{
+private:
+    int                 ind; // the index of the geometry
+    std::vector<int>    vtx; // the index of the vertex geometries
+    std::vector<int>    bnd; // the index of the boundary geometries
+... ...
+@};
+@end example
+
+For the node(0-dimensional) geometry, the index of the vertex and boundary is
+the index of the corresponding point. Generally, it's not required that the
+index of the node geometry is the same as the index of the point though in most
+cases, they are the same. Such mechanism is kept for future. As we can see, the
+most efficient operation is then to find all the components of a geometry. That
+looks enough for most of the finite element application.
+
+Template Element
+
+A template element includes several parts of information. Those parts are
+depdent each other in certain degree. We adopt the following division in the
+code:
+
+@menu
+* Geometry Information: Geometry Information (1). 
+* Coordinate Transformation::
+* Degree of Freedom Distribution::
+* Basis Function::
+@end menu
+
+@node Geometry Information (1)
+@subsection Geometry Information
+
+The geometry information is in fact a triangulation, a very simple triangulation
+with only one element. The geometry information of a template element is
+comparatively complete than that of a real element in a triangulation. With the
+geometry information of the template element, we can construct a image of the
+geometry information of a real element. The order of the vertices of the real
+element is very important because the construction is mainly depended on the
+information of the vertices. And the numerical quadrature information is also
+include in the geometry information in the library, though we believe that it
+can be took out as an independent part. Generally we don't know the algebraic
+accuracy of the application before the problem has been given. You can look up
+for the correct quadrature information in a table if you give the required
+algebraic accuracy. It's very convenient for programmer to code with different
+quadrature formulas in different occasion.
+
+@node Coordinate Transformation
+@subsection Coordinate Transformation
+
+This coordinate transformation is used to map a point in the template element to
+a real element, and vice visa. It's constructed according the coordinate of the
+vertices of the template element and the real element, too. With this coordinate
+transformation, and given a point on the template element, you can get the
+coordinate of the corresponding point in the real element and the jacibian
+determinant at that point, and vice visa.
+
+@node Degree of Freedom Distribution
+@subsection Degree of Freedom Distribution
+
+This is the information to appoint the degrees of freedom of any geometry in the
+template element. With the map from the template element geometry, we can then
+obtain the degree of freedom on any geometry in the real triangulation. Of
+course, on a geometry in the real triangulation shared by several element, the
+appointment of degree of freedom should be coincide on it. The code will check
+if the data are correct when build the freedom of degree for the finite element
+space. It's obvious that with this information, the code can manipulate the
+degree of freedom of the whole finite element space for you automatically.
+
+@node Basis Function
+@subsection Basis Function
+
+A basis function is related with a degree of freedom. It's a function defined on
+a real element, and can calculate its value and gradient at a point provided the
+coordinate of the vertices of the element. More roughly, it can only be called a
+shape function from the finite element point of view. And it's only appointed to
+related with a certain geometry of the template element. The code will relate it
+with a degree of freedom automatically and connect it with other shape functions
+on the neighbours of the real element to construct a REAL basis function. So for
+those shape function related with the same geometry in the triangulation, an
+identification is needed to connect them each other as a complete basis function
+correctly. The user of the library should guarantee that the basis functions
+with the same identification are continuous enough as your designment, because
+the library will only judge if the shape functions are belong to the same basis
+function according the identification but not accoding the expression of the
+shape function.
+
+The four parts of the template element are taken as data in the library, which
+means the library can be extended very freely as the user's willing. That's why
+we declare that we can build the finite element space for you, only if you can
+provide the template elements of the finite element space.
+
+@node Mesh Adaptation Level
+@section Mesh Adaptation Level
+
+Because the mesh adaptation module in this library is designed at the beginning
+to operate on different finite element spaces on different meshes, the
+implementation is very different with other libraries. We adopted a hierarchy
+tree structure to store the geometries of all the meshes. This hierarchy is a
+infinitely refined mesh on the whole domain in mind. Every real mesh is a "cross
+section" of the hierarchy tree. We give the concept "semiregular", to make the
+real mesh uniquely determined by a semiregular mesh. It's very convienient to
+calculate the intersect and the union of two semiregular meshes, which makes it
+possible to analysis the relationship of two different finite element space on
+these two meshes. And such structure is very convienient for mesh adaptation,
+too. Though there have already been several successful implementations of mesh
+adaptation, especially of mesh coarsement, the mesh adaptation in this library
+is different with all of them. The mesh adaptation is implemented as
+"semiregularization" of an arbitrary mesh, the operation to turn an arbitrary
+mesh into a semiregular mesh. Then we have no clear difference in refinement and
+coarsement. With the given indicator, the refinement and coarsement are all a
+semiregularization operation. As mentioned, with a given semiregular mesh, we
+can construct a regular mesh and pass it to the finite element level. We can
+then construct finite element space on the regular mesh as required.
+
+@node Application Level
+@section Application Level
+
+This level is called application because they are really applications built on
+the former leverls. You needn't to care about this level if you are not interest
+in our research at all. These applications can also be took as examples using
+the library. We have developped very efficient solver for Possion equation,
+p-Laplacian problem, variational inequalities, elliptic optimal control problem
+and parameter estimation problem. Those applications are very good example to
+show how to use the library and how powerful the library is.
+
+@node Copyright
+@chapter Copyright
+
+AFEPack Copyright 2002 Robert Lie , rli@@math.pku.edu.cn
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE@. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 675 Mass Ave,
+Cambridge, MA 02139, USA@.
+
+@bye

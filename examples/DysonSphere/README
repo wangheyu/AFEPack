@@ -1,0 +1,11 @@
+This example will plot a Dyson Sphere using local refinement technique, in 3D
+The obtained solution is saved in file "Cube.dx".
+
+Usage:
+	1. compile with make [-e debug=no];
+	2. generate the mesh with easymesh as:
+               $ gmsh -3 Cube.geo
+	       $ gmsh2mesh Cube.msh Cube.mesh
+	3. run with ./run.sh Cube.mesh n, here the second parameter n means times for the initial global refinement of mesh grids.
+	4. view the obtained numerical solution with OpenDX;
+

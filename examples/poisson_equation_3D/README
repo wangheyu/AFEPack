@@ -1,0 +1,12 @@
+This example will solve a Possion equation on a gmsh generated data. 
+The obtained solution is saved in file "u.dx".
+
+Usage:
+	1. compile with make [-e debug=no];
+	2. generate the mesh with gmsh as:
+	     $ gmsh -3 Cube.geo
+	     $ gmsh2mesh Cube.msh Cube.mesh
+	     $ mesh_refine 3 Cube.mesh Cube3.mesh 3 0
+	3. run with ./run.sh Cube3.mesh;
+	4. view the obtained numerical solution with OpenDX;
+
