@@ -1,182 +1,128 @@
-dnl Process this file with autoconf to produce a configure script.
-AC_PREREQ(2.50)
-AC_INIT(AFEPack, 1.8, [rli@math.pku.edu.cn])
-AC_CONFIG_SRCDIR([library])
-AM_CONFIG_HEADER(config.h)
-AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
 
-AFEPACK_PATH=`pwd`
-AC_SUBST(AFEPACK_PATH)
+AC_PREREQ([2.69])
+AC_INIT([AFEPack],[0.0],[rli@math.pku.edu.cn])
+AM_INIT_AUTOMAKE([subdir-objects tar-ustar])
+LT_INIT
+AC_CONFIG_SRCDIR([src/AMGSolver.cpp])
+AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIRS([m4])
 
-AC_PROG_CC
-AC_PROG_CPP
-AC_PROG_CXX
+# Checks for programs.
+AC_PROG_CXX([mpicxx])
+AC_PROG_CC([mpicc])
 AC_PROG_LN_S
-AC_CHECK_TOOL(AR, ar, :)
-AC_CHECK_TOOL(DOCGEN, doxygen, :)
-AC_CHECK_TOOL(PERL, perl, :)
-AC_CHECK_TOOL(SED, sed, :)
-AC_CHECK_PROGS(MAKE, [gmake make])
+dnl  AC_PROG_RANLIB
+
 AC_LANG(C++)
 
-dnl libdl
-AC_TRY_CPP([#include <dlfcn.h>],
-  dl_header=yes, dl_header=no)
-AC_MSG_CHECKING([for dlfcn.h])
-if test "x$dl_header" != xno; then
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
-  AC_ERROR([dlfcn.h not found])
-fi
+# Checks for libraries.
+dnl LIBS="$EXTRA_LIBDIR $LIBS"
+dnl Checks for deal.II libraries.
+#AC_CHECK_LIB([deal_II], [main],
+#  [deal_II_library=yes, LIBS="-ldeal_II $LIBS"],
+#  [deal_II_library=no])
+# if test "x$deal_II_library" == xno; then
+#  AC_CHECK_LIB([base], [main],
+#    [deal_II_library=yes, LIBS="-llac -lbase $LIBS"],
+#    [deal_II_library=no])
+#  if test "x$deal_II_library" == xno; then
+#    AC_MSG_ERROR(deal.II library not found)
+#  fi
+# fi
 
-AC_CHECK_LIB([dl], [dlopen], [], [AC_ERROR([library -ldl not found])])
-dnl ----------------------
 
-dnl lib math
-AC_CHECK_LIB([m], [sin], [], [AC_ERROR([library -lm not found])])
-dnl ----------------------
+# Checks for header files.
+#AC_CHECK_HEADERS([fcntl.h unistd.h])
+#AC_CHECK_HEADERS(deal.II/base/exceptions.h,[],[AC_MSG_ERROR([Could not find deal.II header files])],
+#[#define DEBUG
+  #include <deal.II/base/exceptions.h>
+#])
 
-THIS_FLAG="$EXTRA_INCDIR"
-CFLAGS="$THIS_FLAG $CFLAGS"
-CXXFLAGS="$THIS_FLAG $CXXFLAGS"
-CPPFLAGS="$THIS_FLAG $CPPFLAGS"
 
-enable_shared=yes
-AC_SUBST(enable_shared)
-LIBS="$EXTRA_LIBS $LIBS"
+# Checks for typedefs, structures, and compiler characteristics.
+AC_CHECK_HEADER_STDBOOL
+AC_C_INLINE
+AC_TYPE_PID_T
+AC_TYPE_SIZE_T
 
-dnl multi-thread option
-AC_ARG_ENABLE(thread,
-  AC_HELP_STRING([--enable-thread], [enable POSIX thread support(default: yes)]),,
-  [enable_thread=yes])
-AC_MSG_CHECKING([if thread support was requested])
-if test "x$enable_thread" != xno; then
-  AC_MSG_RESULT(yes)
-  THIS_FLAG="-D__SERIALIZATION__ -DMULTITHREAD -pthread -fPIC"
-  CFLAGS="$CFLAGS $THIS_FLAG"
-  CXXFLAGS="$CXXFLAGS $THIS_FLAG -std=c++11"
-  CPPFLAGS="$CPPFLAGS $THIS_FLAG"
-else
-  AC_MSG_RESULT(no)
-fi
-AC_SUBST(enable_thread)
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_CHECK_FUNCS([floor pow sqrt strchr strrchr strstr])
 
-dnl MPI library
-AC_MSG_CHECKING([for MPI])
-AC_ARG_WITH([mpi], AC_HELP_STRING([--with-mpi={yes|no|PATH}], [Specify if MPI is enabled or path to mpi installation]), [], [with_mpi=check])
-if test "x$with_mpi" = xno; then
-  with_mpi=check
-fi
-if test "x$with_mpi" != xcheck; then
-  if test "$with_mpi" = yes; then
-    MPICC=`which mpicc`
-    MPICXX=`which mpicxx`
-  else
-    MPICC="$with_mpi/bin/mpicc"
-    MPICXX="$with_mpi/bin/mpicxx"
-  fi
-  CXX_backup=$CXX
-  CXX=$MPICXX
-  AC_TRY_LINK([#include <mpi.h>],
-    [MPI_Init(NULL, NULL); MPI_Finalize()], mpi_lib=yes, mpi_lib=no)
-  CXX=$CXX_backup
-  if test "x$mpi_lib" != xno; then
-    AC_MSG_RESULT(yes)
-  else
-   AC_MSG_RESULT(no)
-   AC_ERROR([MPI not found])
-  fi
-else
-  AC_MSG_RESULT(no)
-  MPICC=""
-  MPICXX=""
-fi
-AC_SUBST(MPICC)
-AC_SUBST(MPICXX)
-AC_SUBST(with_mpi)
-dnl ----------------------
+# preconfig some flags
+AC_SUBST([AM_CPPFLAGS],['-I$(top_srcdir)/include'])
+AC_SUBST([AM_CXXFLAGS],['-D__SERIALIZATION -DMULTITHREAD -pthread -fopenmp -fno-delete-null-pointer-checks'])
 
-dnl boost headers
-AC_ARG_WITH([boost], AC_HELP_STRING([--with-boost=PATH], [Specify path to boost installation]), [], [with_boost=check])
-if test "x$with_boost" != xcheck; then
-  THIS_FLAG="-I$with_boost/include"
-  CFLAGS="$THIS_FLAG $CFLAGS"
-  CXXFLAGS="$THIS_FLAG $CXXFLAGS"
-  CPPFLAGS="$THIS_FLAG $CPPFLAGS"
-fi
-AC_TRY_CPP([#include <boost/serialization/array.hpp>],
-  boost_header=yes, boost_header=no)
-AC_MSG_CHECKING([for boost headers])
-if test "x$dl_header" != xno; then
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
-  AC_ERROR([boost headers not found])
-fi
-AC_SUBST(with_boost)
-dnl ----------------------
 
-dnl Header for deal.II
-AC_ARG_WITH([dealii], AC_HELP_STRING([--with-dealii=PATH], [Specify path to deal.II installation]), [], [with_dealii=check])
-if test "x$with_dealii" != xcheck; then
-  THIS_FLAG="-I$with_dealii/base/include -I$with_dealii/lac/include -I$with_dealii/include -I$with_dealii/include/deal.II"
-  CFLAGS="$THIS_FLAG $CFLAGS"
-  CXXFLAGS="$THIS_FLAG $CXXFLAGS"
-  CPPFLAGS="$THIS_FLAG $CPPFLAGS"
-fi
-AC_TRY_CPP([#include <base/config.h>],
-  deal_II_header=yes, deal_II_header=no)
-AC_MSG_CHECKING([for deal.II header files])
-if test "x$deal_II_header" != xno; then
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
-  AC_ERROR([deal.II header not found])
-fi
+AC_CONFIG_FILES([Makefile
+                 tools/Makefile
+		 doc/Makefile
+		 external/Makefile
+		 external/easymesh/Makefile
+		 examples/Makefile
+		 examples/poisson_equation/Makefile
+     examples/poisson_equation_3D/Makefile
+     examples/DysonSphere/Makefile
+     examples/TaiChiYinYang/Makefile
+     examples/elliptic_equation/Makefile
+		 examples/step-7/Makefile
+		 examples/moving_mesh/Makefile
+		 examples/laplacian_evp3D/Makefile
+		 examples/coefficient_possion_equation/Makefile
+		 examples/local_refine/Makefile
+		 examples/local_refine/2d/Makefile
+		 examples/local_refine/3d/Makefile
+                 include/AFEPack/Makefile
+                 include/AFEPack/template/Makefile
+                 include/AFEPack/template/four_tetrahedron/Makefile
+                 include/AFEPack/template/four_tetrahedron/four_tetrahedron.0/Makefile
+                 include/AFEPack/template/four_tetrahedron/four_tetrahedron.1.D/Makefile
+                 include/AFEPack/template/four_tetrahedron/four_tetrahedron.1/Makefile
+                 include/AFEPack/template/interval/Makefile
+                 include/AFEPack/template/interval/interval.1/Makefile
+                 include/AFEPack/template/interval/interval.2/Makefile
+                 include/AFEPack/template/interval/interval.3/Makefile
+                 include/AFEPack/template/interval/interval.4/Makefile
+                 include/AFEPack/template/tetrahedron/Makefile
+                 include/AFEPack/template/tetrahedron/tetrahedron.0/Makefile
+                 include/AFEPack/template/tetrahedron/tetrahedron.1.D/Makefile
+                 include/AFEPack/template/tetrahedron/tetrahedron.1/Makefile
+                 include/AFEPack/template/tetrahedron/tetrahedron.2.D/Makefile
+                 include/AFEPack/template/tetrahedron/tetrahedron.2/Makefile
+                 include/AFEPack/template/tetrahedron/tetrahedron.3.D/Makefile
+                 include/AFEPack/template/tetrahedron/tetrahedron.edge.1/Makefile
+                 include/AFEPack/template/triangle/Makefile
+                 include/AFEPack/template/triangle/triangle.0/Makefile
+                 include/AFEPack/template/triangle/triangle.1.D/Makefile
+                 include/AFEPack/template/triangle/triangle.1/Makefile
+                 include/AFEPack/template/triangle/triangle.2/Makefile
+                 include/AFEPack/template/triangle/triangle.3/Makefile
+                 include/AFEPack/template/triangle/triangle.4/Makefile
+                 include/AFEPack/template/triangle/triangle.DG.1/Makefile
+                 include/AFEPack/template/triangle/triangle.DG.2/Makefile
+                 include/AFEPack/template/triangle/triangle.DG.3/Makefile
+                 include/AFEPack/template/triangle/triangle.RT.1/Makefile
+                 include/AFEPack/template/triangle/triangle.RT.2/Makefile
+                 include/AFEPack/template/triangle/triangle.dual.0/Makefile
+                 include/AFEPack/template/triangle/triangle.edge.1/Makefile
+                 include/AFEPack/template/triangle/triangle.edge.Full.1/Makefile
+                 include/AFEPack/template/triangle/triangle.morley.1/Makefile
+                 include/AFEPack/template/twin_tetrahedron/Makefile
+                 include/AFEPack/template/twin_tetrahedron/twin_tetrahedron.0/Makefile
+                 include/AFEPack/template/twin_tetrahedron/twin_tetrahedron.1.D/Makefile
+                 include/AFEPack/template/twin_tetrahedron/twin_tetrahedron.1/Makefile
+                 include/AFEPack/template/twin_triangle/Makefile
+                 include/AFEPack/template/twin_triangle/twin_triangle.0/Makefile
+                 include/AFEPack/template/twin_triangle/twin_triangle.1.D/Makefile
+                 include/AFEPack/template/twin_triangle/twin_triangle.1/Makefile
+                 include/AFEPack/template/twin_triangle/twin_triangle.2/Makefile
+                 include/AFEPack/template/twin_triangle/twin_triangle.DG.1/Makefile
+                 include/AFEPack/template/twin_triangle/twin_triangle.RT.1/Makefile
+                 include/AFEPack/template/twin_triangle/twin_triangle.morley.1/Makefile
+                 include/Makefile
+                 src/Makefile
+                 src/mpi/Makefile])
 
-dnl Libraries for deal.II
-AC_MSG_CHECKING([for deal.II library (-ldeal_II)])
-LIBS="-L$with_dealii/lib $LIBS"
-LIBS_backup=$LIBS
-LIBS="-ldeal_II $LIBS_backup"
-AC_TRY_LINK([#include <base/config.h>], [],
-  deal_II_library=yes, deal_II_library=no)
-if test "x$deal_II_library" != xno; then
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(not found)
-  AC_MSG_CHECKING([for deal.II library (-llac -lbase -ltbb)])
-  LIBS="-llac -lbase -ltbb $LIBS_backup"
-  AC_TRY_LINK([#include <base/config.h>], [],
-  deal_II_library=yes, deal_II_library=no)
-  if test "x$deal_II_library" != xno; then
-    AC_MSG_RESULT(yes)
-  else
-    AC_MSG_RESULT(not found)
-    AC_ERROR([deal.II library not found])
-  fi
-fi
-dnl -----------------------
-
-THIS_FLAG="-ftemplate-depth-256 -I$AFEPACK_PATH/library/include"
-CFLAGS="$CFLAGS $THIS_FLAG"
-CXXFLAGS="$CXXFLAGS $THIS_FLAG"
-CPPFLAGS="$CPPFLAGS $THIS_FLAG"
-AC_SUBST(CFLAGS)
-AC_SUBST(CXXFLAGS)
-AC_SUBST(CPPFLAGS)
-
-AC_SUBST(LIBS)
-
-dnl Checks for header files.
-AC_HEADER_STDC
-
-AC_OUTPUT(Makefile \
-  template/Makefile \
-  example/Makefile \
-  example/local_refine/Makefile \
-  contrib/Makefile \
-  Make.global_options)
-
+AC_OUTPUT

@@ -1,3 +1,2 @@
-## Process this file with automake to create Makefile.in
-
-SUBDIRS = library template contrib
+SUBDIRS = src include tools external examples doc
+ACLOCAL_AMFLAGS = -I m4
