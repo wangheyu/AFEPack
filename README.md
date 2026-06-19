@@ -47,24 +47,29 @@ make install
 
 `make install` 会将头文件（`include/AFEPack/`）、库文件（`libAFEPack.so`、`libAFEPack_mpi.so`）、模板数据以及 easymesh 工具安装到目标目录（默认 `/usr/local`）。
 
-安装后，确保 `lib` 目录在 `LD_LIBRARY_PATH` 中：
+安装后，需设置以下环境变量：
 
 ```bash
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+export PATH=/usr/local/bin:$PATH
+export AFEPACK_TEMPLATE_PATH=/usr/local/include/AFEPack/template/triangle
 ```
+
+`AFEPACK_TEMPLATE_PATH` 需指向所用几何类型对应的模板子目录（如 `triangle`、`tetrahedron` 等），多个路径可用 `:` 分隔。
 
 ### 编译运行例子
 
-例子位于 `examples/` 目录下，每个子目录包含源码和 `Makefile.sample`。安装 AFEPack 后：
+安装后的例子位于 `share/doc/AFEPack/example/`。以 poisson_equation 为例：
 
 ```bash
-cd examples/poisson_equation
+cd share/doc/AFEPack/example/poisson_equation
 cp Makefile.sample Makefile
 make
-./main D.d
+easymesh D          # 生成网格 D.n, D.s, D.e
+./main D            # 传入网格文件前缀（不含扩展名）
 ```
 
-其余例子（`examples/step-7/`、`examples/moving_mesh/` 等）用法类似。
+> **注意**：部分例子（如 `poisson_equation_3D`、`laplacian_evp3D`）无需生成网格，直接 `./main <输入文件>` 即可。参见各子目录下的 `README` 和 `run.sh.sample`。
 
 > 注：`examples/` 下部分额外例子（`debug/`、`FDM/`、`Poisson_withTrilinos/`、`template_element/` 等）仍使用旧版 Makefile，需单独编译。
 
