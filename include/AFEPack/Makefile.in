@@ -372,6 +372,7 @@ headerinclude_HEADERS = AMGSolver.h\
 			Migration.details.h\
 			Migration.h\
 			Miscellaneous.h\
+			MovingMesh.h\
 			MovingMesh2D.h\
 			MovingMesh3D.h\
 			MovingMeshFB.h\
