@@ -1,0 +1,55 @@
+package:
+  name: afepack
+  version: 0.0.1
+
+source:
+  url: https://codeload.github.com/wangheyu/AFEPack/zip/refs/heads/master
+  fn: AFEPack-master.zip
+
+build:
+  number: 1
+  skip: True  # [win]
+
+requirements:
+  build:
+    - {{ compiler('cxx') }}
+    - {{ stdlib('c') }}
+    - make
+    - automake
+    - autoconf
+    - libtool
+    # for make docs
+    - texinfo
+    # for fix tools build failed
+    - sed
+  host:
+    - openblas
+    - mpich
+    - boost-cpp
+  run:
+    # for run examples
+    - {{ compiler('cxx') }}
+    - openblas
+    - mpich
+    - boost-cpp
+
+test:
+  commands:
+    - test -f $PREFIX/lib/libAFEPack.so
+    - test -d $PREFIX/include/AFEPack
+
+about:
+  home: https://github.com/wangheyu/AFEPack
+  license: GPL-2.0-or-later
+  license_family: GPL
+  license_file: COPYING
+  summary: AFEPack - Adaptive Finite Element Package
+  description: |
+    AFEPack is an adaptive finite element library with support for MPI, OpenBLAS, and Boost.
+    It provides tools for solving partial differential equations using finite element methods.
+  doc_url: https://github.com/wangheyu/AFEPack
+  dev_url: https://github.com/wangheyu/AFEPack
+
+extra:
+  recipe-maintainers:
+    - clsxyz

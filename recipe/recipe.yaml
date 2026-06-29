@@ -1,0 +1,58 @@
+schema_version: 1
+
+context:
+  name: afepack
+  version: "0.0.1"
+
+package:
+  name: ${{ name }}
+  version: ${{ version }}
+
+source:
+  url: https://codeload.github.com/wangheyu/AFEPack/zip/refs/heads/master
+
+build:
+  number: 1
+
+requirements:
+  build:
+    - ${{ compiler('cxx') }}
+    - ${{ stdlib("c") }}
+    - make
+    - automake
+    - autoconf
+    - libtool
+    # for make docs
+    - texinfo
+    # for fix tools build failed
+    - sed
+  host:
+    - openblas
+    - mpich
+    - boost-cpp
+  run:
+    # for run examples
+    - ${{ compiler('cxx') }}
+    - openblas
+    - mpich
+    - boost-cpp
+
+tests:
+  - script:
+      - if: unix
+        then: test -f $PREFIX/lib/libAFEPack${SHLIB_EXT}
+      - if: unix
+        then: test -d $PREFIX/include/AFEPack
+      - if: unix
+        then: test -f $PREFIX/include/AFEPack/AMGSolver.h
+
+about:
+  license: GPL-2.0-or-later
+  license_file: COPYING
+  summary: AFEPack - Adaptive Finite Element Package
+  homepage: https://github.com/wangheyu/AFEPack
+  description: AFEPack is an adaptive finite element library with support for MPI, OpenBLAS, and Boost
+
+extra:
+  recipe-maintainers:
+    - clsxyz
