@@ -769,7 +769,8 @@ info: info-recursive
 info-am:
 
 install-data-am:
-
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-recursive
 
 install-dvi-am:
@@ -816,7 +817,8 @@ ps-am:
 
 uninstall-am:
 
-.MAKE: $(am__recursive_targets) all install-am install-strip
+.MAKE: $(am__recursive_targets) all install-am install-data-am \
+	install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--refresh check check-am clean clean-cscope clean-generic \
@@ -826,17 +828,56 @@ uninstall-am:
 	distclean-generic distclean-hdr distclean-libtool \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am
+	install-data install-data-am install-data-hook install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am tags tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 
+
+install-data-hook:
+	@bashrc="$${HOME}/.bashrc"; \
+	marker="# AFEPack environment (added by AFEPack install)"; \
+	if test -n "$(DESTDIR)"; then \
+	  echo "DESTDIR is set; skipping interactive .bashrc update."; \
+	  exit 0; \
+	fi; \
+	echo ""; \
+	echo "AFEPack can append the following environment settings to $$bashrc:"; \
+	echo ""; \
+	printf '%s\n' "$$marker"; \
+	printf '%s\n' 'export LD_LIBRARY_PATH="$(prefix)/lib:$${LD_LIBRARY_PATH}"'; \
+	printf '%s\n' 'export AFEPACK_PATH="$(prefix)/include/AFEPack"'; \
+	printf '%s\n' 'export AFEPACK_TEMPLATE_PATH="$${AFEPACK_PATH}/template/triangle"'; \
+	echo ""; \
+	if test ! -t 0; then \
+	  echo "Non-interactive install detected; skipping .bashrc update."; \
+	  echo "Add the lines above manually if you want AFEPack available in new shells."; \
+	  exit 0; \
+	fi; \
+	printf 'Append these lines to %s? [y/N] ' "$$bashrc"; \
+	read ans; \
+	case "$$ans" in \
+	  y|Y|yes|YES) \
+	    if test -f "$$bashrc" && grep -F "$$marker" "$$bashrc" >/dev/null 2>&1; then \
+	      echo "AFEPack environment block already exists in $$bashrc; not appending a duplicate."; \
+	    else \
+	      { \
+	        printf '\n%s\n' "$$marker"; \
+	        printf '%s\n' 'export LD_LIBRARY_PATH="$(prefix)/lib:$${LD_LIBRARY_PATH}"'; \
+	        printf '%s\n' 'export AFEPACK_PATH="$(prefix)/include/AFEPack"'; \
+	        printf '%s\n' 'export AFEPACK_TEMPLATE_PATH="$${AFEPACK_PATH}/template/triangle"'; \
+	      } >> "$$bashrc"; \
+	      echo "AFEPack environment settings appended to $$bashrc."; \
+	    fi ;; \
+	  *) \
+	    echo "Skipped .bashrc update." ;; \
+	esac
 
 .PHONY: test
 test: all check

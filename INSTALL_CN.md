@@ -52,7 +52,7 @@ sudo apt install libopenmpi-dev openmpi-bin
 ```sh
 mkdir -p build
 cd build
-CC=gcc CXX=g++ ../configure --prefix="$HOME/.local/afepack"
+CC=gcc CXX=g++ ../configure
 make -j"$(nproc)"
 make test
 make install
@@ -61,8 +61,10 @@ make install
 说明：
 
 - `CC=gcc CXX=g++` 用于明确选择非 MPI 编译器。
+- 默认安装到 `$HOME/local/AFEPack`。如需安装到其他目录，可显式传入 `--prefix=DIR`。
 - 默认不进入 `src/mpi`，也不安装 MPI 头文件。
 - `make test` 会先编译所有目标，再运行 `make check`。
+- `make install` 会在交互式终端中询问是否把 AFEPack 环境变量追加到 `~/.bashrc`；非交互安装或设置 `DESTDIR` 时会跳过写入并打印可手动添加的内容。
 - 如果没有安装 `gmsh`，3D 示例测试会显示为 `SKIP`，这不是失败。
 - 如果希望缺少 `gmsh` 时直接报错，请在配置时加入 `--enable-gmsh-tests=yes`。
 
@@ -74,7 +76,7 @@ OpenBLAS 作为组合提供者时：
 
 ```sh
 CC=gcc CXX=g++ ../configure \
-  --prefix="$HOME/.local/afepack" \
+  --prefix="$HOME/local/AFEPack" \
   --with-cblas-includedir=/path/to/deps/include \
   --with-lapacke-includedir=/path/to/deps/include \
   --with-openblas-libdir=/path/to/deps/lib \
@@ -86,7 +88,7 @@ CC=gcc CXX=g++ ../configure \
 
 ```sh
 CC=gcc CXX=g++ ../configure \
-  --prefix="$HOME/.local/afepack" \
+  --prefix="$HOME/local/AFEPack" \
   --with-cblas-includedir=/path/to/cblas/include \
   --with-cblas-libdir=/path/to/cblas/lib \
   --with-lapacke-includedir=/path/to/lapacke/include \
@@ -100,7 +102,7 @@ CC=gcc CXX=g++ ../configure \
 常用选项：
 
 ```text
---prefix=DIR                    安装前缀，默认为 /usr/local
+--prefix=DIR                    安装前缀，默认为 $HOME/local/AFEPack
 --enable-debug                  使用 -O0 -g 等调试编译选项
 --enable-mpi                    启用 MPI 库和 MPI 头文件安装，默认关闭
 --enable-gmsh-tests=auto|yes|no 控制 gmsh 相关示例测试，默认 auto
@@ -127,7 +129,7 @@ CC=gcc CXX=g++ ../configure \
 mkdir -p build-mpi
 cd build-mpi
 CC=gcc CXX=g++ ../configure \
-  --prefix="$HOME/.local/afepack-mpi" \
+  --prefix="$HOME/local/AFEPack-mpi" \
   --enable-mpi
 make -j"$(nproc)"
 make test
@@ -190,8 +192,8 @@ make test
 运行安装后的示例时，通常需要设置：
 
 ```sh
-export LD_LIBRARY_PATH="$HOME/.local/afepack/lib:${LD_LIBRARY_PATH}"
-export AFEPACK_PATH="$HOME/.local/afepack/include/AFEPack"
+export LD_LIBRARY_PATH="$HOME/local/AFEPack/lib:${LD_LIBRARY_PATH}"
+export AFEPACK_PATH="$HOME/local/AFEPack/include/AFEPack"
 export AFEPACK_TEMPLATE_PATH="$AFEPACK_PATH/template/triangle"
 ```
 

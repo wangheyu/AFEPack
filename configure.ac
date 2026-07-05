@@ -3,6 +3,7 @@
 
 AC_PREREQ([2.69])
 AC_INIT([AFEPack],[0.0],[rli@math.pku.edu.cn])
+AC_PREFIX_DEFAULT([$HOME/local/AFEPack])
 AM_INIT_AUTOMAKE([subdir-objects tar-ustar])
 LT_INIT
 AC_CONFIG_SRCDIR([src/AMGSolver.cpp])
