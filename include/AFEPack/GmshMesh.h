@@ -52,9 +52,9 @@ public:
   void readData(const std::string&);
   virtual void generateMesh(Mesh<3,3>& m);
   virtual void addBoundaryMark(Mesh<3, 3>& m);
-  DeclException1(ExcMeshData, 
-		 char *, 
-		 << "Mesh data error: " << arg1);
+  // DeclException1(ExcMeshData, 
+  // 		 char *, 
+  // 		 << "Mesh data error: " << arg1);
 };
 #else
 class GmshMesh : public SimplestMesh<3,3>

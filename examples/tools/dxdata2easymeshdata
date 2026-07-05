@@ -1,5 +1,0 @@
-#! /bin/sh
-
-export AFEPACK=/usr/local/AFEPack
-export AFEPACK_TEMPLATE_PATH=$AFEPACK/template/triangle
-dxdata2easymeshdata.bin $*

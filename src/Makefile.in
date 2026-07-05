@@ -99,7 +99,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
@@ -131,21 +131,20 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libAFEPack_la_DEPENDENCIES =
+libAFEPack_la_LIBADD =
 am_libAFEPack_la_OBJECTS = AMGSolver.lo BilinearOperator.lo \
-	BoundaryCondition.lo DBMesh.lo DGFEMSpace.lo DenseMatrix.lo \
-	EasyMesh.lo FEMSpace.lo FEMSpace.vector_value.1d.lo \
+	BoundaryCondition.lo DBMesh.lo DGFEMSpace.lo EasyMesh.lo \
+	FEMSpace.lo FEMSpace.vector_value.1d.lo \
 	FEMSpace.vector_value.2d.lo FEMSpace.vector_value.3d.lo \
 	Functional.lo Geometry.1d.lo Geometry.2d.lo Geometry.3d.lo \
 	Geometry.lo GmshMesh.lo HGeometry.1d.lo HGeometry.2d.lo \
-	HGeometry.3d.lo LOBPCG.lo Migration.lo Miscellaneous.lo \
-	MovingMesh2D.lo MovingMesh3D.lo MovingMeshFB.lo \
-	MovingMeshFB3D.lo Operator.discretize.lo \
-	Operator.interpolate.lo Operator.project.lo PropertyTable.lo \
-	SparseMatrix.lo SparseMatrixTool.lo SparsityPattern.lo \
+	HGeometry.3d.lo Migration.lo Miscellaneous.lo MovingMesh2D.lo \
+	MovingMesh3D.lo MovingMeshFB.lo MovingMeshFB3D.lo \
+	Operator.discretize.lo Operator.interpolate.lo \
+	Operator.project.lo PropertyTable.lo SparseMatrixTool.lo \
 	TemplateElement.lo TemplateElement.vector_value.l1.lo \
 	TemplateElement.vector_value.l2.lo \
-	TemplateElement.vector_value.l3.lo Thread.lo Vector.lo
+	TemplateElement.vector_value.l3.lo Thread.lo
 libAFEPack_la_OBJECTS = $(am_libAFEPack_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -169,8 +168,8 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/AMGSolver.Plo \
 	./$(DEPDIR)/BilinearOperator.Plo \
 	./$(DEPDIR)/BoundaryCondition.Plo ./$(DEPDIR)/DBMesh.Plo \
-	./$(DEPDIR)/DGFEMSpace.Plo ./$(DEPDIR)/DenseMatrix.Plo \
-	./$(DEPDIR)/EasyMesh.Plo ./$(DEPDIR)/FEMSpace.Plo \
+	./$(DEPDIR)/DGFEMSpace.Plo ./$(DEPDIR)/EasyMesh.Plo \
+	./$(DEPDIR)/FEMSpace.Plo \
 	./$(DEPDIR)/FEMSpace.vector_value.1d.Plo \
 	./$(DEPDIR)/FEMSpace.vector_value.2d.Plo \
 	./$(DEPDIR)/FEMSpace.vector_value.3d.Plo \
@@ -178,20 +177,19 @@ am__depfiles_remade = ./$(DEPDIR)/AMGSolver.Plo \
 	./$(DEPDIR)/Geometry.2d.Plo ./$(DEPDIR)/Geometry.3d.Plo \
 	./$(DEPDIR)/Geometry.Plo ./$(DEPDIR)/GmshMesh.Plo \
 	./$(DEPDIR)/HGeometry.1d.Plo ./$(DEPDIR)/HGeometry.2d.Plo \
-	./$(DEPDIR)/HGeometry.3d.Plo ./$(DEPDIR)/LOBPCG.Plo \
-	./$(DEPDIR)/Migration.Plo ./$(DEPDIR)/Miscellaneous.Plo \
-	./$(DEPDIR)/MovingMesh2D.Plo ./$(DEPDIR)/MovingMesh3D.Plo \
-	./$(DEPDIR)/MovingMeshFB.Plo ./$(DEPDIR)/MovingMeshFB3D.Plo \
+	./$(DEPDIR)/HGeometry.3d.Plo ./$(DEPDIR)/Migration.Plo \
+	./$(DEPDIR)/Miscellaneous.Plo ./$(DEPDIR)/MovingMesh2D.Plo \
+	./$(DEPDIR)/MovingMesh3D.Plo ./$(DEPDIR)/MovingMeshFB.Plo \
+	./$(DEPDIR)/MovingMeshFB3D.Plo \
 	./$(DEPDIR)/Operator.discretize.Plo \
 	./$(DEPDIR)/Operator.interpolate.Plo \
 	./$(DEPDIR)/Operator.project.Plo ./$(DEPDIR)/PropertyTable.Plo \
-	./$(DEPDIR)/SparseMatrix.Plo ./$(DEPDIR)/SparseMatrixTool.Plo \
-	./$(DEPDIR)/SparsityPattern.Plo \
+	./$(DEPDIR)/SparseMatrixTool.Plo \
 	./$(DEPDIR)/TemplateElement.Plo \
 	./$(DEPDIR)/TemplateElement.vector_value.l1.Plo \
 	./$(DEPDIR)/TemplateElement.vector_value.l2.Plo \
 	./$(DEPDIR)/TemplateElement.vector_value.l3.Plo \
-	./$(DEPDIR)/Thread.Plo ./$(DEPDIR)/Vector.Plo
+	./$(DEPDIR)/Thread.Plo
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -251,9 +249,7 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-DIST_SUBDIRS = $(SUBDIRS)
-am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp \
-	$(top_srcdir)/mkinstalldirs
+am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
   dir0=`pwd`; \
@@ -285,11 +281,15 @@ AMTAR = @AMTAR@
 AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_CXXFLAGS = @AM_CXXFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AM_LDFLAGS = @AM_LDFLAGS@
 AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
+BOOST_LDFLAGS = @BOOST_LDFLAGS@
+BOOST_SERIALIZATION_LIB = @BOOST_SERIALIZATION_LIB@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -314,6 +314,8 @@ ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 FILECMD = @FILECMD@
+GMSH = @GMSH@
+GMSH_TESTS = @GMSH_TESTS@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -332,6 +334,7 @@ LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
+MPICXX = @MPICXX@
 NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
@@ -347,6 +350,7 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+RPATH_FLAGS = @RPATH_FLAGS@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -409,53 +413,48 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = libAFEPack.la
-libAFEPack_la_LIBADD = -lopenblas
-libAFEPack_la_SOURCES = AMGSolver.cpp\
-			BilinearOperator.cpp\
-			BoundaryCondition.cpp\
-			DBMesh.cpp\
-			DGFEMSpace.cpp\
-			DenseMatrix.cpp\
-			EasyMesh.cpp\
-			FEMSpace.cpp\
-			FEMSpace.vector_value.1d.cpp\
-			FEMSpace.vector_value.2d.cpp\
-			FEMSpace.vector_value.3d.cpp\
-			Functional.cpp\
-			Geometry.1d.cpp\
-			Geometry.2d.cpp\
-			Geometry.3d.cpp\
-			Geometry.cpp\
-			GmshMesh.cpp\
-			HGeometry.1d.cpp\
-			HGeometry.2d.cpp\
-			HGeometry.3d.cpp\
-			LOBPCG.cpp\
-			Migration.cpp\
-			Miscellaneous.cpp\
-			MovingMesh2D.cpp\
-			MovingMesh3D.cpp\
-			MovingMeshFB.cpp\
-			MovingMeshFB3D.cpp\
-			Operator.discretize.cpp\
-			Operator.interpolate.cpp\
-			Operator.project.cpp\
-			PropertyTable.cpp\
-			SparseMatrix.cpp\
-			SparseMatrixTool.cpp\
-			SparsityPattern.cpp\
-			TemplateElement.cpp\
-			TemplateElement.vector_value.l1.cpp\
-			TemplateElement.vector_value.l2.cpp\
-			TemplateElement.vector_value.l3.cpp\
-			Thread.cpp\
-			Vector.cpp
+libAFEPack_la_SOURCES = $(srcdir)/AMGSolver.cpp\
+			$(srcdir)/BilinearOperator.cpp\
+			$(srcdir)/BoundaryCondition.cpp\
+			$(srcdir)/DBMesh.cpp\
+			$(srcdir)/DGFEMSpace.cpp\
+			$(srcdir)/EasyMesh.cpp\
+			$(srcdir)/FEMSpace.cpp\
+			$(srcdir)/FEMSpace.vector_value.1d.cpp\
+			$(srcdir)/FEMSpace.vector_value.2d.cpp\
+			$(srcdir)/FEMSpace.vector_value.3d.cpp\
+			$(srcdir)/Functional.cpp\
+			$(srcdir)/Geometry.1d.cpp\
+			$(srcdir)/Geometry.2d.cpp\
+			$(srcdir)/Geometry.3d.cpp\
+			$(srcdir)/Geometry.cpp\
+			$(srcdir)/GmshMesh.cpp\
+			$(srcdir)/HGeometry.1d.cpp\
+			$(srcdir)/HGeometry.2d.cpp\
+			$(srcdir)/HGeometry.3d.cpp\
+			$(srcdir)/Migration.cpp\
+			$(srcdir)/Miscellaneous.cpp\
+			$(srcdir)/MovingMesh2D.cpp\
+			$(srcdir)/MovingMesh3D.cpp\
+			$(srcdir)/MovingMeshFB.cpp\
+			$(srcdir)/MovingMeshFB3D.cpp\
+			$(srcdir)/Operator.discretize.cpp\
+			$(srcdir)/Operator.interpolate.cpp\
+			$(srcdir)/Operator.project.cpp\
+			$(srcdir)/PropertyTable.cpp\
+			$(srcdir)/SparseMatrixTool.cpp\
+			$(srcdir)/TemplateElement.cpp\
+			$(srcdir)/TemplateElement.vector_value.l1.cpp\
+			$(srcdir)/TemplateElement.vector_value.l2.cpp\
+			$(srcdir)/TemplateElement.vector_value.l3.cpp\
+			$(srcdir)/Thread.cpp
 
-EXTRA_DIST = HGeometry.cpptemplate
 
-# install-exec-hook:
-# 	$(LN_S) .libs/libAFEPack.so $(top_srcdir)/lib/
-SUBDIRS = mpi
+# libAFEPack_la_CPPFLAGS = -I$(top_srcdir)/include
+EXTRA_DIST = $(srcdir)/HGeometry.cpptemplate
+@ENABLE_MPI_FALSE@SUBDIRS = 
+@ENABLE_MPI_TRUE@SUBDIRS = mpi
+DIST_SUBDIRS = mpi
 all: all-recursive
 
 .SUFFIXES:
@@ -537,7 +536,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BoundaryCondition.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DBMesh.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DGFEMSpace.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DenseMatrix.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EasyMesh.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FEMSpace.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FEMSpace.vector_value.1d.Plo@am__quote@ # am--include-marker
@@ -552,7 +550,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HGeometry.1d.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HGeometry.2d.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HGeometry.3d.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LOBPCG.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Migration.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Miscellaneous.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MovingMesh2D.Plo@am__quote@ # am--include-marker
@@ -563,15 +560,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Operator.interpolate.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Operator.project.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PropertyTable.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SparseMatrix.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SparseMatrixTool.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SparsityPattern.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TemplateElement.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TemplateElement.vector_value.l1.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TemplateElement.vector_value.l2.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TemplateElement.vector_value.l3.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Thread.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Vector.Plo@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -814,7 +808,6 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/BoundaryCondition.Plo
 	-rm -f ./$(DEPDIR)/DBMesh.Plo
 	-rm -f ./$(DEPDIR)/DGFEMSpace.Plo
-	-rm -f ./$(DEPDIR)/DenseMatrix.Plo
 	-rm -f ./$(DEPDIR)/EasyMesh.Plo
 	-rm -f ./$(DEPDIR)/FEMSpace.Plo
 	-rm -f ./$(DEPDIR)/FEMSpace.vector_value.1d.Plo
@@ -829,7 +822,6 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/HGeometry.1d.Plo
 	-rm -f ./$(DEPDIR)/HGeometry.2d.Plo
 	-rm -f ./$(DEPDIR)/HGeometry.3d.Plo
-	-rm -f ./$(DEPDIR)/LOBPCG.Plo
 	-rm -f ./$(DEPDIR)/Migration.Plo
 	-rm -f ./$(DEPDIR)/Miscellaneous.Plo
 	-rm -f ./$(DEPDIR)/MovingMesh2D.Plo
@@ -840,15 +832,12 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/Operator.interpolate.Plo
 	-rm -f ./$(DEPDIR)/Operator.project.Plo
 	-rm -f ./$(DEPDIR)/PropertyTable.Plo
-	-rm -f ./$(DEPDIR)/SparseMatrix.Plo
 	-rm -f ./$(DEPDIR)/SparseMatrixTool.Plo
-	-rm -f ./$(DEPDIR)/SparsityPattern.Plo
 	-rm -f ./$(DEPDIR)/TemplateElement.Plo
 	-rm -f ./$(DEPDIR)/TemplateElement.vector_value.l1.Plo
 	-rm -f ./$(DEPDIR)/TemplateElement.vector_value.l2.Plo
 	-rm -f ./$(DEPDIR)/TemplateElement.vector_value.l3.Plo
 	-rm -f ./$(DEPDIR)/Thread.Plo
-	-rm -f ./$(DEPDIR)/Vector.Plo
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -899,7 +888,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/BoundaryCondition.Plo
 	-rm -f ./$(DEPDIR)/DBMesh.Plo
 	-rm -f ./$(DEPDIR)/DGFEMSpace.Plo
-	-rm -f ./$(DEPDIR)/DenseMatrix.Plo
 	-rm -f ./$(DEPDIR)/EasyMesh.Plo
 	-rm -f ./$(DEPDIR)/FEMSpace.Plo
 	-rm -f ./$(DEPDIR)/FEMSpace.vector_value.1d.Plo
@@ -914,7 +902,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/HGeometry.1d.Plo
 	-rm -f ./$(DEPDIR)/HGeometry.2d.Plo
 	-rm -f ./$(DEPDIR)/HGeometry.3d.Plo
-	-rm -f ./$(DEPDIR)/LOBPCG.Plo
 	-rm -f ./$(DEPDIR)/Migration.Plo
 	-rm -f ./$(DEPDIR)/Miscellaneous.Plo
 	-rm -f ./$(DEPDIR)/MovingMesh2D.Plo
@@ -925,15 +912,12 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/Operator.interpolate.Plo
 	-rm -f ./$(DEPDIR)/Operator.project.Plo
 	-rm -f ./$(DEPDIR)/PropertyTable.Plo
-	-rm -f ./$(DEPDIR)/SparseMatrix.Plo
 	-rm -f ./$(DEPDIR)/SparseMatrixTool.Plo
-	-rm -f ./$(DEPDIR)/SparsityPattern.Plo
 	-rm -f ./$(DEPDIR)/TemplateElement.Plo
 	-rm -f ./$(DEPDIR)/TemplateElement.vector_value.l1.Plo
 	-rm -f ./$(DEPDIR)/TemplateElement.vector_value.l2.Plo
 	-rm -f ./$(DEPDIR)/TemplateElement.vector_value.l3.Plo
 	-rm -f ./$(DEPDIR)/Thread.Plo
-	-rm -f ./$(DEPDIR)/Vector.Plo
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

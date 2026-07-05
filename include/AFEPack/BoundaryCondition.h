@@ -16,10 +16,13 @@
 #include <set>
 #include <map>
 
-//#include <deal.II/lac/sparse_matrix.h>
-//#include <deal.II/lac/vector.h>
-#include <AFEPack/SparseMatrix.h>
 #include <AFEPack/Vector.h>
+#include <AFEPack/DenseMatrix.h>
+#include <AFEPack/SparsityPattern.h>
+#include <AFEPack/SparseMatrix.h>
+
+
+
 #include <AFEPack/Miscellaneous.h>
 
 /**
@@ -241,13 +244,14 @@ class BCAdmin {
       u_int n_dof = sp.n_dof();
       const SparsityPattern& spA = A.get_sparsity_pattern();
       const std::size_t * rowstart = spA.get_rowstart_indices();
-      const u_int * colnum = spA.get_column_numbers();
+      //const u_int * colnum = spA.get_column_numbers();
+      const size_t * colnum = spA.get_column_numbers();      
       for (u_int i = 0;i < n_dof;++ i) {
         int bm = sp.dofInfo(i).boundary_mark;
         if (bm == 0) continue; /// 0 缺省指区域内部
         const bc_ptr_t bc = this->find(bm);
         /// 如果这个边界条件不由本对象处理，或者不是狄氏边界，则跳过去。
-        if (bc == NULL) continue;
+        if (bc == nullptr) continue;
         if (bc->type() != BCondition::DIRICHLET) continue;
         bc->value((const void *)(&sp.dofInfo(i).interp_point), 
                   (void *)(&u(i)));
@@ -259,7 +263,8 @@ class BCAdmin {
         if (preserve_symmetry) {
           for (u_int j = rowstart[i] + 1;j < rowstart[i + 1];++ j) {
             u_int k = colnum[j];
-            const u_int * p = std::find(&colnum[rowstart[k] + 1],
+            //const u_int * p = std::find(&colnum[rowstart[k] + 1],
+	    const size_t * p = std::find(&colnum[rowstart[k] + 1],	    
                                         &colnum[rowstart[k + 1]], i);
             if (p != &colnum[rowstart[k+1]]) {
               u_int l = p - &colnum[rowstart[0]];
@@ -287,7 +292,7 @@ class BCAdmin {
         int bm = sp.dof_info(i).bound_mark();
         if (bm == 0) continue; /// 0 缺省指区域内部
         const bc_ptr_t bc = find(bm);
-        if (bc != NULL) f(i) -= f(i);
+        if (bc != nullptr) f(i) -= f(i);
       }
     }
 
@@ -310,7 +315,7 @@ class BCAdmin {
 
   /**
    * 找出对应于材料标识 bm 的边界条件的指针，如果没有找到，则返回
-   * NULL。
+   * nullptr。
    * 
    */
   bc_ptr_t find(int bm) const 
@@ -320,7 +325,7 @@ class BCAdmin {
       if (the_ptr != _map.end()) {
         return the_ptr->second;
       } else {
-        return NULL;
+        return nullptr;
       }
     }
 };

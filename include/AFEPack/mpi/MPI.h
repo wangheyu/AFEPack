@@ -134,7 +134,7 @@ namespace MPI {
     struct Remote_pointer {
       int type; /// 指针共享类型，约定 0 为缺省值，表示两个对象完全一致
       T * ptr;  /// 指针的远程内存地址
-    Remote_pointer() : type(0), ptr(NULL) {}
+    Remote_pointer() : type(0), ptr(nullptr) {}
     Remote_pointer(int _type, T * _ptr) :
       type(_type), ptr(_ptr) {}
     Remote_pointer(const Remote_pointer<T>& rp) :

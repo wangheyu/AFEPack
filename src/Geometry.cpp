@@ -239,8 +239,10 @@ namespace __hidden_namespace {
 
     if ( ! init ) {
       unsigned char gray[ 2 * 2 ] ;
-      register unsigned k ;
-      register unsigned j ;
+      // register unsigned k ;
+      // register unsigned j ;
+      unsigned k ;
+      unsigned j ;
 
       gray[0] = 0 ;
       for ( k = 1 ; k < sizeof(gray) ; k <<= 1 ) {
@@ -313,8 +315,10 @@ namespace __hidden_namespace {
 
     if ( ! init ) {
       unsigned char gray[ 2*2*2 ] ;
-      register unsigned k ;
-      register unsigned j ;
+      // register unsigned k ;
+      // register unsigned j ;
+      unsigned k ;
+      unsigned j ;
 
       gray[0] = 0 ;
       for ( k = 1 ; k < sizeof(gray) ; k <<= 1 ) {

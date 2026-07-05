@@ -156,7 +156,7 @@ THIS barycenter(const std::vector<THIS >& p, const double * w)
   int i, j, k;
   double bc[DIM];
   k = p.size();
-  if (w == NULL) {
+  if (w == nullptr) {
     for (i = 0;i < DIM;i ++) {
       bc[i] = 0;
       for (j = 0;j < k;j ++)
@@ -237,7 +237,7 @@ THIS::~Mesh()
 TEMPLATE
 THIS& THIS::operator=(const THIS& m)
 {
-  if (&m != NULL) {
+  if (&m != nullptr) {
     pnt = m.pnt;
     geo = m.geo;
   }
@@ -434,8 +434,8 @@ void THIS::writeData(const std::string& s) const
 TEMPLATE
 void THIS::readData1d(const std::string& s)
 {
-  Assert(DIM == 1, ExcMeshData("this method can only be used for 1d."));
-  Assert(DOW == 1, ExcMeshData("this method can only be used for 1d."));
+  assert(DIM == 1);
+  assert(DOW == 1);
   int i, j;
   std::ifstream is(s.c_str());
   is >> i;
@@ -488,7 +488,7 @@ std::istream& operator>>(std::istream& is, THIS& m)
     for (k = 0;k < j;k ++) {
       is >> temp;
       l = temp.index();
-      Assert(l < j, (typename THIS::ExcMeshData("geometry index error.")));
+      assert(l < j);
       g[l] = temp;
     }
     std::cerr << j << " OK!" << std::endl;
@@ -543,7 +543,7 @@ QuadratureInfo<DIM>::~QuadratureInfo()
 template <int DIM>
 QuadratureInfo<DIM>& QuadratureInfo<DIM>::operator=(const QuadratureInfo<DIM>& q)
 {
-  if (&q != NULL) {
+  if (&q != nullptr) {
     alg_acc = q.alg_acc;
     pnt = q.pnt;
     wei = q.wei;
@@ -743,12 +743,12 @@ std::ostream& operator<<(std::ostream& os, const QuadratureInfoAdmin<DIM>& q)
 
 template <int DIM>
 TemplateGeometry<DIM>::TemplateGeometry() :
-handle(NULL)
+handle(nullptr)
 {}
 
 template <int DIM>
 TemplateGeometry<DIM>::TemplateGeometry(const TemplateGeometry<DIM>& t) :
-handle(NULL),
+handle(nullptr),
   library_name(t.library_name),
   volume_function_name(t.volume_function_name),
   quad_info(t.quad_info)
@@ -763,7 +763,7 @@ TemplateGeometry<DIM>::~TemplateGeometry()
 template <int DIM>
 TemplateGeometry<DIM>& TemplateGeometry<DIM>::operator=(const TemplateGeometry<DIM>& t)
 {
-  if (&t != NULL) {
+  if (&t != nullptr) {
     library_name = t.library_name;
     volume_function_name = t.volume_function_name;
     quad_info = t.quad_info;
@@ -784,16 +784,16 @@ void TemplateGeometry<DIM>::loadFunction()
   handle = AFEPackDLOpen(temp);
 
   void * symbol = dlsym(handle, volume_function_name.c_str());
-  Assert(symbol, ExcLoadFunction(volume_function_name.c_str(), library_name.c_str()));
+  assert(symbol);
   volume_function = (double (*)(const double **))symbol;
 }
 
 template <int DIM>
 void TemplateGeometry<DIM>::unloadFunction()
 {
-  if (handle != NULL) {
+  if (handle != nullptr) {
     dlclose(handle);
-    handle = NULL;
+    handle = nullptr;
   };
 }
 
@@ -882,9 +882,9 @@ filtering_istream& operator>>(filtering_istream& is, TemplateGeometry<DIM>& t)
       const std::vector<int>& v = temp.vertex();
       m = v.size() - 1;
       for (l = 0;l < m;l ++)
-	Assert(v[l] < v[l+1], (typename TemplateGeometry<DIM>::ExcTemplateGeometryData("geometry vertices not sorted.")));
+	assert(v[l] < v[l+1]);
       l = temp.index();
-      Assert(l < j, (typename TemplateGeometry<DIM>::ExcTemplateGeometryData("geometry index error.")));
+      assert(l < j);
       dynamic_cast<Geometry&>(g[l]) = temp;
     }
   }
@@ -1087,7 +1087,7 @@ void Mesh<DIM,DOW>::renumerateElementHSFC(void (*f)(const double *, double*))
       pnt += point(vtx_idx);
     }
     pnt /= n_vtx;
-    if (f != NULL) {
+    if (f != nullptr) {
       Point<DOW> pnt1(pnt);
       f(&(pnt1[0]), &(pnt[0]));
     }

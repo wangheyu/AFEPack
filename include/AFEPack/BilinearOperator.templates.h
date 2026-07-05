@@ -80,7 +80,7 @@ void THIS::buildSparsityPattern()
     typename std::vector<Element<value_type0,DIM,DOW,TDIM0> >::iterator end_element0 = fem_space0->endElement();
     typename std::vector<Element<value_type1,DIM,DOW,TDIM1> >::iterator the_element1 = fem_space1->beginElement();
     for (;the_element0 != end_element0;the_element0 ++, the_element1 ++) {
-      Assert (the_element0->index() == the_element1->index(), ExcInternalError());
+      assert(the_element0->index() == the_element1->index());
       getElementPattern(*the_element0, *the_element1);
       addElementPattern();
     }
@@ -92,7 +92,7 @@ void THIS::buildSparsityPattern()
     RegularMesh<DIM,DOW>& regular_mesh1 = dynamic_cast<RegularMesh<DIM,DOW>&>(mesh1);
     IrregularMesh<DIM,DOW>& irregular_mesh0 = regular_mesh0.irregularMesh();
     IrregularMesh<DIM,DOW>& irregular_mesh1 = regular_mesh1.irregularMesh();
-    Assert (&(irregular_mesh0.geometryTree()) == &(irregular_mesh1.geometryTree()), ExcInternalError());
+    assert(&(irregular_mesh0.geometryTree()) == &(irregular_mesh1.geometryTree()));
     IrregularMeshPair<DIM,DOW> mesh_pair(irregular_mesh0, irregular_mesh1);
     ActiveElementPairIterator<DIM,DOW> the_pair = mesh_pair.beginActiveElementPair();
     ActiveElementPairIterator<DIM,DOW> end_pair = mesh_pair.endActiveElementPair();
@@ -101,8 +101,8 @@ void THIS::buildSparsityPattern()
       const HElement<DIM,DOW>& h_element1 = the_pair(1);
       Element<value_type0,DIM,DOW,TDIM0>& element0 = fem_space0->element(h_element0.index);
       Element<value_type1,DIM,DOW,TDIM1>& element1 = fem_space1->element(h_element1.index);
-      Assert (element0.index() == h_element0.index, ExcInternalError());
-      Assert (element1.index() == h_element1.index, ExcInternalError());
+      assert(element0.index() == h_element0.index);
+      assert(element1.index() == h_element1.index);
       getElementPattern(element0, element1);
       addElementPattern();
     }
@@ -134,7 +134,7 @@ void THIS::buildDofInfo()
     typename std::vector<Element<value_type0,DIM,DOW,TDIM0> >::iterator end_element0 = fem_space0->endElement();
     typename std::vector<Element<value_type1,DIM,DOW,TDIM1> >::iterator the_element1 = fem_space1->beginElement();
     for (;the_element0 != end_element0;the_element0 ++, the_element1 ++) {
-      Assert (the_element0->index() == the_element1->index(), ExcInternalError());
+      assert(the_element0->index() == the_element1->index());
       getElementPattern(*the_element0, *the_element1);
       int n_element_dof0 = elementDof0().size();
       int n_element_dof1 = elementDof1().size();
@@ -149,7 +149,7 @@ void THIS::buildDofInfo()
     RegularMesh<DIM,DOW>& regular_mesh1 = dynamic_cast<RegularMesh<DIM,DOW>&>(mesh1);
     IrregularMesh<DIM,DOW>& irregular_mesh0 = regular_mesh0.irregularMesh();
     IrregularMesh<DIM,DOW>& irregular_mesh1 = regular_mesh1.irregularMesh();
-    Assert (&(irregular_mesh0.geometryTree()) == &(irregular_mesh0.geometryTree()), ExcInternalError());
+    assert(&(irregular_mesh0.geometryTree()) == &(irregular_mesh0.geometryTree()));
     IrregularMeshPair<DIM,DOW> mesh_pair(irregular_mesh0, irregular_mesh1);
     ActiveElementPairIterator<DIM,DOW> the_pair = mesh_pair.beginActiveElementPair();
     ActiveElementPairIterator<DIM,DOW> end_pair = mesh_pair.endActiveElementPair();
@@ -158,8 +158,8 @@ void THIS::buildDofInfo()
       const HElement<DIM,DOW>& h_element1 = the_pair(1);
       Element<value_type0,DIM,DOW,TDIM0>& element0 = fem_space0->element(h_element0.index);
       Element<value_type1,DIM,DOW,TDIM1>& element1 = fem_space1->element(h_element1.index);
-      Assert (element0.index() == h_element0.index, ExcInternalError());
-      Assert (element1.index() == h_element1.index, ExcInternalError());
+      assert(element0.index() == h_element0.index);
+      assert(element1.index() == h_element1.index);
       getElementPattern(element0, element1);
       int n_element_dof0 = elementDof0().size();
       int n_element_dof1 = elementDof1().size();
@@ -193,7 +193,7 @@ void THIS::buildSparseMatrix()
     typename std::vector<Element<value_type0,DIM,DOW,TDIM0> >::iterator end_element0 = fem_space0->endElement();
     typename std::vector<Element<value_type1,DIM,DOW,TDIM1> >::iterator the_element1 = fem_space1->beginElement();
     for (;the_element0 != end_element0;the_element0 ++, the_element1 ++) {
-      Assert (the_element0->index() == the_element1->index(), ExcInternalError());
+      assert(the_element0->index() == the_element1->index());
       getElementPattern(*the_element0, *the_element1);
       elementMatrix().reinit(elementDof0().size(), elementDof1().size());
       getElementMatrix(*the_element0, *the_element1);
@@ -207,7 +207,7 @@ void THIS::buildSparseMatrix()
     RegularMesh<DIM,DOW>& regular_mesh1 = dynamic_cast<RegularMesh<DIM,DOW>&>(mesh1);
     IrregularMesh<DIM,DOW>& irregular_mesh0 = regular_mesh0.irregularMesh();
     IrregularMesh<DIM,DOW>& irregular_mesh1 = regular_mesh1.irregularMesh();
-    Assert (&(irregular_mesh0.geometryTree()) == &(irregular_mesh1.geometryTree()), ExcInternalError());
+    assert(&(irregular_mesh0.geometryTree()) == &(irregular_mesh1.geometryTree()));
     IrregularMeshPair<DIM,DOW> mesh_pair(irregular_mesh0, irregular_mesh1);
     ActiveElementPairIterator<DIM,DOW> the_pair = mesh_pair.beginActiveElementPair();
     ActiveElementPairIterator<DIM,DOW> end_pair = mesh_pair.endActiveElementPair();
@@ -216,8 +216,8 @@ void THIS::buildSparseMatrix()
       const HElement<DIM,DOW>& h_element1 = the_pair(1);
       Element<value_type0,DIM,DOW,TDIM0>& element0 = fem_space0->element(h_element0.index);
       Element<value_type1,DIM,DOW,TDIM1>& element1 = fem_space1->element(h_element1.index);
-      Assert (element0.index() == h_element0.index, ExcInternalError());
-      Assert (element1.index() == h_element1.index, ExcInternalError());
+      assert(element0.index() == h_element0.index);
+      assert(element1.index() == h_element1.index);
       getElementPattern(element0, element1);
       elementMatrix().reinit(elementDof0().size(), elementDof1().size());
       getElementMatrix(element0, element1, the_pair.state());
@@ -332,16 +332,16 @@ void THIS::getElementMatrix(const Element<value_type0,DIM,DOW,TDIM0>& element0,
 #define THIS MassMatrix<DIM,value_type,DOW,TDIM>
 
 TEMPLATE
-void THIS::reinit(FEMSpace<typename MassMatrix::value_type,DIM,DOW,TDIM>& sp)
+void THIS::reinit(FEMSpace<value_type,DIM,DOW,TDIM>& sp)
 {
-  BilinearOperator<DIM,typename MassMatrix::value_type,typename MassMatrix::value_type,DOW,TDIM,TDIM>::reinit(sp, sp);
+  BilinearOperator<DIM,value_type,value_type,DOW,TDIM,TDIM>::reinit(sp, sp);
 }
 
 
 
 TEMPLATE
-void THIS::getElementMatrix(const Element<typename MassMatrix::value_type,DIM,DOW,TDIM>& element0,
-                            const Element<typename MassMatrix::value_type,DIM,DOW,TDIM>& element1,
+void THIS::getElementMatrix(const Element<value_type,DIM,DOW,TDIM>& element0,
+                            const Element<value_type,DIM,DOW,TDIM>& element1,
                             const typename ActiveElementPairIterator<DIM>::State state)
 {
   const std::vector<int>& ele_dof0 = element0.dof();
@@ -354,7 +354,7 @@ void THIS::getElementMatrix(const Element<typename MassMatrix::value_type,DIM,DO
   std::vector<double> jacobian = element0.local_to_global_jacobian(quad_info.quadraturePoint());
   int n_quadrature_point = quad_info.n_quadraturePoint();
   std::vector<Point<DOW> > q_point = element0.local_to_global(quad_info.quadraturePoint());
-  std::vector<std::vector<typename MassMatrix::value_type> > basis_value = element0.basis_function_value(q_point);
+  std::vector<std::vector<value_type> > basis_value = element0.basis_function_value(q_point);
   for (int l = 0;l < n_quadrature_point;l ++) {
     double Jxw = quad_info.weight(l)*jacobian[l]*volume;
     for (int j = 0;j < n_element_dof0;j ++) {
@@ -372,16 +372,16 @@ void THIS::getElementMatrix(const Element<typename MassMatrix::value_type,DIM,DO
 #define THIS StiffMatrix<DIM,value_type,DOW,TDIM>
 
 TEMPLATE
-void THIS::reinit(FEMSpace<typename StiffMatrix::value_type,DIM,DOW,TDIM>& sp)
+void THIS::reinit(FEMSpace<value_type,DIM,DOW,TDIM>& sp)
 {
-  BilinearOperator<DIM,typename StiffMatrix::value_type,typename StiffMatrix::value_type,DOW,TDIM,TDIM>::reinit(sp, sp);
+  BilinearOperator<DIM,value_type,value_type,DOW,TDIM,TDIM>::reinit(sp, sp);
 }
 
 
 
 TEMPLATE
-void THIS::getElementMatrix(const Element<typename StiffMatrix::value_type,DIM,DOW,TDIM>& element0,
-                            const Element<typename StiffMatrix::value_type,DIM,DOW,TDIM>& element1,
+void THIS::getElementMatrix(const Element<value_type,DIM,DOW,TDIM>& element0,
+                            const Element<value_type,DIM,DOW,TDIM>& element1,
                             const typename ActiveElementPairIterator<DIM>::State state)
 {
   const std::vector<int>& ele_dof0 = element0.dof();
@@ -389,12 +389,12 @@ void THIS::getElementMatrix(const Element<typename StiffMatrix::value_type,DIM,D
   int n_element_dof0 = ele_dof0.size();
   int n_element_dof1 = ele_dof1.size();
   double volume = element0.templateElement().volume();
-  const int& alg_acc = this->algebricAccuracy();  
+  const int& alg_acc = this->algebricAccuracy();
   const QuadratureInfo<TDIM>& quad_info = element0.findQuadratureInfo(alg_acc);
   std::vector<double> jacobian = element0.local_to_global_jacobian(quad_info.quadraturePoint());
   int n_quadrature_point = quad_info.n_quadraturePoint();
   std::vector<Point<DOW> > q_point = element0.local_to_global(quad_info.quadraturePoint());
-  std::vector<std::vector<std::vector<typename StiffMatrix::value_type> > > basis_gradient = element0.basis_function_gradient(q_point);
+  std::vector<std::vector<std::vector<value_type> > > basis_gradient = element0.basis_function_gradient(q_point);
   for (int l = 0;l < n_quadrature_point;l ++) {
     double Jxw = quad_info.weight(l)*jacobian[l]*volume;
     for (int j = 0;j < n_element_dof0;j ++) {
@@ -407,6 +407,87 @@ void THIS::getElementMatrix(const Element<typename StiffMatrix::value_type,DIM,D
 
 #undef THIS
 #undef TEMPLATE
+
+
+/* #define TEMPLATE template <int DIM, class value_type, int DOW, int TDIM> */
+/* #define THIS MassMatrix<DIM,value_type,DOW,TDIM> */
+
+/* TEMPLATE */
+/* void THIS::reinit(FEMSpace<typename MassMatrix::value_type,DIM,DOW,TDIM>& sp) */
+/* { */
+/*   BilinearOperator<DIM,typename MassMatrix::value_type,typename MassMatrix::value_type,DOW,TDIM,TDIM>::reinit(sp, sp); */
+/* } */
+
+
+
+/* TEMPLATE */
+/* void THIS::getElementMatrix(const Element<typename MassMatrix::value_type,DIM,DOW,TDIM>& element0, */
+/*                             const Element<typename MassMatrix::value_type,DIM,DOW,TDIM>& element1, */
+/*                             const typename ActiveElementPairIterator<DIM>::State state) */
+/* { */
+/*   const std::vector<int>& ele_dof0 = element0.dof(); */
+/*   const std::vector<int>& ele_dof1 = element1.dof(); */
+/*   int n_element_dof0 = ele_dof0.size(); */
+/*   int n_element_dof1 = ele_dof1.size(); */
+/*   double volume = element0.templateElement().volume(); */
+/*   const int& alg_acc = this->algebricAccuracy(); */
+/*   const QuadratureInfo<DIM>& quad_info = element0.findQuadratureInfo(alg_acc); */
+/*   std::vector<double> jacobian = element0.local_to_global_jacobian(quad_info.quadraturePoint()); */
+/*   int n_quadrature_point = quad_info.n_quadraturePoint(); */
+/*   std::vector<Point<DOW> > q_point = element0.local_to_global(quad_info.quadraturePoint()); */
+/*   std::vector<std::vector<typename MassMatrix::value_type> > basis_value = element0.basis_function_value(q_point); */
+/*   for (int l = 0;l < n_quadrature_point;l ++) { */
+/*     double Jxw = quad_info.weight(l)*jacobian[l]*volume; */
+/*     for (int j = 0;j < n_element_dof0;j ++) { */
+/*       for (int k = 0;k < n_element_dof1;k ++) { */
+/* 	this->elementMatrix(j,k) += Jxw*basis_value[j][l]*basis_value[k][l]; */
+/*       } */
+/*     } */
+/*   } */
+/* } */
+
+/* #undef THIS */
+/* #undef TEMPLATE */
+
+/* #define TEMPLATE template <int DIM, class value_type, int DOW, int TDIM> */
+/* #define THIS StiffMatrix<DIM,value_type,DOW,TDIM> */
+
+/* TEMPLATE */
+/* void THIS::reinit(FEMSpace<typename StiffMatrix::value_type,DIM,DOW,TDIM>& sp) */
+/* { */
+/*   BilinearOperator<DIM,typename StiffMatrix::value_type,typename StiffMatrix::value_type,DOW,TDIM,TDIM>::reinit(sp, sp); */
+/* } */
+
+
+
+/* TEMPLATE */
+/* void THIS::getElementMatrix(const Element<typename StiffMatrix::value_type,DIM,DOW,TDIM>& element0, */
+/*                             const Element<typename StiffMatrix::value_type,DIM,DOW,TDIM>& element1, */
+/*                             const typename ActiveElementPairIterator<DIM>::State state) */
+/* { */
+/*   const std::vector<int>& ele_dof0 = element0.dof(); */
+/*   const std::vector<int>& ele_dof1 = element1.dof(); */
+/*   int n_element_dof0 = ele_dof0.size(); */
+/*   int n_element_dof1 = ele_dof1.size(); */
+/*   double volume = element0.templateElement().volume(); */
+/*   const int& alg_acc = this->algebricAccuracy();   */
+/*   const QuadratureInfo<TDIM>& quad_info = element0.findQuadratureInfo(alg_acc); */
+/*   std::vector<double> jacobian = element0.local_to_global_jacobian(quad_info.quadraturePoint()); */
+/*   int n_quadrature_point = quad_info.n_quadraturePoint(); */
+/*   std::vector<Point<DOW> > q_point = element0.local_to_global(quad_info.quadraturePoint()); */
+/*   std::vector<std::vector<std::vector<typename StiffMatrix::value_type> > > basis_gradient = element0.basis_function_gradient(q_point); */
+/*   for (int l = 0;l < n_quadrature_point;l ++) { */
+/*     double Jxw = quad_info.weight(l)*jacobian[l]*volume; */
+/*     for (int j = 0;j < n_element_dof0;j ++) { */
+/*       for (int k = 0;k < n_element_dof1;k ++) { */
+/* 	this->elementMatrix(j,k) += Jxw*innerProduct(basis_gradient[j][l],basis_gradient[k][l]); */
+/*       } */
+/*     } */
+/*   } */
+/* } */
+
+/* #undef THIS */
+/* #undef TEMPLATE */
 
 AFEPACK_CLOSE_NAMESPACE
 

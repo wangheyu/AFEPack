@@ -35,7 +35,7 @@ void DBMesh::readData(const std::string& filename)
       readQuadrilateralElement(is);
     else if (dummy == "Dimension") {
       is >> i;
-      Assert(i == 2, ExcMeshData("the dimension of the mesh should be 2"));
+      assert(i == 2);
     }
     else if (dummy == "End")
       break;

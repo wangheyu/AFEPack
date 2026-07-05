@@ -1,0 +1,15 @@
+CXX = @CXX@
+
+CXXFLAGS = -O2 -g
+
+CPPFLAGS = -I@prefix@/include @BOOST_CPPFLAGS@
+
+LDFLAGS = -L@prefix@/lib @AM_LDFLAGS@
+
+LIBS = -lAFEPack
+
+main : main.cpp EllipticEquation.o
+	$(CXX) $(CXXFLAGS) main.cpp EllipticEquation.o $(CPPFLAGS) $(LDFLAGS) $(LIBS) -omain
+
+clean:
+	rm -f main *~ *.[nes] u.dx *.o

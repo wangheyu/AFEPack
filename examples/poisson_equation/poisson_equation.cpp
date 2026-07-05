@@ -39,9 +39,7 @@ int main(int argc, char * argv[])
 			     triangle_coord_transform,
 			     triangle_basis_function);
 
-  //FEMSpace<double,2> fem_space(mesh, template_element);
   FEMSpace<double,2> fem_space;
-  //fem_space = new FEMSpace<double, 2>(mesh, template_element);
   fem_space.reinit(mesh, template_element);  
 	
   int n_element = mesh.n_geometry(2);

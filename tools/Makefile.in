@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -91,12 +92,12 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = easymesh2mesh$(EXEEXT) easymesh2opendx$(EXEEXT) \
-	gmsh2mesh.bin$(EXEEXT) mesh_refine$(EXEEXT) \
-	mesh2opendx$(EXEEXT) mesh2easymesh$(EXEEXT) \
-	easymesh_refine$(EXEEXT) simpmesh2mesh$(EXEEXT) \
-	dbmesh2mesh.bin$(EXEEXT) dxdata2easymeshdata.bin$(EXEEXT) \
-	tricube$(EXEEXT) dxdata2tecplotdata.bin$(EXEEXT) \
-	hsfc_renum$(EXEEXT) 2d_vecfun_dxdata2tecplotdata$(EXEEXT)
+	gmsh2mesh$(EXEEXT) mesh_refine$(EXEEXT) mesh2opendx$(EXEEXT) \
+	mesh2easymesh$(EXEEXT) easymesh_refine$(EXEEXT) \
+	simpmesh2mesh$(EXEEXT) dbmesh2mesh$(EXEEXT) \
+	dxdata2easymeshdata$(EXEEXT) tricube$(EXEEXT) \
+	dxdata2tecplotdata$(EXEEXT) hsfc_renum$(EXEEXT) \
+	2d_vecfun_dxdata2tecplotdata$(EXEEXT)
 subdir = tools
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -106,11 +107,11 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = gmsh2mesh.sh
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_2d_vecfun_dxdata2tecplotdata_OBJECTS =  \
 	2d_vecfun_dxdata2tecplotdata.$(OBJEXT)
@@ -118,69 +119,90 @@ am_2d_vecfun_dxdata2tecplotdata_OBJECTS =  \
 	$(am_2d_vecfun_dxdata2tecplotdata_OBJECTS)
 2d_vecfun_dxdata2tecplotdata_LDADD = $(LDADD)
 2d_vecfun_dxdata2tecplotdata_DEPENDENCIES =  \
-	$(top_builddir)/src/.libs/libAFEPack.so
+	$(top_builddir)/src/libAFEPack.la
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-am_dbmesh2mesh_bin_OBJECTS = dbmesh2mesh.$(OBJEXT)
-dbmesh2mesh_bin_OBJECTS = $(am_dbmesh2mesh_bin_OBJECTS)
-dbmesh2mesh_bin_LDADD = $(LDADD)
-dbmesh2mesh_bin_DEPENDENCIES =  \
-	$(top_builddir)/src/.libs/libAFEPack.so
-am_dxdata2easymeshdata_bin_OBJECTS = dxdata2easymeshdata.$(OBJEXT)
-dxdata2easymeshdata_bin_OBJECTS =  \
-	$(am_dxdata2easymeshdata_bin_OBJECTS)
-dxdata2easymeshdata_bin_LDADD = $(LDADD)
-dxdata2easymeshdata_bin_DEPENDENCIES =  \
-	$(top_builddir)/src/.libs/libAFEPack.so
-am_dxdata2tecplotdata_bin_OBJECTS = dxdata2tecplotdata.$(OBJEXT)
-dxdata2tecplotdata_bin_OBJECTS = $(am_dxdata2tecplotdata_bin_OBJECTS)
-dxdata2tecplotdata_bin_LDADD = $(LDADD)
-dxdata2tecplotdata_bin_DEPENDENCIES =  \
-	$(top_builddir)/src/.libs/libAFEPack.so
+am_dbmesh2mesh_OBJECTS = dbmesh2mesh.$(OBJEXT)
+dbmesh2mesh_OBJECTS = $(am_dbmesh2mesh_OBJECTS)
+dbmesh2mesh_LDADD = $(LDADD)
+dbmesh2mesh_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
+am_dxdata2easymeshdata_OBJECTS = dxdata2easymeshdata.$(OBJEXT)
+dxdata2easymeshdata_OBJECTS = $(am_dxdata2easymeshdata_OBJECTS)
+dxdata2easymeshdata_LDADD = $(LDADD)
+dxdata2easymeshdata_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
+am_dxdata2tecplotdata_OBJECTS = dxdata2tecplotdata.$(OBJEXT)
+dxdata2tecplotdata_OBJECTS = $(am_dxdata2tecplotdata_OBJECTS)
+dxdata2tecplotdata_LDADD = $(LDADD)
+dxdata2tecplotdata_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
 am_easymesh2mesh_OBJECTS = easymesh2mesh.$(OBJEXT)
 easymesh2mesh_OBJECTS = $(am_easymesh2mesh_OBJECTS)
 easymesh2mesh_LDADD = $(LDADD)
-easymesh2mesh_DEPENDENCIES = $(top_builddir)/src/.libs/libAFEPack.so
+easymesh2mesh_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
 am_easymesh2opendx_OBJECTS = easymesh2opendx.$(OBJEXT)
 easymesh2opendx_OBJECTS = $(am_easymesh2opendx_OBJECTS)
 easymesh2opendx_LDADD = $(LDADD)
-easymesh2opendx_DEPENDENCIES =  \
-	$(top_builddir)/src/.libs/libAFEPack.so
+easymesh2opendx_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
 am_easymesh_refine_OBJECTS = easymesh_refine.$(OBJEXT)
 easymesh_refine_OBJECTS = $(am_easymesh_refine_OBJECTS)
 easymesh_refine_LDADD = $(LDADD)
-easymesh_refine_DEPENDENCIES =  \
-	$(top_builddir)/src/.libs/libAFEPack.so
-am_gmsh2mesh_bin_OBJECTS = gmsh2mesh.$(OBJEXT)
-gmsh2mesh_bin_OBJECTS = $(am_gmsh2mesh_bin_OBJECTS)
-gmsh2mesh_bin_LDADD = $(LDADD)
-gmsh2mesh_bin_DEPENDENCIES = $(top_builddir)/src/.libs/libAFEPack.so
+easymesh_refine_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
+am_gmsh2mesh_OBJECTS = gmsh2mesh.$(OBJEXT)
+gmsh2mesh_OBJECTS = $(am_gmsh2mesh_OBJECTS)
+gmsh2mesh_LDADD = $(LDADD)
+gmsh2mesh_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
 am_hsfc_renum_OBJECTS = hsfc_renum.$(OBJEXT)
 hsfc_renum_OBJECTS = $(am_hsfc_renum_OBJECTS)
 hsfc_renum_LDADD = $(LDADD)
-hsfc_renum_DEPENDENCIES = $(top_builddir)/src/.libs/libAFEPack.so
+hsfc_renum_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
 am_mesh2easymesh_OBJECTS = mesh2easymesh.$(OBJEXT)
 mesh2easymesh_OBJECTS = $(am_mesh2easymesh_OBJECTS)
 mesh2easymesh_LDADD = $(LDADD)
-mesh2easymesh_DEPENDENCIES = $(top_builddir)/src/.libs/libAFEPack.so
+mesh2easymesh_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
 am_mesh2opendx_OBJECTS = mesh2opendx.$(OBJEXT)
 mesh2opendx_OBJECTS = $(am_mesh2opendx_OBJECTS)
 mesh2opendx_LDADD = $(LDADD)
-mesh2opendx_DEPENDENCIES = $(top_builddir)/src/.libs/libAFEPack.so
+mesh2opendx_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
 am_mesh_refine_OBJECTS = mesh_refine.$(OBJEXT)
 mesh_refine_OBJECTS = $(am_mesh_refine_OBJECTS)
 mesh_refine_LDADD = $(LDADD)
-mesh_refine_DEPENDENCIES = $(top_builddir)/src/.libs/libAFEPack.so
+mesh_refine_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
 am_simpmesh2mesh_OBJECTS = simpmesh2mesh.$(OBJEXT)
 simpmesh2mesh_OBJECTS = $(am_simpmesh2mesh_OBJECTS)
 simpmesh2mesh_LDADD = $(LDADD)
-simpmesh2mesh_DEPENDENCIES = $(top_builddir)/src/.libs/libAFEPack.so
+simpmesh2mesh_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
 am_tricube_OBJECTS = tricube.$(OBJEXT)
 tricube_OBJECTS = $(am_tricube_OBJECTS)
 tricube_LDADD = $(LDADD)
-tricube_DEPENDENCIES = $(top_builddir)/src/.libs/libAFEPack.so
+tricube_DEPENDENCIES = $(top_builddir)/src/libAFEPack.la
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+  || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+       $(am__cd) "$$dir" && echo $$files | $(am__xargs_n) 40 $(am__rm_f); }; \
+  }
+SCRIPTS = $(nodist_bin_SCRIPTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -224,18 +246,18 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(2d_vecfun_dxdata2tecplotdata_SOURCES) \
-	$(dbmesh2mesh_bin_SOURCES) $(dxdata2easymeshdata_bin_SOURCES) \
-	$(dxdata2tecplotdata_bin_SOURCES) $(easymesh2mesh_SOURCES) \
+	$(dbmesh2mesh_SOURCES) $(dxdata2easymeshdata_SOURCES) \
+	$(dxdata2tecplotdata_SOURCES) $(easymesh2mesh_SOURCES) \
 	$(easymesh2opendx_SOURCES) $(easymesh_refine_SOURCES) \
-	$(gmsh2mesh_bin_SOURCES) $(hsfc_renum_SOURCES) \
+	$(gmsh2mesh_SOURCES) $(hsfc_renum_SOURCES) \
 	$(mesh2easymesh_SOURCES) $(mesh2opendx_SOURCES) \
 	$(mesh_refine_SOURCES) $(simpmesh2mesh_SOURCES) \
 	$(tricube_SOURCES)
 DIST_SOURCES = $(2d_vecfun_dxdata2tecplotdata_SOURCES) \
-	$(dbmesh2mesh_bin_SOURCES) $(dxdata2easymeshdata_bin_SOURCES) \
-	$(dxdata2tecplotdata_bin_SOURCES) $(easymesh2mesh_SOURCES) \
+	$(dbmesh2mesh_SOURCES) $(dxdata2easymeshdata_SOURCES) \
+	$(dxdata2tecplotdata_SOURCES) $(easymesh2mesh_SOURCES) \
 	$(easymesh2opendx_SOURCES) $(easymesh_refine_SOURCES) \
-	$(gmsh2mesh_bin_SOURCES) $(hsfc_renum_SOURCES) \
+	$(gmsh2mesh_SOURCES) $(hsfc_renum_SOURCES) \
 	$(mesh2easymesh_SOURCES) $(mesh2opendx_SOURCES) \
 	$(mesh_refine_SOURCES) $(simpmesh2mesh_SOURCES) \
 	$(tricube_SOURCES)
@@ -261,19 +283,23 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp \
-	$(top_srcdir)/mkinstalldirs README
+am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/gmsh2mesh.sh.in \
+	$(top_srcdir)/depcomp README
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_CXXFLAGS = @AM_CXXFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AM_LDFLAGS = @AM_LDFLAGS@ $(RPATH_FLAGS)
 AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
+BOOST_LDFLAGS = @BOOST_LDFLAGS@
+BOOST_SERIALIZATION_LIB = @BOOST_SERIALIZATION_LIB@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -298,6 +324,8 @@ ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 FILECMD = @FILECMD@
+GMSH = @GMSH@
+GMSH_TESTS = @GMSH_TESTS@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -316,6 +344,7 @@ LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
+MPICXX = @MPICXX@
 NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
@@ -331,6 +360,7 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+RPATH_FLAGS = @RPATH_FLAGS@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -392,23 +422,23 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+EXTRA_DIST = gmsh2mesh.sh.in
+nodist_bin_SCRIPTS = gmsh2mesh.sh
 easymesh2mesh_SOURCES = easymesh2mesh.cpp
 easymesh2opendx_SOURCES = easymesh2opendx.cpp
-gmsh2mesh_bin_SOURCES = gmsh2mesh.cpp
+gmsh2mesh_SOURCES = gmsh2mesh.cpp
 mesh_refine_SOURCES = mesh_refine.cpp
 mesh2opendx_SOURCES = mesh2opendx.cpp
 mesh2easymesh_SOURCES = mesh2easymesh.cpp
 easymesh_refine_SOURCES = easymesh_refine.cpp
 simpmesh2mesh_SOURCES = simpmesh2mesh.cpp
-dbmesh2mesh_bin_SOURCES = dbmesh2mesh.cpp
-dxdata2easymeshdata_bin_SOURCES = dxdata2easymeshdata.cpp
+dbmesh2mesh_SOURCES = dbmesh2mesh.cpp
+dxdata2easymeshdata_SOURCES = dxdata2easymeshdata.cpp
 tricube_SOURCES = tricube.cpp
-dxdata2tecplotdata_bin_SOURCES = dxdata2tecplotdata.cpp
+dxdata2tecplotdata_SOURCES = dxdata2tecplotdata.cpp
 hsfc_renum_SOURCES = hsfc_renum.cpp
 2d_vecfun_dxdata2tecplotdata_SOURCES = 2d_vecfun_dxdata2tecplotdata.cpp
-bin_CPPFLAGS = -I$(top_srcdir)/include -I$(prefix)/include
-LDADD = $(top_builddir)/src/.libs/libAFEPack.so
-EXTRA_DIST = gmsh2mesh dbmesh2mesh dxdata2easymeshdata dxdata2tecplotdata
+LDADD = $(top_builddir)/src/libAFEPack.la
 all: all-am
 
 .SUFFIXES:
@@ -442,6 +472,8 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+gmsh2mesh.sh: $(top_builddir)/config.status $(srcdir)/gmsh2mesh.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -491,17 +523,17 @@ clean-binPROGRAMS:
 	@rm -f 2d_vecfun_dxdata2tecplotdata$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(2d_vecfun_dxdata2tecplotdata_OBJECTS) $(2d_vecfun_dxdata2tecplotdata_LDADD) $(LIBS)
 
-dbmesh2mesh.bin$(EXEEXT): $(dbmesh2mesh_bin_OBJECTS) $(dbmesh2mesh_bin_DEPENDENCIES) $(EXTRA_dbmesh2mesh_bin_DEPENDENCIES) 
-	@rm -f dbmesh2mesh.bin$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(dbmesh2mesh_bin_OBJECTS) $(dbmesh2mesh_bin_LDADD) $(LIBS)
+dbmesh2mesh$(EXEEXT): $(dbmesh2mesh_OBJECTS) $(dbmesh2mesh_DEPENDENCIES) $(EXTRA_dbmesh2mesh_DEPENDENCIES) 
+	@rm -f dbmesh2mesh$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(dbmesh2mesh_OBJECTS) $(dbmesh2mesh_LDADD) $(LIBS)
 
-dxdata2easymeshdata.bin$(EXEEXT): $(dxdata2easymeshdata_bin_OBJECTS) $(dxdata2easymeshdata_bin_DEPENDENCIES) $(EXTRA_dxdata2easymeshdata_bin_DEPENDENCIES) 
-	@rm -f dxdata2easymeshdata.bin$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(dxdata2easymeshdata_bin_OBJECTS) $(dxdata2easymeshdata_bin_LDADD) $(LIBS)
+dxdata2easymeshdata$(EXEEXT): $(dxdata2easymeshdata_OBJECTS) $(dxdata2easymeshdata_DEPENDENCIES) $(EXTRA_dxdata2easymeshdata_DEPENDENCIES) 
+	@rm -f dxdata2easymeshdata$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(dxdata2easymeshdata_OBJECTS) $(dxdata2easymeshdata_LDADD) $(LIBS)
 
-dxdata2tecplotdata.bin$(EXEEXT): $(dxdata2tecplotdata_bin_OBJECTS) $(dxdata2tecplotdata_bin_DEPENDENCIES) $(EXTRA_dxdata2tecplotdata_bin_DEPENDENCIES) 
-	@rm -f dxdata2tecplotdata.bin$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(dxdata2tecplotdata_bin_OBJECTS) $(dxdata2tecplotdata_bin_LDADD) $(LIBS)
+dxdata2tecplotdata$(EXEEXT): $(dxdata2tecplotdata_OBJECTS) $(dxdata2tecplotdata_DEPENDENCIES) $(EXTRA_dxdata2tecplotdata_DEPENDENCIES) 
+	@rm -f dxdata2tecplotdata$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(dxdata2tecplotdata_OBJECTS) $(dxdata2tecplotdata_LDADD) $(LIBS)
 
 easymesh2mesh$(EXEEXT): $(easymesh2mesh_OBJECTS) $(easymesh2mesh_DEPENDENCIES) $(EXTRA_easymesh2mesh_DEPENDENCIES) 
 	@rm -f easymesh2mesh$(EXEEXT)
@@ -515,9 +547,9 @@ easymesh_refine$(EXEEXT): $(easymesh_refine_OBJECTS) $(easymesh_refine_DEPENDENC
 	@rm -f easymesh_refine$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(easymesh_refine_OBJECTS) $(easymesh_refine_LDADD) $(LIBS)
 
-gmsh2mesh.bin$(EXEEXT): $(gmsh2mesh_bin_OBJECTS) $(gmsh2mesh_bin_DEPENDENCIES) $(EXTRA_gmsh2mesh_bin_DEPENDENCIES) 
-	@rm -f gmsh2mesh.bin$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(gmsh2mesh_bin_OBJECTS) $(gmsh2mesh_bin_LDADD) $(LIBS)
+gmsh2mesh$(EXEEXT): $(gmsh2mesh_OBJECTS) $(gmsh2mesh_DEPENDENCIES) $(EXTRA_gmsh2mesh_DEPENDENCIES) 
+	@rm -f gmsh2mesh$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(gmsh2mesh_OBJECTS) $(gmsh2mesh_LDADD) $(LIBS)
 
 hsfc_renum$(EXEEXT): $(hsfc_renum_OBJECTS) $(hsfc_renum_DEPENDENCIES) $(EXTRA_hsfc_renum_DEPENDENCIES) 
 	@rm -f hsfc_renum$(EXEEXT)
@@ -542,6 +574,41 @@ simpmesh2mesh$(EXEEXT): $(simpmesh2mesh_OBJECTS) $(simpmesh2mesh_DEPENDENCIES) $
 tricube$(EXEEXT): $(tricube_OBJECTS) $(tricube_DEPENDENCIES) $(EXTRA_tricube_DEPENDENCIES) 
 	@rm -f tricube$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tricube_OBJECTS) $(tricube_LDADD) $(LIBS)
+install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(bindir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(bindir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-nodist_binSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	dir='$(DESTDIR)$(bindir)'; $(am__uninstall_files_from_dir)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -686,9 +753,9 @@ distdir-am: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile $(PROGRAMS) $(SCRIPTS)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -762,7 +829,7 @@ install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS
+install-exec-am: install-binPROGRAMS install-nodist_binSCRIPTS
 
 install-html: install-html-am
 
@@ -815,7 +882,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS
+uninstall-am: uninstall-binPROGRAMS uninstall-nodist_binSCRIPTS
 
 .MAKE: install-am install-strip
 
@@ -826,35 +893,17 @@ uninstall-am: uninstall-binPROGRAMS
 	html-am info info-am install install-am install-binPROGRAMS \
 	install-data install-data-am install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	install-info install-info-am install-man \
+	install-nodist_binSCRIPTS install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS
+	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-nodist_binSCRIPTS
 
 .PRECIOUS: Makefile
 
-
-# dist-hook:
-# 	cp $(srcdir)/gmsh2mesh $(srcdir)/dbmesh2mesh $(srcdir)/dxdata2easymeshdata $(srcdir)/dxdata2tecplotdata $(distdir)
-
-# install-data-local:
-# 	cp $(srcdir)/gmsh2mesh\
-# 	   $(srcdir)/dbmesh2mesh\
-# 	   $(srcdir)/dxdata2easymeshdata\
-# 	   $(srcdir)/dxdata2tecplotdata\
-# 	   $(bindir)/
-# 	chmod 755 $(bindir)/gmsh2mesh
-# 	chmod 755 $(bindir)/dbmesh2mesh
-# 	chmod 755 $(bindir)/dxdata2easymeshdata
-# 	chmod 755 $(bindir)/dxdata2tecplotdata
-
-# uninstall-local:
-# 	rm -f $(bindir)/gmsh2mesh\
-#               $(bindir)/dbmesh2mesh\
-#               $(bindir)/dxdata2easymeshdata\
-# 	      $(bindir)/dxdata2tecplotdata
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

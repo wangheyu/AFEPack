@@ -108,7 +108,7 @@ namespace Migration {
         the_entry = so.begin(), end_entry = so.end();
       for (;the_entry != end_entry;++ the_entry) {
         GEO * p_geo = the_entry->local_pointer();
-        if (p_geo->get_property(pid) == NULL) {
+        if (p_geo->get_property(pid) == nullptr) {
           buffer_trait * p_bt = p_geo->new_property(pid);
           p_bt->p_buf = &(p_geo->buffer);
         }
@@ -189,12 +189,12 @@ namespace Migration {
       if (geo.has_property(flag)) return; /// 已经输入过了
 
       BinaryBuffer<>& buf = get_buffer(geo, data_id, false);
-      if (&buf == NULL) return; /// 并无要输入的性质
+      if (&buf == nullptr) return; /// 并无要输入的性质
 
       geo.new_property(flag); /// 做上标记并进行输出
 
       T * p_prp = geo.get_property(pid);
-      if (p_prp == NULL) {
+      if (p_prp == nullptr) {
         p_prp = geo.new_property(pid);
       }
 
@@ -231,7 +231,7 @@ namespace Migration {
       for (;the_ele != end_ele;++ the_ele) {
         const HGeometry<dim,dow> * p_geo = &(*the_ele);
         do {
-          if (p_geo->parent != NULL) {
+          if (p_geo->parent != nullptr) {
             p_geo = p_geo->parent;
           } else break;
         } while (true);
@@ -253,7 +253,7 @@ namespace Migration {
       for (;the_ele != end_ele;++ the_ele) {
         const HGeometry<dim,dow> * p_geo = &(*the_ele);
         do {
-          if (p_geo->parent != NULL) {
+          if (p_geo->parent != nullptr) {
             p_geo = p_geo->parent;
           } else break;
         } while (true);
@@ -278,7 +278,7 @@ namespace Migration {
     for (;the_ele != end_ele;++ the_ele) {
       HGeometry<dim,dow> * p_geo = &(*the_ele);
       do {
-        if (p_geo->parent != NULL) {
+        if (p_geo->parent != nullptr) {
           p_geo = p_geo->parent;
         } else break;
       } while (true);

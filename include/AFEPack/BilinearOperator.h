@@ -10,13 +10,11 @@
 #include <iterator>
 #include <algorithm>
 
-//#include <deal.II/base/exceptions.h>
-//#include <deal.II/lac/full_matrix.h>
-//#include <deal.II/lac/sparsity_pattern.h>
-//#include <deal.II/lac/sparse_matrix.h>
+#include <AFEPack/Vector.h>
 #include <AFEPack/DenseMatrix.h>
-#include <AFEPack/SparseMatrix.h>
 #include <AFEPack/SparsityPattern.h>
+#include <AFEPack/SparseMatrix.h>
+
 
 #include <AFEPack/Geometry.h>
 #include <AFEPack/TemplateElement.h>
@@ -86,8 +84,8 @@ template <int DIM, class value_type0, class value_type1=value_type0,
   int						n_max_coupling_dof;
   const std::vector<int> *			element_dof0;
   const std::vector<int> *			element_dof1;
-  //FullMatrix<double>				element_matrix;
-  DenseMatrix<double>				element_matrix; // Vecma Version
+    //FullMatrix<double>				element_matrix;
+    DenseMatrix<double>				element_matrix;    
   int						algebric_accuracy;
   public:
   BilinearOperator();
@@ -114,11 +112,11 @@ template <int DIM, class value_type0, class value_type1=value_type0,
   const int& elementDof0(const int& i) const {return (*element_dof0)[i];};
   const int& elementDof1(const int& i) const {return (*element_dof1)[i];};
 
-  //const FullMatrix<double>& elementMatrix() const {return element_matrix;};
-  const DenseMatrix<double>& elementMatrix() const {return element_matrix;};
+    //const FullMatrix<double>& elementMatrix() const {return element_matrix;};
+    const DenseMatrix<double>& elementMatrix() const {return element_matrix;};    
   const double elementMatrix(const int& i, const int& j) const {return element_matrix(i,j);};
-  //FullMatrix<double>& elementMatrix() {return element_matrix;};
-  DenseMatrix<double>& elementMatrix() {return element_matrix;};
+    //FullMatrix<double>& elementMatrix() {return element_matrix;};
+    DenseMatrix<double>& elementMatrix() {return element_matrix;};    
   double& elementMatrix(const int& i, const int& j) {return element_matrix(i,j);};
   void buildDofInfo();
   void addElementPattern();
@@ -157,37 +155,74 @@ template <int DIM, class value_type0, class value_type1=value_type0,
                                 const typename ActiveElementPairIterator<DIM>::State state = ActiveElementPairIterator<DIM>::EQUAL);
   };
 
+// template <int DIM, class value_type, int DOW=DIM, int TDIM=DIM>
+// class MassMatrix : public BilinearOperator<DIM, value_type, value_type, DOW, TDIM, TDIM>
+// {
+// public:
+//   MassMatrix() {};
+//   MassMatrix(FEMSpace<typename MassMatrix::value_type,DIM,DOW,TDIM>& sp) :
+//   BilinearOperator<DIM, typename MassMatrix::value_type, 
+//   typename MassMatrix::value_type, DOW, TDIM, TDIM>(sp, sp) {};
+    
+//   virtual ~MassMatrix() {};
+// public:
+//   void reinit(FEMSpace<typename MassMatrix::value_type,DIM,DOW,TDIM>& sp);
+
+//   virtual void getElementMatrix(const Element<typename MassMatrix::value_type,DIM,DOW,TDIM>& e0, 
+//                                 const Element<typename MassMatrix::value_type,DIM,DOW,TDIM>& e1,
+//                                 const typename ActiveElementPairIterator<DIM>::State state = ActiveElementPairIterator<DIM>::EQUAL);
+// };
+
+// template <int DIM, class value_type, int DOW=DIM, int TDIM=DIM>
+//   class StiffMatrix : public BilinearOperator<DIM, value_type, value_type, DOW, TDIM, TDIM>
+//   {
+//   public:
+//   StiffMatrix() {};
+//   StiffMatrix(FEMSpace<typename StiffMatrix::value_type,DIM,DOW,TDIM>& sp) :
+//   BilinearOperator<DIM, typename StiffMatrix::value_type, 
+//   typename StiffMatrix::value_type,DOW,TDIM,TDIM>(sp, sp) {};
+//   virtual ~StiffMatrix() {};
+//   public:
+//   void reinit(FEMSpace<typename StiffMatrix::value_type,DIM,DOW,TDIM>& sp);
+//   virtual void getElementMatrix(const Element<typename StiffMatrix::value_type,DIM,DOW,TDIM>&, 
+//                                 const Element<typename StiffMatrix::value_type,DIM,DOW,TDIM>&,
+//                                 const typename ActiveElementPairIterator<DIM>::State state = ActiveElementPairIterator<DIM>::EQUAL);
+//   };
+
 template <int DIM, class value_type, int DOW=DIM, int TDIM=DIM>
-  class MassMatrix : public BilinearOperator<DIM, value_type, value_type, DOW, TDIM, TDIM>
-  {
-  public:
+class MassMatrix : public BilinearOperator<DIM, value_type, value_type, DOW, TDIM, TDIM>
+{
+public:
   MassMatrix() {};
-  MassMatrix(FEMSpace<typename MassMatrix::value_type,DIM,DOW,TDIM>& sp) :
-  BilinearOperator<DIM, typename MassMatrix::value_type, 
-  typename MassMatrix::value_type, DOW, TDIM, TDIM>(sp, sp) {};
+  MassMatrix(FEMSpace<value_type,DIM,DOW,TDIM>& sp) :
+  BilinearOperator<DIM, value_type, 
+  value_type, DOW, TDIM, TDIM>(sp, sp) {};
+    
   virtual ~MassMatrix() {};
-  public:
-  void reinit(FEMSpace<typename MassMatrix::value_type,DIM,DOW,TDIM>& sp);
-  virtual void getElementMatrix(const Element<typename MassMatrix::value_type,DIM,DOW,TDIM>& e0, 
-                                const Element<typename MassMatrix::value_type,DIM,DOW,TDIM>& e1,
+public:
+  void reinit(FEMSpace<value_type,DIM,DOW,TDIM>& sp);
+
+  virtual void getElementMatrix(const Element<value_type,DIM,DOW,TDIM>& e0, 
+                                const Element<value_type,DIM,DOW,TDIM>& e1,
                                 const typename ActiveElementPairIterator<DIM>::State state = ActiveElementPairIterator<DIM>::EQUAL);
-  };
+};
 
 template <int DIM, class value_type, int DOW=DIM, int TDIM=DIM>
   class StiffMatrix : public BilinearOperator<DIM, value_type, value_type, DOW, TDIM, TDIM>
   {
   public:
   StiffMatrix() {};
-  StiffMatrix(FEMSpace<typename StiffMatrix::value_type,DIM,DOW,TDIM>& sp) :
-  BilinearOperator<DIM, typename StiffMatrix::value_type, 
-  typename StiffMatrix::value_type,DOW,TDIM,TDIM>(sp, sp) {};
+  StiffMatrix(FEMSpace<value_type,DIM,DOW,TDIM>& sp) :
+  BilinearOperator<DIM, value_type, 
+  value_type,DOW,TDIM,TDIM>(sp, sp) {};
   virtual ~StiffMatrix() {};
   public:
-  void reinit(FEMSpace<typename StiffMatrix::value_type,DIM,DOW,TDIM>& sp);
-  virtual void getElementMatrix(const Element<typename StiffMatrix::value_type,DIM,DOW,TDIM>&, 
-                                const Element<typename StiffMatrix::value_type,DIM,DOW,TDIM>&,
+  void reinit(FEMSpace<value_type,DIM,DOW,TDIM>& sp);
+  virtual void getElementMatrix(const Element<value_type,DIM,DOW,TDIM>&, 
+                                const Element<value_type,DIM,DOW,TDIM>&,
                                 const typename ActiveElementPairIterator<DIM>::State state = ActiveElementPairIterator<DIM>::EQUAL);
   };
+
 
 AFEPACK_CLOSE_NAMESPACE
 

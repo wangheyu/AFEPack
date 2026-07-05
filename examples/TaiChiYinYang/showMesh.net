@@ -13,7 +13,7 @@ macro main(
 ) {
     // 
     // node FileSelector[1]: x = 10, y = 10, inputs = 0, label = FileSelector
-    // output[1]: visible = 1, type = 32, value = "/Users/gary/tmp/TaiChiYinYang/D.dx"
+    // output[1]: visible = 1, type = 32, value = "D.dx"
     // output[2]: visible = 1, type = 32, value = "D.dx"
     //
     // 
@@ -129,7 +129,7 @@ main_Image_1_out_3 =
 // network: end of macro body
 CacheScene(main_Image_1_in_1, main_Image_1_out_1, main_Image_1_out_2);
 }
-main_FileSelector_1_out_1 = "/Users/gary/tmp/TaiChiYinYang/D.dx";
+main_FileSelector_1_out_1 = "D.dx";
 main_Import_1_in_2 = NULL;
 main_Import_1_in_3 = NULL;
 main_Import_1_in_4 = NULL;

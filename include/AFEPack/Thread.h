@@ -133,7 +133,7 @@ class ThreadManager
    */
   template <class T>
   int start(T fun_data,
-	    pthread_attr_t * attr = NULL) {
+	    pthread_attr_t * attr = nullptr) {
     pthread_t th;
     T * fun_data_copy = new T(fun_data); /** 
 					  * it looks that it is more safe 
@@ -171,7 +171,7 @@ class ThreadManager
     std::list<pthread_t>::iterator end_th = threads.end();
     std::list<void *>::iterator the_arg = args.begin();
     for (;the_th != end_th;the_th ++, the_arg ++) {
-      int error_number = pthread_join(*the_th, NULL);
+      int error_number = pthread_join(*the_th, nullptr);
       if (error_number) {
 	std::cout << "thread join error with error_number "
 		  << error_number << std::endl;

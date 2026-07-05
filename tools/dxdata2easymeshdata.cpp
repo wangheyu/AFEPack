@@ -124,7 +124,7 @@ void readData(std::istream& is)
   } while (1);
   is.get(buffer, 256);
   std::cout << n_data << " total, ... " << std::flush;
-  Assert(n_data == simp_mesh.n_point(), ExcInternalError());
+  assert(n_data == simp_mesh.n_point());
   data.resize(n_data);
   for (int i = 0;i < n_data;i ++) {
     is >> data[i];

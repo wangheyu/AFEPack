@@ -22,7 +22,7 @@ THIS::get_dof_minimal_rank(u_int i) const {
 
   int * p_min_rank = mesh.template get_property<int>(dim, gid, 
 						     _pid_min_rank);
-  if (p_min_rank == NULL) {
+  if (p_min_rank == nullptr) {
     return _forest->rank();
   } else {
     return *p_min_rank;
@@ -55,7 +55,7 @@ THIS::sync_idx() {
     const int& gid = dof_idx.geometry_index;
     if (_forest->is_geometry_shared(mesh, dim, gid)) {
       p_buf = mesh.get_property(dim, gid, _pid_global_idx);
-      if (p_buf == NULL) {
+      if (p_buf == nullptr) {
         p_buf = mesh.new_property(dim, gid, _pid_global_idx);
       }
       Migration::ostream<> os(*p_buf);
@@ -105,7 +105,7 @@ THIS::sync_idx() {
                             mesh.point(mesh.geometry(0, geo.vertex(1)).vertex(0)));
 
         p_buf = mesh.get_property(dim, gid, _pid_global_idx);
-        assert (p_buf != NULL);
+        assert (p_buf != nullptr);
         Migration::istream<> is(*p_buf);
         do {
           dof_info_t dof_info;
@@ -149,7 +149,7 @@ THIS::set_dof_minimal_rank() {
 
       int * p_min_rank = mesh.template get_property<int>(dim, gid,
 							 _pid_min_rank);
-      if (p_min_rank == NULL) {
+      if (p_min_rank == nullptr) {
 	p_min_rank = mesh.template new_property<int>(dim, gid,
 						     _pid_min_rank);
 	(*p_min_rank) = _forest->rank();
@@ -279,7 +279,7 @@ THIS::pack_global_idx(HGeometry<GDIM,fe_space_t::dow> * geo,
                       Migration::ostream<>& os) {
   BinaryBuffer<> * p_buf = geo->get_property(_pid_global_idx);
   u_int n = 0;
-  if (p_buf != NULL) {
+  if (p_buf != nullptr) {
     n = p_buf->size();
     os << n;
     os.encode_binary(&(*p_buf)[0], n);
@@ -297,7 +297,7 @@ THIS::unpack_global_idx(HGeometry<GDIM,fe_space_t::dow> * geo,
   is >> n;
   if (n > 0) {
     BinaryBuffer<> * p_buf;;
-    assert ((p_buf  = geo->get_property(_pid_global_idx)) == NULL);
+    assert ((p_buf  = geo->get_property(_pid_global_idx)) == nullptr);
     p_buf = geo->new_property(_pid_global_idx);
     p_buf->resize(n);
     is.decode_binary(&(*p_buf)[0], n);

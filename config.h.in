@@ -1,5 +1,15 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to 1 if you have the <boost/archive/text_oarchive.hpp> header file.
+   */
+#undef HAVE_BOOST_ARCHIVE_TEXT_OARCHIVE_HPP
+
+/* Define if CBLAS library is found */
+#undef HAVE_CBLAS
+
+/* Define if cblas.h is found */
+#undef HAVE_CBLAS_H
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
@@ -9,9 +19,18 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define if LAPACKE library is found */
+#undef HAVE_LAPACKE
+
+/* Define if lapacke.h is found */
+#undef HAVE_LAPACKE_H
+
 /* Define to 1 if your system has a GNU libc compatible 'malloc' function, and
    to 0 otherwise. */
 #undef HAVE_MALLOC
+
+/* Define if OpenBLAS library is found */
+#undef HAVE_OPENBLAS
 
 /* Define to 1 if you have the 'pow' function. */
 #undef HAVE_POW
@@ -52,9 +71,6 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if the system has the type '_Bool'. */
-#undef HAVE__BOOL
-
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
@@ -87,17 +103,5 @@
 /* Version number of package */
 #undef VERSION
 
-/* Define to '__inline__' or '__inline' if that's what the C compiler
-   calls it, or to nothing if 'inline' is not supported under any name.  */
-#ifndef __cplusplus
-#undef inline
-#endif
-
 /* Define to rpl_malloc if the replacement function should be used. */
 #undef malloc
-
-/* Define as a signed integer type capable of holding a process identifier. */
-#undef pid_t
-
-/* Define as 'unsigned int' if <stddef.h> doesn't define. */
-#undef size_t

@@ -40,7 +40,7 @@ void TriangleMesh<DOW>::readData(const std::string& filename)
   std::cout << "\treading side data ..." << std::flush;
   is.open((filename + ".s").c_str());
   is >> i;
-  Assert(i == n_side, ExcMeshData("in side file: side number error"));
+  assert(i == n_side);
   this->Mesh<2,DOW>::geometry(1).resize(n_side);
   for (i = 0;i < n_side;i ++) {
     Geometry& g = this->Mesh<2,DOW>::geometry(1,i);
@@ -57,11 +57,11 @@ void TriangleMesh<DOW>::readData(const std::string& filename)
   std::cout << "\treading element data ..." << std::flush;
   is.open((filename + ".e").c_str());
   is >> i;
-  Assert(i == n_element, ExcMeshData("in element file: element number error"));
+  assert(i == n_element);
   is >> i;
-  Assert(i == n_node, ExcMeshData("in element file: node number error"));
+  assert(i == n_node);
   is >> i;
-  Assert(i == n_side, ExcMeshData("in element file: side number error"));
+  assert(i == n_side);
   is.getline(text, 64);
   this->Mesh<2,DOW>::geometry(2).resize(n_element);
   for (i = 0;i < n_element;i ++) {
@@ -115,11 +115,11 @@ void TriangleMesh<DOW>::writeData(const std::string& filename) const
       k = the_element.boundary(j);
       const GeometryBM& the_side = this->Mesh<2,DOW>::geometry(1, k);
       if (the_side.vertex(0) == the_element.vertex((j+1)%3)) {
-	Assert(the_side.vertex(1) == the_element.vertex((j+2)%3), ExcInternalError());
+	assert(the_side.vertex(1) == the_element.vertex((j+2)%3));
 	side_neighbour[0][k] = i;
       }
       else if (the_side.vertex(0) == the_element.vertex((j+2)%3)) {
-	Assert(the_side.vertex(1) == the_element.vertex((j+1)%3), ExcInternalError());
+	assert(the_side.vertex(1) == the_element.vertex((j+1)%3));
 	side_neighbour[1][k] = i;
       }
     }
@@ -136,7 +136,7 @@ void TriangleMesh<DOW>::writeData(const std::string& filename) const
 	element_neighbour[j][i] = side_neighbour[0][k];
       }
       else {
-	Assert(false, ExcInternalError()); // something must be wrong!
+	assert(false); // something must be wrong!
       }
     }
   }

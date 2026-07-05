@@ -31,7 +31,7 @@ namespace details {
   public:
     virtual ~property_id_allocator_t() {}
 
-    virtual void * allocate() const {return NULL;}
+    virtual void * allocate() const {return nullptr;}
     virtual void deallocate(void *) const {}
   };
 
@@ -107,7 +107,7 @@ namespace details {
     /// 全局性质表中存储的数据的类型
     class property_entry_t {
     public:
-    property_entry_t() : p_obj(NULL), p_data(NULL) {}
+    property_entry_t() : p_obj(nullptr), p_data(nullptr) {}
     property_entry_t(PropertyTableBase * po, void * pd) :
       p_obj(po), p_data(pd) {}
     property_entry_t(const property_entry_t& pe) :
@@ -219,7 +219,7 @@ namespace details {
       {
         prop_iter_const_iter_t iter;
         if (! has_property(i, iter)) {
-          return (T *)NULL;
+          return (T *)nullptr;
         }
         else {
           return (T *)(iter->second._iter->data_ptr());

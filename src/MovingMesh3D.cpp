@@ -823,7 +823,7 @@ void MovingMesh3D::Solver::Project(const sparse_matrix_t& M,
   std::vector<u_int> core_point(M.m());
   const SparsityPattern& spM = M.get_sparsity_pattern();
   const std::size_t * M_rowstart = spM.get_rowstart_indices();
-  const u_int * M_colnums = spM.get_column_numbers();
+  const size_t * M_colnums = spM.get_column_numbers();
 
   /**
    * 选择核心点，我们优先将材料标识较高的点选择为核心点。
@@ -904,11 +904,11 @@ sparse_matrix_t * MovingMesh3D::Solver::getPMPT(const sparse_matrix_t& P,
   const SparsityPattern& spM = M.get_sparsity_pattern();
   const SparsityPattern& spPt = Pt.get_sparsity_pattern();
   const std::size_t * P_rowstart = spP.get_rowstart_indices();
-  const u_int * P_colnums = spP.get_column_numbers();
+  const size_t * P_colnums = spP.get_column_numbers();
   const std::size_t * M_rowstart = spM.get_rowstart_indices();
-  const u_int * M_colnums = spM.get_column_numbers();
+  const size_t * M_colnums = spM.get_column_numbers();
   const std::size_t * Pt_rowstart = spPt.get_rowstart_indices();
-  const u_int * Pt_colnums = spPt.get_column_numbers();
+  const size_t * Pt_colnums = spPt.get_column_numbers();
 
   std::vector<u_int> row_length(P.m(), 0);
   std::vector<bool> flag(P.m(), true);
@@ -963,13 +963,13 @@ void MovingMesh3D::Solver::lazyPMPT(const sparse_matrix_t& P,
   const SparsityPattern& spPt = Pt.get_sparsity_pattern();
   const SparsityPattern& spA = A.get_sparsity_pattern();
   const std::size_t * P_rowstart = spP.get_rowstart_indices();
-  const u_int * P_colnums = spP.get_column_numbers();
+  const size_t * P_colnums = spP.get_column_numbers();
   const std::size_t * M_rowstart = spM.get_rowstart_indices();
-  const u_int * M_colnums = spM.get_column_numbers();
+  const size_t * M_colnums = spM.get_column_numbers();
   const std::size_t * Pt_rowstart = spPt.get_rowstart_indices();
-  const u_int * Pt_colnums = spPt.get_column_numbers();
+  const size_t * Pt_colnums = spPt.get_column_numbers();
   const std::size_t * A_rowstart = spA.get_rowstart_indices();
-  const u_int * A_colnums = spA.get_column_numbers();
+  const size_t * A_colnums = spA.get_column_numbers();
 
   u_int i, j, k, l;
   std::vector<double> row_entry(P.m(), 0.0);
@@ -1002,7 +1002,7 @@ void MovingMesh3D::Solver::GaussSidel(const sparse_matrix_t& M,
 {
   const SparsityPattern& spM = M.get_sparsity_pattern();
   const std::size_t * rowstart = spM.get_rowstart_indices();
-  const u_int * colnums = spM.get_column_numbers();
+  const size_t * colnums = spM.get_column_numbers();
   for (unsigned i = 0;i < s;i ++) {
     for (u_int j = 0;j < M.m();j ++) {
       double rj[3] = {r[0](j), r[1](j), r[2](j)};

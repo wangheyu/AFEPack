@@ -1,0 +1,16 @@
+CXX = @CXX@
+
+CXXFLAGS = -O2 -g
+
+CPPFLAGS = -I@prefix@/include
+
+LDFLAGS = -L@prefix@/lib @AM_LDFLAGS@
+
+LIBS = -lAFEPack
+
+main : main.o
+	$(CXX) -omain main.o $(LDFLAGS) $(LIBS) $(CXXFLAGS)
+
+
+clean:
+	rm -f main.o *~ D.dx D.[nse]

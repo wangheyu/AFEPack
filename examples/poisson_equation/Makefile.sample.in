@@ -1,0 +1,15 @@
+CXX = @CXX@
+
+CXXFLAGS = -O2 -g -std=c++20
+
+CPPFLAGS = -I@prefix@/include @BOOST_CPPFLAGS@
+
+LDFLAGS = -L@prefix@/lib @AM_LDFLAGS@
+
+LIBS = -lAFEPack
+
+main : poisson_equation.o
+	$(CXX) -omain poisson_equation.o $(LDFLAGS) $(LIBS) $(CXXFLAGS)
+
+clean:
+	rm -f poisson_equation.o *~ u.dx D.[nse]

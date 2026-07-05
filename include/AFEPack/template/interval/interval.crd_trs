@@ -1,4 +1,4 @@
-./interval.geometry.so
+./libinterval.geometry.so
         local_to_global
         global_to_local
         local_to_global_jacobian

@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 #include <dlfcn.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <iostream>
 #include <fstream>
@@ -22,6 +24,12 @@ const double r = 1.;
 
 int main(int argc, char * argv[])
 {
+  if (argc < 3) {
+    std::cerr << "Usage: " << argv[0] << " mesh refine_time [--test-once]" << std::endl;
+    return 1;
+  }
+  bool test_once = (argc > 3 && strcmp(argv[3], "--test-once") == 0);
+
   HGeometryTree<DIM> h_tree;
   h_tree.readEasyMesh(argv[1]);
   IrregularMesh<DIM> irregular_mesh(h_tree);
@@ -33,8 +41,10 @@ int main(int argc, char * argv[])
     irregular_mesh.regularize(false);
     RegularMesh<DIM>& regular_mesh = irregular_mesh.regularMesh();
     regular_mesh.writeOpenDXData("D.dx");
-    std::cout << "Press ENTER to continue or CTRL+C to stop ..." << std::flush;
-    getchar();
+    if (!test_once) {
+      std::cout << "Press ENTER to continue or CTRL+C to stop ..." << std::flush;
+      getchar();
+    }
 
     Indicator<DIM> indicator(regular_mesh);
 
@@ -73,6 +83,7 @@ int main(int argc, char * argv[])
     mesh_adaptor.setIndicator(indicator);
     mesh_adaptor.tolerence() = 1.0e-06;
     mesh_adaptor.adapt();
+    if (test_once) break;
   } while (1);	
 };
 

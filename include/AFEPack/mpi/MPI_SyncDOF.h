@@ -56,10 +56,10 @@ namespace MPI {
       const int& geo_idx = di.geometry_index;
       const mesh_t& mesh = dynamic_cast<const mesh_t&>(_p_fe_sp->mesh());
       const HGeometry<D,forest_t::dow> * p_geo = mesh.template h_geometry<D>(geo_idx);
-      if (_p_forest->get_shared_info(*p_geo) == NULL) return false;
+      if (_p_forest->get_shared_info(*p_geo) == nullptr) return false;
 
       BinaryBuffer<> * p_buf = p_geo->get_property(pid);
-      if (p_buf == NULL) {
+      if (p_buf == nullptr) {
         p_buf = p_geo->new_property(pid);
       }
 
@@ -93,10 +93,10 @@ namespace MPI {
       const int& geo_idx = di.geometry_index;
       const mesh_t& mesh = dynamic_cast<const mesh_t&>(_p_fe_sp->mesh());
       const HGeometry<D,forest_t::dow> * p_geo = mesh.template h_geometry<D>(geo_idx);
-      if (_p_forest->get_shared_info(*p_geo) == NULL) return;
+      if (_p_forest->get_shared_info(*p_geo) == nullptr) return;
 
       BinaryBuffer<> * p_buf = p_geo->get_property(pid);
-      if (p_buf == NULL) return;
+      if (p_buf == nullptr) return;
 
       const dof_info_t& dof_info = _p_fe_sp->dofInfo(i);
       double d = dof_info.interp_point.length();

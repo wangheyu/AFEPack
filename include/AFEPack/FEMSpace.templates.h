@@ -48,7 +48,7 @@ void THIS::reinit(fe_space_t& f,
 TEMPLATE
 void THIS::reinit(int g, int t)
 {
-  Assert (sp != NULL, ExcInternalError());
+  assert(sp != nullptr);
   geometry_index = g;
   template_element_index = t;
 }
@@ -68,7 +68,7 @@ void THIS::reinit(fe_space_t& f,
 TEMPLATE
 typename THIS::element_t& THIS::operator=(const element_t& e)
 {
-  if (&e != NULL) {
+  if (&e != nullptr) {
     sp = e.sp;
     geometry_index = e.geometry_index;
     template_element_index = e.template_element_index;
@@ -601,7 +601,7 @@ THIS::~FEMSpace()
 TEMPLATE
 typename THIS::fe_space_t& THIS::operator=(const fe_space_t& f)
 {
-  if (&f != NULL) {
+  if (&f != nullptr) {
     msh = f.msh;
     tmp_ele = f.tmp_ele;
     df = f.df;
@@ -729,7 +729,7 @@ void THIS::buildDof()
   dof().n_dof = 0;
 
   pthread_mutex_t mutex;
-  pthread_mutex_init(&mutex, NULL);
+  pthread_mutex_init(&mutex, nullptr);
   int n_thread = getThread();
   ThreadManager thread;
   for (int rank = 1;rank < n_thread;rank ++) {
@@ -743,7 +743,7 @@ void THIS::buildDof()
   dof().dof_index.resize(dof().n_dof);
   dofInfo().resize(dof().n_dof);
 	
-  pthread_mutex_init(&mutex, NULL);
+  pthread_mutex_init(&mutex, nullptr);
   for (int rank = 1;rank < n_thread;rank ++) {
     thread.start(encapsulate(&THIS::
 			     threadBuildDof1).collectArgs(this, flag, mutex, n_thread, rank));
@@ -789,7 +789,7 @@ void THIS::threadBuildDof0(std::vector<std::vector<bool> >& flag,
 	m = t_dof.n_geometry_dof[i][j];
 	pthread_mutex_lock(&mutex);
 	if (flag[i][l]) {
-	  Assert(dof().n_geometry_dof[i][l] == m, ExcDOFData("DOF number mismatch."));
+	  assert(dof().n_geometry_dof[i][l] == m);
 	}
 	else {
 	  flag[i][l] = true;
@@ -857,7 +857,7 @@ void THIS::threadBuildDof1(std::vector<std::vector<bool> >& flag,
 		break;
 	      }
 	    }
-	    Assert(i1 < m, ExcDOFData("DOF data mismatch."));
+	    assert(i1 < m);
 	  }
 	}
 	else {
@@ -926,7 +926,7 @@ void THIS::buildDof()
 	l = el_geo_img[i][j];
 	m = t_dof.n_geometry_dof[i][j];
 	if (flag[i][l]) {
-	  Assert(dof().n_geometry_dof[i][l] == m, ExcDOFData("DOF number mismatch."));
+	  assert(dof().n_geometry_dof[i][l] == m);
 	}
 	else {
 	  flag[i][l] = true;
@@ -978,7 +978,7 @@ void THIS::buildDof()
 		break;
 	      }
 	    }
-	    Assert(i1 < m, ExcDOFData("DOF data mismatch."));
+	    assert(i1 < m);
 	  }
 	}
 	else {
@@ -1030,7 +1030,7 @@ TEMPLATE
 THIS::FEMFunction(fe_space_t & f) :
 sp(&f)
 {
-  if (sp != NULL)
+  if (sp != nullptr)
     Vector<Number>::reinit(sp->n_dof());
 }
 
@@ -1048,7 +1048,7 @@ TEMPLATE
 void THIS::reinit(fe_space_t& f, bool is_bare)
 {
   sp = &f;
-  if ((sp != NULL) && (! is_bare))
+  if ((sp != nullptr) && (! is_bare))
     Vector<Number>::reinit(sp->n_dof());
 }
 
@@ -1214,7 +1214,7 @@ template <class value_type, int DIM, int DOW, int TDIM, typename Number>
   LocalFEMFunction<value_type,DIM,DOW,TDIM,Number>::LocalFEMFunction(Element<value_type,DIM,DOW,TDIM> & e)
 {
   ele = &e;
-  if (ele != NULL)
+  if (ele != nullptr)
     Vector<value_type>::reinit(ele->n_dof());
 }
 
@@ -1230,7 +1230,7 @@ template <class value_type, int DIM, int DOW, int TDIM, typename Number>
   void LocalFEMFunction<value_type,DIM,DOW,TDIM,Number>::reinit(Element<value_type,DIM,DOW,TDIM> & e)
 {
   ele = &e;
-  if (ele != NULL)
+  if (ele != nullptr)
     Vector<value_type>::reinit(ele->n_dof());
 }
 
@@ -1307,12 +1307,12 @@ template <class value_type, int DIM, int DOW, int TDIM, typename Number>
 {
   if (b.boundaryType() != BoundaryCondition<value_type,DIM,DOW,TDIM,Number>::DIRICHLET) {
     std::cerr << "Now we can only apply Dirichlet boundary condition." << std::endl;
-    Assert(false, ExcInternalError());
+    assert(false);
   }
   if (b.boundaryMark() < 0) {
     std::cerr << "We now require a boundary mark to be a positive number."
 	      << std::endl;
-    Assert(false, ExcInternalError());
+    assert(false);
   }
   typename std::vector<const BoundaryCondition<value_type,DIM,DOW,TDIM,Number> *>::iterator 
     the_bc = std::vector<const BoundaryCondition<value_type,DIM,DOW,TDIM,Number> *>::begin();
@@ -1324,7 +1324,7 @@ template <class value_type, int DIM, int DOW, int TDIM, typename Number>
 		<< b.boundaryMark()
 		<< ") already."
 		<< std::endl;
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   this->push_back(&b);
@@ -1343,24 +1343,24 @@ template <class value_type, int DIM, int DOW, int TDIM, typename Number>
 {
   unsigned int i, j, k, l, n_dof;
   n_dof = fem_space->n_dof();
-  Assert (A.n() == A.m(), ExcDimensionMismatch(A.n(), A.m()));
-  Assert (A.n() == f.size(), ExcDimensionMismatch(A.n(), f.size()));
-  Assert (A.n() == u.size(), ExcDimensionMismatch(A.n(), u.size()));
-  Assert (A.n() == n_dof, ExcDimensionMismatch(A.n(), n_dof));
+  assert(A.n() == A.m());
+  assert(A.n() == f.size());
+  assert(A.n() == u.size());
+  assert(A.n() == n_dof);
   typename FEMSpace<double,DIM,DOW,TDIM>::bmark_t bm;
   const SparsityPattern& spA = A.get_sparsity_pattern();
   const std::size_t * row_start = spA.get_rowstart_indices();
-  const unsigned int * column_index = spA.get_column_numbers();
+  const size_t * column_index = spA.get_column_numbers();
   for (i = 0;i < n_dof;i ++) {
     bm = fem_space->dofBoundaryMark(i);
-    const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>& bc = find(bm);
+    const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>* bc = find(bm);
     if (!isValid(bc)) continue;
-    f(i) = A.diag_element(i)*bc.value(fem_space->dofInfo(i).interp_point);
+    f(i) = A.diag_element(i)*bc->value(fem_space->dofInfo(i).interp_point);////////////////////////////////
     for (j = row_start[i]+1;j < row_start[i+1];j ++) A.global_entry(j) = 0.0;
     if (preserve_symmetry) {
       for (j = row_start[i]+1;j < row_start[i+1];j ++) {
 	k = column_index[j];
-	const unsigned int * p = std::find(&column_index[row_start[k]+1],
+	const size_t * p = std::find(&column_index[row_start[k]+1],
 					   &column_index[row_start[k+1]], i);
 	if (p != &column_index[row_start[k+1]]) {
 	  l = p - &column_index[row_start[0]];

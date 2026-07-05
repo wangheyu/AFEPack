@@ -54,7 +54,7 @@ template <int DIM, int DOW=DIM>
  std::list<ir_mesh_t *> ir_mesh;
 
  public:
- MemoryReclaimer() : h_tree(NULL) {}
+ MemoryReclaimer() : h_tree(nullptr) {}
  MemoryReclaimer(tree_t& _h_tree) : h_tree(&_h_tree) {}
  virtual ~MemoryReclaimer() {}
 
@@ -78,7 +78,7 @@ template <int DIM, int DOW=DIM>
    ir_mesh.push_back(&_ir_mesh);
  }
  void clear() {
-   h_tree = NULL;
+   h_tree = nullptr;
    ir_mesh.clear();
  }
  /*!
@@ -101,7 +101,7 @@ template <int DIM, int DOW=DIM>
    其标识修改为-2，并返回-1表示是第一次索引到它。如果标识为1，那么
    这个几何体正在被某个IrregularMesh使用，我们不做什么。如果一个几
    何体标识为-2，那么这个几何体已经是至少第二次被索引到了，那么就切
-   断对其进行这次索引的联系，将对其进行索引的那个指针设为 NULL。经
+   断对其进行这次索引的联系，将对其进行索引的那个指针设为 nullptr。经
    过这个操作，HGeometryTree中原本是个网状结构的数据，那个需要被删
    除的部分，已经被拆成为了树状结构；
 

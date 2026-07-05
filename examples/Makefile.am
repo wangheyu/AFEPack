@@ -1,10 +1,11 @@
 SUBDIRS = poisson_equation\
-	  poisson_equation_3D\
-	  DysonSphere\
-	  elliptic_equation\
-	  TaiChiYinYang\
-	  step-7\
-	  moving_mesh\
-	  local_refine\
-      coefficient_possion_equation\
-	  laplacian_evp3D
+          poisson_equation_3D\
+          elliptic_equation\
+          TaiChiYinYang\
+          DysonSphere
+
+TESTS = check-2d-examples.sh check-3d-examples.sh
+
+EXTRA_DIST = check-2d-examples.sh.in check-3d-examples.sh.in
+
+DISTCLEANFILES = $(TESTS)

@@ -4,14 +4,15 @@
 
 #include <stdio.h>
 #include <dlfcn.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <iostream>
 #include <fstream>
 
-#include <deal.II/base/exceptions.h>
-#include <deal.II/lac/vector.h>
-#include <deal.II/lac/sparsity_pattern.h>
-#include <deal.II/lac/sparse_matrix.h>
+#include <AFEPack/Vector.h>
+#include <AFEPack/SparsityPattern.h>
+#include <AFEPack/SparseMatrix.h>
 
 #include <AFEPack/Geometry.h>
 #include <AFEPack/EasyMesh.h>
@@ -37,6 +38,12 @@ double tetrahedron_volume(const double * v0,
 
 int main(int argc, char * argv[])
 {
+  if (argc < 3) {
+    std::cerr << "Usage: " << argv[0] << " mesh refine_time [--test-once]" << std::endl;
+    return 1;
+  }
+  bool test_once = (argc > 3 && strcmp(argv[3], "--test-once") == 0);
+
   HGeometryTree<DIM> h_tree;
   h_tree.readMesh(argv[1]);
   IrregularMesh<DIM> irregular_mesh(h_tree);
@@ -49,8 +56,10 @@ int main(int argc, char * argv[])
     irregular_mesh.regularize(false);
     RegularMesh<DIM>& regular_mesh = irregular_mesh.regularMesh();
     regular_mesh.writeOpenDXData("Cube.dx");
-    std::cout << "\nPress ENTER to continue or CTRL+C to stop ..." << std::flush;
-    getchar();
+    if (!test_once) {
+      std::cout << "\nPress ENTER to continue or CTRL+C to stop ..." << std::flush;
+      getchar();
+    }
 
     Indicator<DIM> indicator(regular_mesh);
     for (int i = 0;i < regular_mesh.n_geometry(DIM);i ++) {
@@ -76,7 +85,7 @@ int main(int argc, char * argv[])
 	vertex[3] = 3;
 	break;
       default:
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       Point<DIM> p((regular_mesh.point(regular_mesh.geometry(DIM,i).vertex(vertex[0]))[0] +
 		    regular_mesh.point(regular_mesh.geometry(DIM,i).vertex(vertex[1]))[0] +
@@ -110,6 +119,7 @@ int main(int argc, char * argv[])
     mesh_adaptor.setIndicator(indicator);
     mesh_adaptor.tolerence() = 1.0e-08;
     mesh_adaptor.adapt();
+    if (test_once) break;
   } while (1);	
 };
 

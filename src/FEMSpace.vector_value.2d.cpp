@@ -166,7 +166,7 @@ void FEMFunction<value_type, DIM>::writeEasyMeshData(const std::string& filename
     }
   }
   for (i = 0;i < n_node;i ++) {
-    Assert(count[i] > 0, ExcInternalError());
+    assert(count[i] > 0);
     for (j = 0;j < vector_length;j ++)
       val[i][j] /= count[i];
   }
@@ -242,7 +242,7 @@ void FEMFunction<value_type, DIM>::writeOpenDXData(const std::string& filename,
     }
   }
   for (i = 0;i < n_node;i ++) {
-    Assert(count[i] > 0, ExcInternalError());
+    assert(count[i] > 0);
     for (j = 0;j < vector_length;j ++)
       val[i][j] /= count[i];
   }
@@ -263,7 +263,7 @@ void FEMFunction<value_type, DIM>::writeOpenDXData(const std::string& filename,
       j += 2;
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os << "\nobject 2 class array type int rank 1 shape 3 item "
@@ -284,7 +284,7 @@ void FEMFunction<value_type, DIM>::writeOpenDXData(const std::string& filename,
 	 << mesh.geometry(0, mesh.geometry(2,i).vertex(3)).vertex(0) << "\t\n";
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os << "attribute \"element type\" string \"triangles\"\n"

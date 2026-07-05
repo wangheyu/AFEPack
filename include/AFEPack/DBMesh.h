@@ -28,9 +28,9 @@ public:
 public:
 	void readData(const std::string&);
 	virtual void generateMesh(Mesh<2,2>&);
-	DeclException1(ExcMeshData, 
-		char *, 
-		<< "Mesh data error: " << arg1);
+	// DeclException1(ExcMeshData, 
+	// 	char *, 
+	// 	<< "Mesh data error: " << arg1);
 private:
 	void readNode(std::istream&);
 	void readTriangleElement(std::istream&);

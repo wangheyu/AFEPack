@@ -41,9 +41,9 @@ namespace MPI {
     enum { UNUSED_IDX = -1 };
 
     public:
-    GlobalIndex() : _forest(NULL), _fe_sp(NULL) {}
+    GlobalIndex() : _forest(nullptr), _fe_sp(nullptr) {}
     explicit GlobalIndex(const forest_t& forest) :
-    _forest(&forest), _fe_sp(NULL) {}
+    _forest(&forest), _fe_sp(nullptr) {}
     GlobalIndex(const forest_t& forest, const fe_space_t& fe_sp) :
     _forest(&forest), _fe_sp(&fe_sp) {}
     GlobalIndex(const this_t& gi) :

@@ -30,12 +30,12 @@ bool operator==(const BasisFunctionIdentity<DIM>& i0, const BasisFunctionIdentit
 
 template <class value_type, int DIM>
   ShapeFunction<value_type,DIM>::ShapeFunction() :
-  handle(NULL)
+  handle(nullptr)
 {}
 
 template <class value_type, int DIM>
   ShapeFunction<value_type,DIM>::ShapeFunction(const ShapeFunction<value_type,DIM>& s) :
-  handle(NULL),
+  handle(nullptr),
   library_name(s.library_name),
   value_function_name(s.value_function_name),
   gradient_function_name(s.gradient_function_name)
@@ -52,7 +52,7 @@ template <class value_type, int DIM>
 template <class value_type, int DIM>
   ShapeFunction<value_type,DIM>& ShapeFunction<value_type,DIM>::operator=(const ShapeFunction<value_type,DIM>& s)
 {
-  if (&s != NULL) {
+  if (&s != nullptr) {
     library_name = s.library_name;
     value_function_name = s.value_function_name;
     gradient_function_name = s.gradient_function_name;
@@ -74,19 +74,19 @@ template <class value_type, int DIM>
     else
       temp = library_path + "/" + library_name;
     handle = AFEPackDLOpen(temp);
-    if (handle == NULL) return;
+    if (handle == nullptr) return;
 
     void * symbol = dlsym(handle, value_function_name.c_str());
-    Assert(symbol, ExcLoadFunction(value_function_name.c_str(), library_name.c_str()));
+    assert(symbol);
     value_function = (void (*)(const double *, const double **, void *))symbol;
 
     symbol = dlsym(handle, gradient_function_name.c_str());
-    Assert(symbol, ExcLoadFunction(gradient_function_name.c_str(), library_name.c_str()));
+    assert(symbol);
     gradient_function = (void (*)(const double *, const double **, void *))symbol;
 
 #ifdef QUADRATIC_ELEMENT_SUPPORT
     symbol = dlsym(handle, hesse_function_name.c_str());
-    Assert(symbol, ExcLoadFunction(hesse_function_name.c_str(), library_name.c_str()));
+    assert(symbol);
     hesse_function = (void (*)(const double *, const double **, void *))symbol;
 #endif // QUADRATIC_ELEMENT_SUPPORT
   }
@@ -94,9 +94,9 @@ template <class value_type, int DIM>
 template <class value_type, int DIM>
     void ShapeFunction<value_type,DIM>::unloadFunction()
 {
-  if (handle != NULL) {
+  if (handle != nullptr) {
     dlclose(handle);
-    handle = NULL;
+    handle = nullptr;
   }
 }
 
@@ -314,7 +314,7 @@ template <class value_type, int DIM, int TDIM>
 template <class value_type, int DIM, int TDIM>
   BasisFunction<value_type,DIM,TDIM>& BasisFunction<value_type,DIM,TDIM>::operator=(const BasisFunction<value_type,DIM,TDIM>& b)
 {
-  if (&b != NULL) {
+  if (&b != nullptr) {
     ip = b.ip;
     id = b.id;
   }
@@ -357,7 +357,7 @@ template <int DIM>
 TemplateDOF<DIM>::TemplateDOF(TemplateGeometry<DIM>& g) : 
 geometry(&g)
 {
-  if (geometry == NULL) return;
+  if (geometry == nullptr) return;
 	
   int i;
   n_geometry_dof.resize(DIM+1);
@@ -372,7 +372,7 @@ template <int DIM>
 TemplateDOF<DIM>::TemplateDOF(const TemplateDOF<DIM>& t) :
 geometry(t.geometry)
 {
-  if (geometry == NULL) return;
+  if (geometry == nullptr) return;
 	
   int i;
   n_geometry_dof.resize(DIM+1);
@@ -390,7 +390,7 @@ TemplateDOF<DIM>::~TemplateDOF()
 template <int DIM>
 TemplateDOF<DIM>& TemplateDOF<DIM>::operator=(const TemplateDOF<DIM>& t)
 {
-  if (&t != NULL) {
+  if (&t != nullptr) {
     n_dof = t.n_dof;
     n_geometry_dof = t.n_geometry_dof;
     geometry_dof = t.geometry_dof;
@@ -404,7 +404,7 @@ TemplateDOF<DIM>& TemplateDOF<DIM>::operator=(const TemplateDOF<DIM>& t)
   void TemplateDOF<DIM>::reinit(TemplateGeometry<DIM>& g)
   {
     geometry = &g;
-    if (geometry == NULL) return;
+    if (geometry == nullptr) return;
 	
     int i;
     n_geometry_dof.resize(DIM+1);
@@ -441,12 +441,12 @@ void TemplateDOF<DIM>::writeData(const std::string& s) const
 
 template <int TDIM, int DIM>
   CoordTransform<TDIM,DIM>::CoordTransform() :
-  handle(NULL)
+  handle(nullptr)
 {}
 
 template <int TDIM, int DIM>
   CoordTransform<TDIM,DIM>::CoordTransform(const CoordTransform<TDIM,DIM>& c) :
-  handle(NULL),
+  handle(nullptr),
   library_name(c.library_name),
   l2g_function_name(c.l2g_function_name),
   g2l_function_name(c.g2l_function_name),
@@ -465,7 +465,7 @@ template <int TDIM, int DIM>
 template <int TDIM, int DIM>
   CoordTransform<TDIM,DIM>& CoordTransform<TDIM,DIM>::operator=(const CoordTransform<TDIM,DIM>& c)
 {
-  if (&c != NULL) {
+  if (&c != nullptr) {
     library_name = c.library_name;
     l2g_function_name = c.l2g_function_name;
     g2l_function_name = c.g2l_function_name;
@@ -487,31 +487,31 @@ template <int TDIM, int DIM>
     else
       temp = library_path + "/" + library_name;
     handle = AFEPackDLOpen(temp);
-    if (handle == NULL) return;
+    if (handle == nullptr) return;
 
     void * symbol = dlsym(handle, l2g_function_name.c_str());
-    Assert(symbol, ExcLoadFunction(l2g_function_name.c_str(), library_name.c_str()));
+    assert(symbol);
     l2g_function = (void (*)(const double *, const double **, const double **, double *))symbol;
 
     symbol = dlsym(handle, g2l_function_name.c_str());
-    Assert(symbol, ExcLoadFunction(g2l_function_name.c_str(), library_name.c_str()));
+    assert(symbol);
     g2l_function = (void (*)(const double *, const double **, const double **, double *))symbol;
 	
     symbol = dlsym(handle, l2g_jacobian_function_name.c_str());
-    Assert(symbol, ExcLoadFunction(l2g_jacobian_function_name.c_str(), library_name.c_str()));
+    assert(symbol);
     l2g_jacobian_function = (double (*)(const double *, const double **, const double **))symbol;
 
     symbol = dlsym(handle, g2l_jacobian_function_name.c_str());
-    Assert(symbol, ExcLoadFunction(g2l_jacobian_function_name.c_str(), library_name.c_str()));
+    assert(symbol);
     g2l_jacobian_function = (double (*)(const double *, const double **, const double **))symbol;
   }
 
 template <int TDIM, int DIM>
     void CoordTransform<TDIM,DIM>::unloadFunction()
 {
-  if (handle != NULL) {
+  if (handle != nullptr) {
     dlclose(handle);
-    handle = NULL;
+    handle = nullptr;
   }
 }
 
@@ -821,12 +821,12 @@ template <class value_type, int DIM, int TDIM>
 
 template <int DIM>
 UnitOutNormal<DIM>::UnitOutNormal() :
-handle(NULL)
+handle(nullptr)
 {}
 
 template <int DIM>
 UnitOutNormal<DIM>::UnitOutNormal(const UnitOutNormal<DIM>& c) :
-handle(NULL),
+handle(nullptr),
   library_name(c.library_name),
   function_name(c.function_name)
 {
@@ -842,7 +842,7 @@ UnitOutNormal<DIM>::~UnitOutNormal()
 template <int DIM>
 UnitOutNormal<DIM>& UnitOutNormal<DIM>::operator=(const UnitOutNormal<DIM>& c)
 {
-  if (&c != NULL) {
+  if (&c != nullptr) {
     library_name = c.library_name;
     function_name = c.function_name;
   }
@@ -860,19 +860,19 @@ UnitOutNormal<DIM>& UnitOutNormal<DIM>::operator=(const UnitOutNormal<DIM>& c)
     else
       temp = library_path + "/" + library_name;
     handle = AFEPackDLOpen(temp);
-    if (handle == NULL) return;
+    if (handle == nullptr) return;
 
     void * symbol = dlsym(handle, function_name.c_str());
-    Assert(symbol, ExcLoadFunction(function_name.c_str(), library_name.c_str()));
+    assert(symbol);
     function = (void (*)(const double *, const double **, int, double *))symbol;
   }
 
 template <int DIM>
 void UnitOutNormal<DIM>::unloadFunction()
 {
-  if (handle != NULL) {
+  if (handle != nullptr) {
     dlclose(handle);
-    handle = NULL;
+    handle = nullptr;
   }
 }
 
@@ -994,7 +994,7 @@ template <class value_type, int DIM, int TDIM>
   TemplateElement<value_type,DIM,TDIM>& 
   TemplateElement<value_type,DIM,TDIM>::operator=(const TemplateElement<value_type,DIM,TDIM>& t)
 {
-  if (&t != NULL) {
+  if (&t != nullptr) {
     geo = t.geo;
     df = t.df;
     ct = t.ct;

@@ -47,7 +47,7 @@ THIS::readMesh(const std::string& filename) {
   std::vector<Point<this_t::dow> > point(n_point);
   for (u_int i = 0;i < n_point;i ++) is >> point[i];
   is >> n_point;
-  std::vector<HGeometry<0,this_t::dow> *> geo_0d(n_point, (HGeometry<0,this_t::dow> *)NULL);
+  std::vector<HGeometry<0,this_t::dow> *> geo_0d(n_point, (HGeometry<0,this_t::dow> *)nullptr);
   for (u_int i = 0;i < n_point;i ++) {
     u_int j, k;
     is >> j; geo_0d[j] = new HGeometry<0,this_t::dow>();
@@ -62,7 +62,7 @@ THIS::readMesh(const std::string& filename) {
   if (DIM >= 1) {/// 读入一维几何体的信息
     is >> n_geo_1d;
     std::cerr << "\t# 1D-geometry: " << n_geo_1d << std::endl;
-    geo_1d.resize(n_geo_1d, NULL);
+    geo_1d.resize(n_geo_1d, nullptr);
     for (u_int i = 0;i < n_geo_1d;i ++) {
       u_int j, k, l;
       is >> j >> k; geo_1d[j] = new HGeometry<GDIM,this_t::dow>();
@@ -84,7 +84,7 @@ THIS::readMesh(const std::string& filename) {
   if (DIM >= 2) {/// 读入二维几何体的信息
     is >> n_geo_2d;
     std::cerr << "\t# 2D-geometry: " << n_geo_2d << std::endl;
-    geo_2d.resize(n_geo_2d, NULL);
+    geo_2d.resize(n_geo_2d, nullptr);
     for (u_int i = 0;i < n_geo_2d;i ++) {
       u_int j, k, l;
       is >> j >> k; geo_2d[j] = new HGeometry<GDIM,this_t::dow>();
@@ -106,7 +106,7 @@ THIS::readMesh(const std::string& filename) {
   if (DIM >= 3) { /// 读入三维几何体的信息
     is >> n_geo_3d;
     std::cerr << "\t# 3D-geometry: " << n_geo_3d << std::endl;
-    geo_3d.resize(n_geo_3d, NULL);
+    geo_3d.resize(n_geo_3d, nullptr);
     for (u_int i = 0;i < n_geo_3d;i ++) {
       u_int j, k, l;
       is >> j >> k; geo_3d[j] = new HGeometry<GDIM,this_t::dow>();
@@ -384,7 +384,7 @@ THIS::readMesh(const std::string& filename) {
         proc_is >> local_idx >> remote_obj;
         local_obj = geo_0d[local_idx];
         OBJ * p_info = get_shared_info(*local_obj);
-        if (p_info == NULL) p_info = new_shared_info(*local_obj);
+        if (p_info == nullptr) p_info = new_shared_info(*local_obj);
         p_info->add_clone(i, remote_obj);
       }
 #undef OBJ
@@ -402,7 +402,7 @@ THIS::readMesh(const std::string& filename) {
         proc_is >> local_idx >> remote_obj;
         local_obj = geo_1d[local_idx];
         OBJ * p_info = get_shared_info(*local_obj);
-        if (p_info == NULL) p_info = new_shared_info(*local_obj);
+        if (p_info == nullptr) p_info = new_shared_info(*local_obj);
         p_info->add_clone(i, remote_obj);
       }
 #undef OBJ
@@ -420,7 +420,7 @@ THIS::readMesh(const std::string& filename) {
         proc_is >> local_idx >> remote_obj;
         local_obj = geo_2d[local_idx];
         OBJ * p_info = get_shared_info(*local_obj);
-        if (p_info == NULL) p_info = new_shared_info(*local_obj);
+        if (p_info == nullptr) p_info = new_shared_info(*local_obj);
         p_info->add_clone(i, remote_obj);
       }
 #undef OBJ
@@ -438,7 +438,7 @@ THIS::readMesh(const std::string& filename) {
         proc_is >> local_idx >> remote_obj;
         local_obj = geo_3d[local_idx];
         OBJ * p_info = get_shared_info(*local_obj);
-        if (p_info == NULL) p_info = new_shared_info(*local_obj);
+        if (p_info == nullptr) p_info = new_shared_info(*local_obj);
         p_info->add_clone(i, remote_obj);
       }
 #undef OBJ
@@ -470,7 +470,7 @@ void THIS::renumerateRootElement(void (*f)(const double *, double *))
       pnt += *ele.vertex[j];
     }
     pnt /= n_vtx;
-    if (f != NULL) {
+    if (f != nullptr) {
       Point<DOW> pnt1(pnt);
       f(&(pnt1[0]), &(pnt[0]));
     }
@@ -513,7 +513,7 @@ void THIS::eraseRootElementOneLevel() {
   for (;the_ele != end_ele;++ the_ele) {
     for (u_int i = 0;i < HGeometry<DIM,this_t::dow>::n_child;++ i) {
       HGeometry<DIM,this_t::dow> * p_geo = (*the_ele)->child[i];
-      if (p_geo == NULL) {
+      if (p_geo == nullptr) {
         std::cerr << "Macro element is not refined. The root elements are not erased!" 
                   << std::endl;
         abort();
@@ -547,7 +547,7 @@ void THIS::eraseRootElementOneLevel() {
 TEMPLATE
 template <class HGEO>
 void THIS::set_is_used_up(HGEO& geo) const {
-  if (geo.parent != NULL) {
+  if (geo.parent != nullptr) {
     set_is_used_up(*geo.parent);
   }
   u_int n_bound = geo.n_boundary;
@@ -568,7 +568,7 @@ void THIS::set_is_used_up() {
     the_ele = this->rootElement().begin(),
     end_ele = this->rootElement().end();
   for (;the_ele != end_ele;++ the_ele) {
-    if ((*the_ele)->parent != NULL) {
+    if ((*the_ele)->parent != nullptr) {
       this->set_is_used_up(*(*the_ele)->parent);
     }
   }
@@ -643,7 +643,7 @@ THIS::is_pack_match_geometry(HGeometry<GDIM,dow> * geo) const {
     u_int n_boundary = geo->n_boundary;
     for (u_int i = 0;i < n_boundary;++ i) {
       HGeometry<GDIM-1,dow> * bnd = geo->boundary[i];
-      if (bnd->parent == NULL && /// 几何体没有父亲
+      if (bnd->parent == nullptr && /// 几何体没有父亲
           (! is_shared_info_sent(*bnd))) {
         n_unsent_bnd += 1;
       }
@@ -696,7 +696,7 @@ THIS::pack_match_geometry(HGeometry<GDIM,dow> * geo,
     u_int n_unsent_bnd = 0;
     for (u_int i = 0;i < n_boundary;++ i) {
       HGeometry<GDIM-1,dow> * bnd = geo->boundary[i];
-      if (bnd->parent == NULL && /// 几何体没有父亲
+      if (bnd->parent == nullptr && /// 几何体没有父亲
           (! is_shared_info_sent(*bnd))) {
         n_unsent_bnd += 1;
       }
@@ -705,7 +705,7 @@ THIS::pack_match_geometry(HGeometry<GDIM,dow> * geo,
     os << n_unsent_bnd; /// 输出需要发送的边界几何体的个数
     for (u_int i = 0;i < n_boundary;++ i) {
       HGeometry<GDIM-1,dow> * bnd = geo->boundary[i];
-      if (bnd->parent == NULL && /// 几何体没有父亲
+      if (bnd->parent == nullptr && /// 几何体没有父亲
           (! is_shared_info_sent(*bnd))) {
         geometry_reference_point(*bnd, grp);
         os << bnd << grp;
@@ -766,7 +766,7 @@ THIS::unpack_match_geometry(HGeometry<GDIM,dow> * geo,
         int type = matcher().value(pnt[i], *vtx, 1.0e-4*h);
         if (type >= 0) {
           Shared_object<HGeometry<0,dow> > * p_info = get_shared_info(*vtx);
-          if (p_info == NULL) p_info = new_shared_info(*vtx);
+          if (p_info == nullptr) p_info = new_shared_info(*vtx);
           _is_operated |= p_info->add_clone(remote_rank, type, remote_vtx[i]);
           break;
         }
@@ -791,12 +791,12 @@ THIS::unpack_match_geometry(HGeometry<GDIM,dow> * geo,
     for (u_int i = 0;i < n_unsent_bnd;++ i) {
       for (u_int j = 0;j < n_boundary;++ j) {
         HGeometry<GDIM-1,dow> * bnd = geo->boundary[j];
-        if (bnd->parent != NULL) continue;
+        if (bnd->parent != nullptr) continue;
         geometry_reference_point(*bnd, grp);
         int type = matcher().value(remote_grp[i], grp, 1.0e-4*h);
         if (type >= 0) {
           Shared_object<HGeometry<GDIM-1,dow> > * p_info = get_shared_info(*bnd);
-          if (p_info == NULL) p_info = new_shared_info(*bnd);
+          if (p_info == nullptr) p_info = new_shared_info(*bnd);
           _is_operated |= p_info->add_clone(remote_rank, type, remote_bnd[i]);
           break;
         }
@@ -834,15 +834,15 @@ THIS::unpack_match_geometry(HGeometry<GDIM,dow> * geo,
         HGeometry<GDIM,dow> * chd = geo->child[i];
         geometry_reference_point(*chd, grp);
         for (u_int j = 0;j < n_child;++ j) {
-          if (remote_chd[j] == NULL) continue; /// 这是匹配过的位置
+          if (remote_chd[j] == nullptr) continue; /// 这是匹配过的位置
 
           /// 否则计算参考点的是相同的点，是就匹配上
           int type = matcher().value(grp, remote_grp[j], 1.0e-4*h);
           if (type >= 0) {
             Shared_object<HGeometry<GDIM,dow> > * p_info = get_shared_info(*chd); 
-            if (p_info == NULL) p_info = new_shared_info(*chd);
+            if (p_info == nullptr) p_info = new_shared_info(*chd);
             _is_operated |= p_info->add_clone(remote_rank, type, remote_chd[j]);
-            remote_chd[j] = NULL;
+            remote_chd[j] = nullptr;
             n_matched_child += 1;
             break;
           }
@@ -980,13 +980,13 @@ void THIS::eraseRootElementOneLevel() {
   for (;the_ele != end_ele;++ the_ele) {
     for (u_int i = 0;i < element_t::n_child;++ i) {
       element_t * p_geo = (*the_ele)->child[i];
-      if (p_geo == NULL) {
+      if (p_geo == nullptr) {
         std::cerr << "Macro element is not refined. The root elements CAN'T be erased!" 
                   << std::endl;
         abort();
       }
       new_root.push_back(p_geo);
-      p_geo->parent = NULL;
+      p_geo->parent = nullptr;
     }
   }
   new_root.swap(this->rootElement());

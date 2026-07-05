@@ -15,8 +15,8 @@ AFEPACK_OPEN_NAMESPACE
 TEMPLATE
 THIS::DGElement(fe_space_t& f) : sp(&f) 
 {
-  neigh[0] = NULL;
-  neigh[1] = NULL;
+  neigh[0] = nullptr;
+  neigh[1] = nullptr;
 };
 
 TEMPLATE
@@ -47,7 +47,7 @@ void THIS::reinit(fe_space_t& f,
 TEMPLATE
 void THIS::reinit(const int& g, const int& t)
 {
-  Assert (sp != NULL, ExcInternalError());
+  assert(sp != nullptr);
   geometry_index = g;
   template_element_index = t;
 };
@@ -55,7 +55,7 @@ void THIS::reinit(const int& g, const int& t)
 TEMPLATE
 typename THIS::dg_element_t& THIS::operator=(const dg_element_t& e)
 {
-  if (&e != NULL) {
+  if (&e != nullptr) {
     sp = e.sp;
     geometry_index = e.geometry_index;
     template_element_index = e.template_element_index;
@@ -183,12 +183,12 @@ void THIS::buildGeometryImage()
         for (l1 = 0;l1 < l;l1 ++)
           if (geo1.boundary(k1) == geo_index[l1]) break;
         if (l1 == l) {
-          Assert(l < t_geo.n_geometry(i), ExcInternalError());
+          assert(l < t_geo.n_geometry(i));
           geo_index[l ++] = geo1.boundary(k1);
         }
       }
     }
-    Assert(l == t_geo.n_geometry(i), ExcInternalError());
+    assert(l == t_geo.n_geometry(i));
     // reorder those indices according their position in the template element
     j = t_geo.n_geometry(i);
     for (j1 = 0;j1 < j;j1 ++) {
@@ -202,7 +202,7 @@ void THIS::buildGeometryImage()
             break;
           }
         }
-        Assert(l1 < i1, ExcMeshData("the vertex is not belong to the element."));
+        assert(l1 < i1);
       }
       sort(v.begin(), v.end());
       l = t_geo.n_geometry(i);
@@ -213,7 +213,7 @@ void THIS::buildGeometryImage()
           break;
         }
       }
-      Assert(k < l,ExcMeshData("no such boundary in the template geometry."));
+      assert(k < l);
     }
   }
 };
@@ -325,14 +325,14 @@ std::vector<double> THIS::global_to_local_jacobian(const std::vector<Point<DOW> 
 TEMPLATE
 const typename THIS::element_t& THIS::neighbourElement(const int& i) const
 {
-  Assert(i >= 0 && i < 2, ExcInternalError());
+  assert(i >= 0 && i < 2);
   return *neigh[i];
 };
 
 TEMPLATE
 typename THIS::element_t& THIS::neighbourElement(const int& i)
 {
-  Assert(i >= 0 && i < 2, ExcInternalError());
+  assert(i >= 0 && i < 2);
   return *neigh[i];
 };
 
@@ -407,7 +407,7 @@ TEMPLATE
 THIS& THIS::operator=(const THIS& f)
 {
   base_t::operator=(f);
-  if (&f != NULL) 
+  if (&f != nullptr) 
     tmp_dgele = f.tmp_dgele;
   return *this;
 };
@@ -430,8 +430,8 @@ void THIS::buildDGElement()
   DGElementIterator end_el = endDGElement();
   for (i = 0;it_el != end_el;++ it_el) {
     it_el->buildGeometryImage();
-    it_el->neigh[0] = NULL;
-    it_el->neigh[1] = NULL;
+    it_el->neigh[0] = nullptr;
+    it_el->neigh[1] = nullptr;
     index[it_el->index()] = i ++;
   }
   typename base_t::ElementIterator 
@@ -442,16 +442,16 @@ void THIS::buildDGElement()
     for (i = 0;i < g.n_boundary();i ++) {
       j = index[g.boundary(i)];
       if (j != -1) {
-        if (dgele[j].neigh[0] == NULL) {
+        if (dgele[j].neigh[0] == nullptr) {
           dgele[j].neigh[0] = &(*the_ele);
           dgele[j].bnd_idx[0] = i;
         }
-        else if (dgele[j].neigh[1] == NULL) {
+        else if (dgele[j].neigh[1] == nullptr) {
           dgele[j].neigh[1] = &(*the_ele);
           dgele[j].bnd_idx[1] = i;
         }
         else {
-          Assert(false, ExcInternalError());
+          assert(false);
         }
       }
     }

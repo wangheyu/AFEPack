@@ -103,7 +103,7 @@ void Operator::L2Project(const FEMFunction<value_type, DIM>& f0,
 	const std::vector<int>& element_dof = the_element->dof();
 	unsigned int n_element_dof = element_dof.size();
 	//FullMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
-	DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
+	DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);	
 	Vector<double> local_rhs(n_element_dof);
 	Vector<double> local_f1(n_element_dof);
 	unsigned int n_quadrature_point = quad_info.n_quadraturePoint();
@@ -130,7 +130,7 @@ void Operator::L2Project(const FEMFunction<value_type, DIM>& f0,
       break;
     }
     default: {
-      Assert(false, ExcNotImplemented());
+      assert(false);
     }
     }
     return;
@@ -147,7 +147,7 @@ void Operator::L2Project(const FEMFunction<value_type, DIM>& f0,
     if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
       std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		<< std::endl;
-      Assert(false, ExcInternalError());
+      assert(false);
     }
     unsigned int n_dof = fem_space1.n_dof();
     Vector<double> mass_accumulation(n_dof);
@@ -160,8 +160,8 @@ void Operator::L2Project(const FEMFunction<value_type, DIM>& f0,
       const HElement<DIM>& h_element1 = the_pair(1);
       const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
       const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-      Assert(element0.index() == h_element0.index, ExcInternalError());
-      Assert(element1.index() == h_element1.index, ExcInternalError());
+      assert(element0.index() == h_element0.index);
+      assert(element1.index() == h_element1.index);
       const std::vector<int>& element_dof1 = element1.dof();
       unsigned int n_element_dof1 = element_dof1.size();
       if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -211,7 +211,7 @@ void Operator::L2Project(const FEMFunction<value_type, DIM>& f0,
     if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
       std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		<< std::endl;
-      Assert(false, ExcInternalError());
+      assert(false);
     }
     f1.Vector<value_type>::operator=(0.0);
     MassMatrix<DIM, value_type> mass_matrix(fem_space1);
@@ -227,8 +227,8 @@ void Operator::L2Project(const FEMFunction<value_type, DIM>& f0,
       const HElement<DIM>& h_element1 = the_pair(1);
       const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
       const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-      Assert(element0.index() == h_element0.index, ExcInternalError());
-      Assert(element1.index() == h_element1.index, ExcInternalError());
+      assert(element0.index() == h_element0.index);
+      assert(element1.index() == h_element1.index);
       const std::vector<int>& element_dof1 = element1.dof();
       unsigned int n_element_dof1 = element_dof1.size();
       if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -276,7 +276,7 @@ void Operator::L2Project(const FEMFunction<value_type, DIM>& f0,
     if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
       std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		<< std::endl;
-      Assert(false, ExcInternalError());
+      assert(false);
     }
     unsigned int n_dof = fem_space1.n_dof();
     std::vector<int> counter(n_dof, 0);
@@ -290,7 +290,7 @@ void Operator::L2Project(const FEMFunction<value_type, DIM>& f0,
       const HElement<DIM>& the_h_element = the_pair(1);
       the_element_index = the_h_element.index;
       const Element<value_type,DIM>& the_element = fem_space1.element(the_element_index);
-      Assert(the_element.index() == the_element_index, ExcInternalError());
+      assert(the_element.index() == the_element_index);
       n_the_element_dof = the_element.n_dof();
     }
     Vector<double> local_rhs(n_the_element_dof);
@@ -299,8 +299,8 @@ void Operator::L2Project(const FEMFunction<value_type, DIM>& f0,
       const HElement<DIM>& h_element1 = the_pair(1);
       const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
       const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-      Assert(element0.index() == h_element0.index, ExcInternalError());
-      Assert(element1.index() == h_element1.index, ExcInternalError());
+      assert(element0.index() == h_element0.index);
+      assert(element1.index() == h_element1.index);
       const std::vector<int>& element_dof1 = element1.dof();
       unsigned int n_element_dof1 = element_dof1.size();
       if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -338,7 +338,7 @@ void Operator::L2Project(const FEMFunction<value_type, DIM>& f0,
 	const Element<value_type,DIM>& the_element = fem_space1.element(the_element_index);
 	const std::vector<int>& the_element_dof = the_element.dof();
 	//FullMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);
-	DenseMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);
+	DenseMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);	
 	Vector<value_type> local_f1(n_the_element_dof);
 	double volume = the_element.templateElement().volume();
 	const QuadratureInfo<DIM>& quad_info = the_element.findQuadratureInfo(algebric_accuracy);
@@ -372,7 +372,7 @@ void Operator::L2Project(const FEMFunction<value_type, DIM>& f0,
     break;
   }
   default: {
-    Assert(false, ExcNotImplemented());
+    assert(false);
   }
   }
 }
@@ -460,7 +460,7 @@ template <class value_type, int DIM>
       const std::vector<int>& element_dof = the_element->dof();
       unsigned int n_element_dof = element_dof.size();
       //FullMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
-      DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
+      DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);      
       Vector<double> local_rhs(n_element_dof);
       Vector<double> local_f1(n_element_dof);
       unsigned int n_quadrature_point = quad_info.n_quadraturePoint();
@@ -487,7 +487,7 @@ template <class value_type, int DIM>
     break;
   }
   default: {
-    Assert(false, ExcNotImplemented());
+    assert(false);
   }
   }
 }
@@ -575,7 +575,7 @@ template <class value_type, int DIM>
       const std::vector<int>& element_dof = the_element->dof();
       unsigned int n_element_dof = element_dof.size();
       //FullMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
-      DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
+      DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);      
       Vector<double> local_rhs(n_element_dof);
       Vector<double> local_f1(n_element_dof);
       unsigned int n_quadrature_point = quad_info.n_quadraturePoint();
@@ -602,7 +602,7 @@ template <class value_type, int DIM>
     break;
   }
   default: {
-    Assert(false, ExcNotImplemented());
+    assert(false);
   }
   }
 }
@@ -690,7 +690,7 @@ template <class value_type, int DIM>
       const std::vector<int>& element_dof = the_element->dof();
       unsigned int n_element_dof = element_dof.size();
       //FullMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
-      DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
+      DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);      
       Vector<double> local_rhs(n_element_dof);
       Vector<double> local_f1(n_element_dof);
       unsigned int n_quadrature_point = quad_info.n_quadraturePoint();
@@ -717,7 +717,7 @@ template <class value_type, int DIM>
     break;
   }
   default: {
-    Assert(false, ExcNotImplemented());
+    assert(false);
   }
   }
 }
@@ -808,8 +808,8 @@ template <class value_type, int DIM>
 	std::vector<double> jacobian = the_element->local_to_global_jacobian(quad_info.quadraturePoint());
 	const std::vector<int>& element_dof = the_element->dof();
 	unsigned int n_element_dof = element_dof.size();
-	//	FullMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);	
-	DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
+	//FullMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
+	DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);	
 	Vector<double> local_rhs(n_element_dof);
 	Vector<double> local_f1(n_element_dof);
 	unsigned int n_quadrature_point = quad_info.n_quadraturePoint();
@@ -837,7 +837,7 @@ template <class value_type, int DIM>
       break;
     }
     default: {
-      Assert(false, ExcNotImplemented());
+      assert(false);
     }
     }
   }
@@ -853,7 +853,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       unsigned int n_dof = fem_space1.n_dof();
       Vector<double> mass_accumulation(n_dof);
@@ -866,8 +866,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -919,7 +919,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       MassMatrix<DIM, value_type> mass_matrix(fem_space1);
       mass_matrix.algebricAccuracy() = algebric_accuracy;
@@ -934,8 +934,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -985,7 +985,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       unsigned int n_dof = fem_space1.n_dof();
       std::vector<int> counter(n_dof, 0);
@@ -999,7 +999,7 @@ template <class value_type, int DIM>
 	const HElement<DIM>& the_h_element = the_pair(1);
 	the_element_index = the_h_element.index;
 	const Element<value_type,DIM>& the_element = fem_space1.element(the_element_index);
-	Assert(the_element.index() == the_element_index, ExcInternalError());
+	assert(the_element.index() == the_element_index);
 	n_the_element_dof = the_element.n_dof();
       }
       Vector<double> local_rhs(n_the_element_dof);
@@ -1008,8 +1008,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -1049,7 +1049,7 @@ template <class value_type, int DIM>
 	  const Element<value_type,DIM>& the_element = fem_space1.element(the_element_index);
 	  const std::vector<int>& the_element_dof = the_element.dof();
 	  //FullMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);
-	  DenseMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);
+	  DenseMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);	  
 	  Vector<value_type> local_f1(n_the_element_dof);
 	  double volume = element1.templateElement().volume();
 	  const QuadratureInfo<DIM>& quad_info = the_element.findQuadratureInfo(algebric_accuracy);
@@ -1083,7 +1083,7 @@ template <class value_type, int DIM>
       break;
     }
     default: {
-      Assert(false, ExcNotImplemented());
+      assert(false);
     }
     }
   }
@@ -1187,7 +1187,7 @@ template <class value_type, int DIM>
 	const std::vector<int>& element_dof = the_element->dof();
 	unsigned int n_element_dof = element_dof.size();
 	//FullMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
-	DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);
+	DenseMatrix<double> local_mass_matrix(n_element_dof, n_element_dof);	
 	Vector<double> local_rhs(n_element_dof);
 	Vector<double> local_f1(n_element_dof);
 	unsigned int n_quadrature_point = quad_info.n_quadraturePoint();
@@ -1216,7 +1216,7 @@ template <class value_type, int DIM>
       break;
     }
     default: {
-      Assert(false, ExcNotImplemented());
+      assert(false);
     }
     }
   }
@@ -1232,7 +1232,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       unsigned int n_dof = fem_space1.n_dof();
       Vector<double> mass_accumulation(n_dof);
@@ -1245,8 +1245,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -1300,7 +1300,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       f1.Vector<value_type>::operator=(0.0);
       MassMatrix<DIM, value_type> mass_matrix(fem_space1);
@@ -1316,8 +1316,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -1369,7 +1369,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       unsigned int n_dof = fem_space1.n_dof();
       std::vector<int> counter(n_dof, 0);
@@ -1383,7 +1383,7 @@ template <class value_type, int DIM>
 	const HElement<DIM>& the_h_element = the_pair(1);
 	the_element_index = the_h_element.index;
 	const Element<value_type,DIM>& the_element = fem_space1.element(the_element_index);
-	Assert(the_element.index() == the_element_index, ExcInternalError());
+	assert(the_element.index() == the_element_index);
 	n_the_element_dof = the_element.n_dof();
       }
       Vector<double> local_rhs(n_the_element_dof);
@@ -1392,8 +1392,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -1435,7 +1435,7 @@ template <class value_type, int DIM>
 	  const Element<value_type,DIM>& the_element = fem_space1.element(the_element_index);
 	  const std::vector<int>& the_element_dof = the_element.dof();
 	  //FullMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);
-	  DenseMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);
+	  DenseMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);	  
 	  Vector<value_type> local_f1(n_the_element_dof);
 	  double volume = element1.templateElement().volume();
 	  const QuadratureInfo<DIM>& quad_info = the_element.findQuadratureInfo(algebric_accuracy);
@@ -1469,7 +1469,7 @@ template <class value_type, int DIM>
       break;
     }
     default: {
-      Assert(false, ExcNotImplemented());
+      assert(false);
     }
     }
   }
@@ -1485,7 +1485,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       unsigned int n_dof = fem_space1.n_dof();
       Vector<double> mass_accumulation(n_dof);
@@ -1498,8 +1498,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -1553,7 +1553,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       f1.Vector<value_type>::operator=(0.0);
       MassMatrix<DIM, value_type> mass_matrix(fem_space1);
@@ -1569,8 +1569,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -1622,7 +1622,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       unsigned int n_dof = fem_space1.n_dof();
       std::vector<int> counter(n_dof, 0);
@@ -1636,7 +1636,7 @@ template <class value_type, int DIM>
 	const HElement<DIM>& the_h_element = the_pair(1);
 	the_element_index = the_h_element.index;
 	const Element<value_type,DIM>& the_element = fem_space1.element(the_element_index);
-	Assert(the_element.index() == the_element_index, ExcInternalError());
+	assert(the_element.index() == the_element_index);
 	n_the_element_dof = the_element.n_dof();
       }
       Vector<double> local_rhs(n_the_element_dof);
@@ -1645,8 +1645,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -1688,7 +1688,7 @@ template <class value_type, int DIM>
 	  const Element<value_type,DIM>& the_element = fem_space1.element(the_element_index);
 	  const std::vector<int>& the_element_dof = the_element.dof();
 	  //FullMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);
-	  DenseMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);
+	  DenseMatrix<double> local_mass_matrix(n_the_element_dof, n_the_element_dof);	  
 	  Vector<value_type> local_f1(n_the_element_dof);
 	  double volume = element1.templateElement().volume();
 	  const QuadratureInfo<DIM>& quad_info = the_element.findQuadratureInfo(algebric_accuracy);
@@ -1722,7 +1722,7 @@ template <class value_type, int DIM>
       break;
     }
     default: {
-      Assert(false, ExcNotImplemented());
+      assert(false);
     }
     }
   }
@@ -1738,7 +1738,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       unsigned int n_dof = fem_space1.n_dof();
       Vector<double> mass_accumulation(n_dof);
@@ -1751,8 +1751,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -1806,7 +1806,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       f1.Vector<value_type>::operator=(0.0);
       MassMatrix<DIM, value_type> mass_matrix(fem_space1);
@@ -1822,8 +1822,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -1875,7 +1875,7 @@ template <class value_type, int DIM>
       if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
 	std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 		  << std::endl;
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       unsigned int n_dof = fem_space1.n_dof();
       std::vector<int> counter(n_dof, 0);
@@ -1889,7 +1889,7 @@ template <class value_type, int DIM>
 	const HElement<DIM>& the_h_element = the_pair(1);
 	the_element_index = the_h_element.index;
 	const Element<value_type,DIM>& the_element = fem_space1.element(the_element_index);
-	Assert(the_element.index() == the_element_index, ExcInternalError());
+	assert(the_element.index() == the_element_index);
 	n_the_element_dof = the_element.n_dof();
       }
       Vector<double> local_rhs(n_the_element_dof);
@@ -1898,8 +1898,8 @@ template <class value_type, int DIM>
 	const HElement<DIM>& h_element1 = the_pair(1);
 	const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
 	const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-	Assert(element0.index() == h_element0.index, ExcInternalError());
-	Assert(element1.index() == h_element1.index, ExcInternalError());
+	assert(element0.index() == h_element0.index);
+	assert(element1.index() == h_element1.index);
 	const std::vector<int>& element_dof1 = element1.dof();
 	unsigned int n_element_dof1 = element_dof1.size();
 	if (the_pair.state() == ActiveElementPairIterator<DIM>::GREAT_THAN) {
@@ -1975,12 +1975,12 @@ template <class value_type, int DIM>
       break;
     }
     default: {
-      Assert(false, ExcNotImplemented());
+      assert(false);
     }
     }
   }
   else { // something must be wrong
-    Assert(false, ExcInternalError());
+    assert(false);
   }
 }
 

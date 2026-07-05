@@ -78,7 +78,7 @@ THIS::reclaimIrregularMesh(typename THIS::ir_mesh_t& m)
     if (the_ele->isRefined()) {
       for (int i = 0;i < the_ele->n_child;++ i) {
         m.deleteTree(the_ele->child[i]);
-        the_ele->child[i] = NULL;
+        the_ele->child[i] = nullptr;
       }
     }
   }
@@ -143,22 +143,22 @@ template <int DIM1> inline int
 THIS::relabelHGeometryRecursively(HGeometry<DIM1,DOW>& g)
 {
   for (int i = 0;i < g.n_vertex;++ i) {
-    if (g.vertex[i] == NULL) continue;
+    if (g.vertex[i] == nullptr) continue;
     if (relabelHGeometryRecursively(*(g.vertex[i])) == -2) {
-      g.vertex[i] = NULL;
+      g.vertex[i] = nullptr;
     }
   }
   for (int i = 0;i < g.n_boundary;++ i) {
-    if (g.boundary[i] == NULL) continue;
+    if (g.boundary[i] == nullptr) continue;
     if (relabelHGeometryRecursively(*(g.boundary[i])) == -2) {
-      g.boundary[i] = NULL;
+      g.boundary[i] = nullptr;
     }
   }
   if (g.isRefined()) {
     for (int i = 0;i < g.n_child;++ i) {
-      if (g.child[i] == NULL) continue;
+      if (g.child[i] == nullptr) continue;
       if (relabelHGeometryRecursively(*(g.child[i])) == -2) {
-        g.child[i] = NULL;
+        g.child[i] = nullptr;
       }
     }
   }
@@ -199,26 +199,26 @@ template <int DIM1> inline int
 THIS::reclaimHGeometryRecursively(HGeometry<DIM1,DOW>& g)
 {
   for (int i = 0;i < g.n_vertex;++ i) {
-    if (g.vertex[i] != NULL) {
+    if (g.vertex[i] != nullptr) {
       if (reclaimHGeometryRecursively(*(g.vertex[i])) == -1) {
-        g.vertex[i] = NULL;
+        g.vertex[i] = nullptr;
       }
     }
   }
   for (int i = 0;i < g.n_boundary;++ i) {
-    if (g.boundary[i] != NULL) {
+    if (g.boundary[i] != nullptr) {
       if (reclaimHGeometryRecursively(*(g.boundary[i])) == -1) {
-        g.boundary[i] = NULL;
+        g.boundary[i] = nullptr;
       }
     }
   }
   for (int i = 0;i < g.n_child;++ i) {
-    if (g.child[i] == NULL) continue;
+    if (g.child[i] == nullptr) continue;
     if (reclaimHGeometryRecursively(*(g.child[i])) == -1) {
-      g.child[i] = NULL;
+      g.child[i] = nullptr;
     }
   }
-  Assert ((g.index == 1 || g.index == -2), ExcInternalError());
+  assert((g.index == 1 || g.index == -2));
   if (g.index == -2) {
     this->reclaimHGeometry(&g, DIM1);
     return -1;
@@ -236,7 +236,7 @@ THIS::reclaimHGeometryRecursively(HGeometry<DIM1,DOW>& g)
 TEMPLATE inline int 
 THIS::reclaimHGeometryRecursively(HGeometry<0,DOW>& g)
 {
-  Assert ((g.index == 1 || g.index == -2), ExcInternalError());
+  assert((g.index == 1 || g.index == -2));
   if (g.index == -2) {
     this->reclaimHGeometry(&g, 0);
     return -1;

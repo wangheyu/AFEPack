@@ -34,9 +34,9 @@ public:
 public:
   void readData(const std::string&);
   void writeData(const std::string&) const;
-  DeclException1(ExcMeshData, 
-		 char *, 
-		 << "Mesh data error: " << arg1);
+  // DeclException1(ExcMeshData, 
+  // 		 char *, 
+  // 		 << "Mesh data error: " << arg1);
 };
 
 class EasyMesh : public TriangleMesh<2>

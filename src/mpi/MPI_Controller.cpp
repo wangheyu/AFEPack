@@ -58,7 +58,7 @@ namespace MPI {
       cnt_ptr = new details::controller_packer_impl<void>;
     cnt_ptr->name = name;
     cnt_ptr->fun_ptr = function;
-    if (desc != NULL) {
+    if (desc != nullptr) {
       cnt_ptr->description = desc;
     }
     details::setControllerEntry(cnt_ptr);
@@ -69,12 +69,12 @@ namespace MPI {
     Controller& controller = __global_controller_environment::controller;
     int control, dummy, ret;
     size_t n;
-    char * argments = NULL;
+    char * argments = nullptr;
     if (controller.rank == 0) {
       char file[128];
       FILE * fp;
       sprintf(file, ".control.%d", i);
-      if ((fp = fopen(file, "r")) == NULL) {
+      if ((fp = fopen(file, "r")) == nullptr) {
         ret = 0;
       } else {
         dummy = fscanf(fp, "%d", &control);

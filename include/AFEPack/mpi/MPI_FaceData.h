@@ -126,7 +126,7 @@ namespace MPI {
       template <class OBJ> data_t *
         get_send_buffer(const OBJ& obj) const {
         data_t * p_data = _packer.get_property(obj, _pid_out);
-        if (p_data == NULL) p_data = _packer.new_property(obj, _pid_out);
+        if (p_data == nullptr) p_data = _packer.new_property(obj, _pid_out);
         return p_data;
       }
       /**
@@ -178,24 +178,24 @@ namespace MPI {
        * 此处判断仅仅对有数据发送的几何体进行操作。
        */
       bool is_pack_data(geometry_t * geo) const {
-        assert (_forest->get_shared_info(*geo) != NULL);
-        return (geo->get_property(_pid_out) != NULL);
+        assert (_forest->get_shared_info(*geo) != nullptr);
+        return (geo->get_property(_pid_out) != nullptr);
       }
 
       void pack_data(geometry_t * geo,
                      int remote_rank,
                      Migration::ostream<>& os) {
-        assert (_forest->get_shared_info(*geo) != NULL);
+        assert (_forest->get_shared_info(*geo) != nullptr);
         data_t * p_data = geo->get_property(_pid_out);
-        assert (p_data != NULL);
+        assert (p_data != nullptr);
         os << *p_data;
       }
       void unpack_data(geometry_t * geo,
                        int remote_rank,
                        Migration::istream<>& is) {
-        assert (_forest->get_shared_info(*geo) != NULL);
+        assert (_forest->get_shared_info(*geo) != nullptr);
         data_t * p_data = geo->get_property(_pid_in);
-        if (p_data == NULL) p_data = geo->new_property(_pid_in);
+        if (p_data == nullptr) p_data = geo->new_property(_pid_in);
         is >> *p_data;
       }
     };
@@ -290,7 +290,7 @@ namespace MPI {
       template <class OBJ> void
         attach_send_buffer(const OBJ& obj, const data_t data) const {
         data_t * p_data = _packer.get_property(obj, _pid_out);
-        if (p_data == NULL) p_data = _packer.new_property(obj, _pid_out);
+        if (p_data == nullptr) p_data = _packer.new_property(obj, _pid_out);
         (*p_data) = data;
       }
       /**
@@ -300,7 +300,7 @@ namespace MPI {
       template <class OBJ> void
         attach_recv_buffer(const OBJ& obj, const data_t data) const {
         data_t * p_data = _packer.get_property(obj, _pid_in);
-        if (p_data == NULL) p_data = _packer.new_property(obj, _pid_in);
+        if (p_data == nullptr) p_data = _packer.new_property(obj, _pid_in);
         (*p_data) = data;
       }
 
@@ -340,23 +340,23 @@ namespace MPI {
        * 此处判断仅仅对有数据发送的几何体进行操作。
        */
       bool is_pack_data(geometry_t * geo) const {
-        return (geo->get_property(_pid_out) != NULL);
+        return (geo->get_property(_pid_out) != nullptr);
       }
 
       void pack_data(geometry_t * geo,
                      int remote_rank,
                      Migration::ostream<>& os) {
         const data_t * p_data = geo->get_property(_pid_out);
-        assert (p_data != NULL);
-        assert (geo->get_property(_pid_in) != NULL);
+        assert (p_data != nullptr);
+        assert (geo->get_property(_pid_in) != nullptr);
         os << **p_data;
       }
       void unpack_data(geometry_t * geo,
                        int remote_rank,
                        Migration::istream<>& is) {
         const data_t * p_data = geo->get_property(_pid_in);
-        assert (p_data != NULL);
-        assert (geo->get_property(_pid_out) != NULL);
+        assert (p_data != nullptr);
+        assert (geo->get_property(_pid_out) != nullptr);
         is >> **p_data;
       }
     };
@@ -364,7 +364,7 @@ namespace MPI {
     namespace details {
       template <class OBJ, class DATA>
         struct _dummy_packer {
-          DATA * _dummy_func(const OBJ&, const property_id_t<DATA>&) { return NULL; }
+          DATA * _dummy_func(const OBJ&, const property_id_t<DATA>&) { return nullptr; }
         };
 
       /**
@@ -436,7 +436,7 @@ namespace MPI {
           return *this;
         }
       public:
-        const packer_t * packer() const { return NULL; }
+        const packer_t * packer() const { return nullptr; }
         data_t * get_property(const object_t& obj, const pid_t& pid) const {
           return (*_get_property)(obj, pid);
         };

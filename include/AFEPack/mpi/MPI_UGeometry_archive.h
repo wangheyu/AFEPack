@@ -145,7 +145,7 @@ namespace MPI {
       template <int DIM, int DOW>
         void save_override(HGeometry<DIM,DOW>* const& p_geo, int = 0) {
         int type = 0;
-        if (p_geo == NULL) { /// 空指针
+        if (p_geo == nullptr) { /// 空指针
           type = 0;
           base_t::save_override(boost::serialization::make_binary_object(&type, sizeof(int)) COMMA_0);
         } else {
@@ -154,7 +154,7 @@ namespace MPI {
             base_t::save_override(boost::serialization::make_binary_object(&type, sizeof(int)) COMMA_0);
           } else if (lb().is_save_on_this_rank(*p_geo, new_rank())) {
             unsigned long * global_idx = lb().get_global_idx(*p_geo);
-            if (global_idx == NULL) { /// 普通指针
+            if (global_idx == nullptr) { /// 普通指针
               type = (1<<0);
               base_t::save_override(boost::serialization::make_binary_object(&type, sizeof(int)) COMMA_0);
               base_t::save_override(p_geo COMMA_0);
@@ -182,7 +182,7 @@ namespace MPI {
             type = (1<<2);
             base_t::save_override(boost::serialization::make_binary_object(&type, sizeof(int)) COMMA_0);
             unsigned long * global_idx = lb().get_global_idx(*p_geo);
-            assert (global_idx != NULL);
+            assert (global_idx != nullptr);
             base_t::save_override(boost::serialization::make_binary_object(global_idx, sizeof(unsigned long)) COMMA_0);
           }
         }
@@ -258,7 +258,7 @@ namespace MPI {
           unsigned long global_idx;
           base_t::load_override(boost::serialization::make_binary_object(&type, sizeof(int)) COMMA_0);
           if (type == 0) { /// 空指针
-            p_geo = NULL;
+            p_geo = nullptr;
           } else if (type == (1<<0)) { /// 普通指针
             base_t::load_override(p_geo COMMA_0);
           } else if (type == (1<<1)) { /// 共享型指针

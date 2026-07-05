@@ -74,7 +74,7 @@ namespace MPI {
     typedef HGeometry<GDIM,DOW> geo_t;
     typedef Shared_object<geo_t> obj_t;
     obj_t * p_obj = this->get_shared_info(geo);
-    if (p_obj == NULL) {
+    if (p_obj == nullptr) {
       return true;
     } else {
       return p_obj->is_on_primary_rank(_rank);
@@ -89,7 +89,7 @@ namespace MPI {
     typedef HGeometry<GDIM,DOW> geo_t;
     typedef Shared_object<geo_t> obj_t;
     obj_t * p_obj = this->get_shared_info(geo);
-    if (p_obj == NULL) {
+    if (p_obj == nullptr) {
       return _rank;
     } else {
       return p_obj->primary_rank(_rank);
@@ -104,7 +104,7 @@ namespace MPI {
     typedef HGeometry<GDIM,DOW> geo_t;
     typedef Shared_object<geo_t> obj_t;
     obj_t * p_obj = this->get_shared_info(geo);
-    if (p_obj == NULL) {
+    if (p_obj == nullptr) {
       return true;
     } else {
       return p_obj->is_primary_object(_rank);
@@ -118,10 +118,10 @@ namespace MPI {
   bool is_geometry_shared(const RegularMesh<DIM,DOW>& mesh,
                           int dim, int idx) const {
     switch(dim) {
-    case 0: return (get_shared_info(*mesh.template h_geometry<0>(idx)) != NULL);
-    case 1: return (get_shared_info(*mesh.template h_geometry<1>(idx)) != NULL);
-    case 2: return (get_shared_info(*mesh.template h_geometry<2>(idx)) != NULL);
-    case 3: return (get_shared_info(*mesh.template h_geometry<3>(idx)) != NULL);
+    case 0: return (get_shared_info(*mesh.template h_geometry<0>(idx)) != nullptr);
+    case 1: return (get_shared_info(*mesh.template h_geometry<1>(idx)) != nullptr);
+    case 2: return (get_shared_info(*mesh.template h_geometry<2>(idx)) != nullptr);
+    case 3: return (get_shared_info(*mesh.template h_geometry<3>(idx)) != nullptr);
     }
     return false;
   }
@@ -144,7 +144,7 @@ namespace MPI {
   property_id_t<> _pid_shared_info_sent; 
   template <class GEO> bool
   is_shared_info_sent(GEO& geo) const {
-    return (geo.get_property(_pid_shared_info_sent) != NULL);
+    return (geo.get_property(_pid_shared_info_sent) != nullptr);
   }
   template <class GEO> void
   set_shared_info_sent(GEO& geo) const {
@@ -167,7 +167,7 @@ namespace MPI {
   property_id_t<> _pid_dummy;
   template <class GEO> bool
   is_dummy(GEO& geo) const {
-    return (geo.get_property(_pid_dummy) != NULL);
+    return (geo.get_property(_pid_dummy) != nullptr);
   }
   template <class GEO> void
   dummy(GEO& geo) const {
@@ -205,7 +205,7 @@ namespace MPI {
   }
   void erase_shared_info(GEO& geo) {
     OBJ * p_obj = geo.get_property(_pid_so_0d);
-    if (p_obj == NULL) return;
+    if (p_obj == nullptr) return;
     _shared_list_0d.erase(std::find(_shared_list_0d.begin_ptr(), 
                                     _shared_list_0d.end_ptr(), 
                                     p_obj));
@@ -233,7 +233,7 @@ namespace MPI {
   }
   void erase_shared_info(GEO& geo) {
     OBJ * p_obj = geo.get_property(_pid_so_1d);
-    if (p_obj == NULL) return;
+    if (p_obj == nullptr) return;
     _shared_list_1d.erase(std::find(_shared_list_1d.begin_ptr(), 
                                     _shared_list_1d.end_ptr(), 
                                     p_obj));
@@ -261,7 +261,7 @@ namespace MPI {
   }
   void erase_shared_info(GEO& geo) {
     OBJ * p_obj = geo.get_property(_pid_so_2d);
-    if (p_obj == NULL) return;
+    if (p_obj == nullptr) return;
     _shared_list_2d.erase(std::find(_shared_list_2d.begin_ptr(), 
                                     _shared_list_2d.end_ptr(), 
                                     p_obj));
@@ -289,7 +289,7 @@ namespace MPI {
   }
   void erase_shared_info(GEO& geo) {
     OBJ * p_obj = geo.get_property(_pid_so_3d);
-    if (p_obj == NULL) return;
+    if (p_obj == nullptr) return;
     _shared_list_3d.erase(std::find(_shared_list_3d.begin_ptr(), 
                                     _shared_list_3d.end_ptr(), 
                                     p_obj));
@@ -346,8 +346,8 @@ namespace MPI {
   void collect_parent_element(const property_id_t<bool>& pid,
                               HGeometry<dim,dow>& geo,
                               typename tree_t::container_t& nre) const {
-    if (geo.get_property(pid) != NULL) return;
-    if (geo.parent != NULL) {
+    if (geo.get_property(pid) != nullptr) return;
+    if (geo.parent != nullptr) {
       this->collect_parent_element(pid, *geo.parent, nre);
     } else {
       nre.push_back(&geo);
@@ -385,7 +385,7 @@ namespace MPI {
   void readMesh(const std::string&);
 
   void eraseRootElement(u_int level = 1);
-  void renumerateRootElement(void (*f)(const double *, double *) = NULL);
+  void renumerateRootElement(void (*f)(const double *, double *) = nullptr);
 
   /**
    * 从根单元开始，向祖先方向设置几何体被使用的旗标。
@@ -454,7 +454,7 @@ namespace MPI {
     is >> p_remote_geo; /// 读入远程几何体的指针
 
     Shared_object<geo_t> * p_info = this->get_shared_info(*geo);
-    assert (p_info != NULL);
+    assert (p_info != nullptr);
 
     std::size_t n;
     is >> n;
@@ -495,7 +495,7 @@ namespace MPI {
   void eraseRootElementOneLevel();
   template <class GEO>
   void nullParent(GEO& geo) {
-    geo.parent = NULL;
+    geo.parent = nullptr;
     for (u_int i = 0;i < GEO::n_boundary;++ i) {
       this->nullParent(*geo.boundary[i]);
     }
@@ -504,21 +504,21 @@ namespace MPI {
   void tryDeleteGeometry(GEO * p_geo, 
                          const property_id_t<bool>& pid) {
     for (u_int i = 0;i < GEO::n_boundary;++ i) {
-      if (p_geo->boundary[i]->get_property(pid) != NULL) {
-        p_geo->boundary[i] = NULL;
+      if (p_geo->boundary[i]->get_property(pid) != nullptr) {
+        p_geo->boundary[i] = nullptr;
       } else {
         this->tryDeleteGeometry(p_geo->boundary[i], pid);
       }
     }
     bool * p_prp = p_geo->get_property(pid);
-    assert (p_prp == NULL);
+    assert (p_prp == nullptr);
     p_geo->new_property(pid);
     this->erase_shared_info(*p_geo); /// 顺手将其共享信息列表中入口删除
   }
   template <class GEO>
   void deleteGeometry(GEO * p_geo) {
     for (u_int i = 0;i < GEO::n_boundary;++ i) {
-      if (p_geo->boundary[i] != NULL) {
+      if (p_geo->boundary[i] != nullptr) {
         this->deleteGeometry(p_geo->boundary[i]);
       }
     }

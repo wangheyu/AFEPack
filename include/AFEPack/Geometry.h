@@ -11,10 +11,6 @@
 #ifndef _Geometry_h_
 #define _Geometry_h_
 
-#ifndef NULL
-#define NULL 0
-#endif // NULL
-
 #include <stdarg.h>
 #include <dlfcn.h>
 
@@ -27,7 +23,6 @@
 #include <iterator>
 #include <algorithm>
 
-//#include <deal.II/base/exceptions.h>
 
 #include <AFEPack/Miscellaneous.h>
 #include <AFEPack/Migration.h>
@@ -45,7 +40,7 @@ template <int DIM, int DOW> class SimplestMesh;
 
 template <int DIM> Point<DIM> midpoint(const Point<DIM>&, const Point<DIM>&);
 template <int DIM> double distance(const Point<DIM>&, const Point<DIM>&);
-template <int DIM> Point<DIM> barycenter(const std::vector<Point<DIM> >&, const double * = NULL);
+template <int DIM> Point<DIM> barycenter(const std::vector<Point<DIM> >&, const double * = nullptr);
 template <int DIM> Point<DIM> operator+(const Point<DIM>&, const Point<DIM>&);
 template <int DIM> Point<DIM> operator-(const Point<DIM>&, const Point<DIM>&);
 template <int DIM> std::istream& operator>>(std::istream&, Point<DIM>&);
@@ -227,16 +222,16 @@ template <int DIM, int DOW=DIM>
   bmark_t& boundaryMark(int, int); /**< Boundary marker of certain geometry in certain dimension. */
   void renumerateElement(); /**< Renumerate the element of the mesh. This is a very simple
                                but efficient algorithm to decrease the band-width of the sparse system obtained. */
-  void renumerateElementHSFC(void (*f)(const double*, double*)=NULL);
+  void renumerateElementHSFC(void (*f)(const double*, double*)=nullptr);
   void readData(const std::string&); /**< Read in data from a file in the internal data format. */
   void writeData(const std::string&) const; /**< Write data to a file in the internal data format. */
   void readData1d(const std::string&); /**< Read in 1 dimensional data from a file with only the node corrdinates. */
   virtual void writeEasyMesh(const std::string&) const {};
   virtual void writeTecplotData(const std::string&) const {};
 
-  DeclException1(ExcMeshData, 
-                 char *, 
-                 << "Mesh data error: " << arg1);
+  // DeclException1(ExcMeshData, 
+  //                char *, 
+  //                << "Mesh data error: " << arg1);
   public:
   friend std::istream& operator>> <>(std::istream&, mesh_t&); /**< Stream input. */
   friend std::ostream& operator<< <>(std::ostream&, const mesh_t&); /**< Stream output. */
@@ -338,17 +333,17 @@ class TemplateGeometry : public Mesh<DIM,DIM>
   void readData(const std::string&); /**< Read in data from a file in certain file format. */
   void writeData(const std::string&) const; /**< Write out data to a file in certain file foramt. */
 
-  DeclException1(ExcTemplateGeometryData, 
-                 char *, 
-                 << "Template geometry data error: " << arg1);
-  DeclException1(ExcFileOpen, char *,
-                 << "Can't open library "
-                 << arg1);
-  DeclException2(ExcLoadFunction, char *, char *,
-                 << "Can't load function "
-                 << arg1
-                 << " from library "
-                 << arg2);
+  // DeclException1(ExcTemplateGeometryData, 
+  //                char *, 
+  //                << "Template geometry data error: " << arg1);
+  // DeclException1(ExcFileOpen, char *,
+  //                << "Can't open library "
+  //                << arg1);
+  // DeclException2(ExcLoadFunction, char *, char *,
+  //                << "Can't load function "
+  //                << arg1
+  //                << " from library "
+  //                << arg2);
 	
  public:
   friend filtering_istream& operator>> <>(filtering_istream&, TemplateGeometry<DIM>&); /**< Stream input. */

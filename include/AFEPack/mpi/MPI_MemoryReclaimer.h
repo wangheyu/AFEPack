@@ -56,7 +56,7 @@ namespace MPI {
     std::list<ir_mesh_t *> ir_mesh;
 
   public:
-  MemoryReclaimer() : h_tree(NULL) {}
+  MemoryReclaimer() : h_tree(nullptr) {}
   MemoryReclaimer(tree_t& _h_tree) : h_tree(&_h_tree) {}
     virtual ~MemoryReclaimer() {}
 
@@ -80,7 +80,7 @@ namespace MPI {
       ir_mesh.push_back(&_ir_mesh);
     }
     void clear() {
-      h_tree = NULL;
+      h_tree = nullptr;
       ir_mesh.clear();
     }
     void reclaim() {
@@ -118,7 +118,7 @@ namespace MPI {
       for (;the_ele != end_ele;++ the_ele) {
         HGeometry<dim,dow> * p_geo = &(*the_ele);
         do {
-          if (p_geo->parent != NULL) {
+          if (p_geo->parent != nullptr) {
             p_geo = p_geo->parent;
           } else break;
         } while (true);
@@ -129,7 +129,7 @@ namespace MPI {
       for (;the_ele != end_ele;++ the_ele) {
         HGeometry<dim,dow> * p_geo = &(*the_ele);
         do {
-          if (p_geo->parent != NULL) {
+          if (p_geo->parent != nullptr) {
             p_geo = p_geo->parent;
           } else break;
         } while (true);
@@ -145,7 +145,7 @@ namespace MPI {
         if (the_ele->isRefined()) {
           for (int i = 0;i < the_ele->n_child;++ i) {
             m.deleteTree(the_ele->child[i]);
-            the_ele->child[i] = NULL;
+            the_ele->child[i] = nullptr;
           }
         }
       }
@@ -209,7 +209,7 @@ namespace MPI {
     template <class GEO> bool
       is_shared_geometry(const GEO& g) const {
       bool result = false;
-      result |= (h_tree->get_shared_info(g) != NULL);
+      result |= (h_tree->get_shared_info(g) != nullptr);
       if (! result) {
         for (int i = 0;i < g.n_vertex;++ i) {
           result |= is_shared_geometry(*(g.vertex[i]));
@@ -230,15 +230,15 @@ namespace MPI {
      * 上，然后对其后代递归进行。
      */
     void markSharedElement(HGeometry<dim,dow>& ele) const {
-      if ((ele.get_property(_pid_is_shared) == NULL) &&
+      if ((ele.get_property(_pid_is_shared) == nullptr) &&
           (is_shared_geometry(ele))) {
         ele.new_property(_pid_is_shared);
 
-        if (ele.parent != NULL) {
+        if (ele.parent != nullptr) {
           for (int i = 0;i < ele.parent->n_child;++ i) {
             HGeometry<dim,dow> * p_sibling = ele.parent->child[i];
             if (p_sibling == &ele) continue;
-            if (p_sibling->get_property(_pid_is_shared) == NULL) {
+            if (p_sibling->get_property(_pid_is_shared) == nullptr) {
               p_sibling->new_property(_pid_is_shared);
             }
           }
@@ -258,14 +258,14 @@ namespace MPI {
      */
     template <class GEO> void
       markSharedGeometry(GEO& g) const {
-      if (g.get_property(_pid_is_shared) != NULL) {
+      if (g.get_property(_pid_is_shared) != nullptr) {
         for (int i = 0;i < g.n_vertex;++ i) {
-          if (g.vertex[i]->get_property(_pid_is_shared) == NULL) {
+          if (g.vertex[i]->get_property(_pid_is_shared) == nullptr) {
             g.vertex[i]->new_property(_pid_is_shared);
           }
         }
         for (int i = 0;i < g.n_boundary;++ i) {
-          if (g.boundary[i]->get_property(_pid_is_shared) == NULL) {
+          if (g.boundary[i]->get_property(_pid_is_shared) == nullptr) {
             g.boundary[i]->new_property(_pid_is_shared);
           }
           markSharedGeometry(*g.boundary[i]);
@@ -302,27 +302,27 @@ namespace MPI {
 
     template <class GEO> int 
       relabelHGeometryRecursively(GEO& g) const {
-      if (g.get_property(_pid_is_shared) != NULL) {
+      if (g.get_property(_pid_is_shared) != nullptr) {
         g.index = 1;
       }
 
       for (int i = 0;i < g.n_vertex;++ i) {
-        if (g.vertex[i] == NULL) continue;
+        if (g.vertex[i] == nullptr) continue;
         if (relabelHGeometryRecursively(*(g.vertex[i])) == -2) {
-          g.vertex[i] = NULL;
+          g.vertex[i] = nullptr;
         }
       }
       for (int i = 0;i < g.n_boundary;++ i) {
-        if (g.boundary[i] == NULL) continue;
+        if (g.boundary[i] == nullptr) continue;
         if (relabelHGeometryRecursively(*(g.boundary[i])) == -2) {
-          g.boundary[i] = NULL;
+          g.boundary[i] = nullptr;
         }
       }
       if (g.isRefined()) {
         for (int i = 0;i < g.n_child;++ i) {
-          if (g.child[i] == NULL) continue;
+          if (g.child[i] == nullptr) continue;
           if (relabelHGeometryRecursively(*(g.child[i])) == -2) {
-            g.child[i] = NULL;
+            g.child[i] = nullptr;
           }
         }
       }
@@ -337,28 +337,28 @@ namespace MPI {
     template <class GEO> int 
       reclaimHGeometryRecursively(GEO& g) const {
       for (int i = 0;i < g.n_vertex;++ i) {
-        if (g.vertex[i] != NULL) {
+        if (g.vertex[i] != nullptr) {
           if (reclaimHGeometryRecursively(*(g.vertex[i])) == -1) {
-            g.vertex[i] = NULL;
+            g.vertex[i] = nullptr;
           }
         }
       }
       for (int i = 0;i < g.n_boundary;++ i) {
-        if (g.boundary[i] != NULL) {
+        if (g.boundary[i] != nullptr) {
           if (reclaimHGeometryRecursively(*(g.boundary[i])) == -1) {
-            g.boundary[i] = NULL;
+            g.boundary[i] = nullptr;
           }
         }
       }
       for (int i = 0;i < g.n_child;++ i) {
-        if (g.child[i] == NULL) continue;
+        if (g.child[i] == nullptr) continue;
         if (reclaimHGeometryRecursively(*(g.child[i])) == -1) {
-          g.child[i] = NULL;
+          g.child[i] = nullptr;
         }
       }
 
       if ((g.index == -2) && 
-          (g.get_property(_pid_is_shared) == NULL)) {
+          (g.get_property(_pid_is_shared) == nullptr)) {
         this->reclaimHGeometry(&g);
         return -1;
       } else {
@@ -368,7 +368,7 @@ namespace MPI {
 
     template <class GEO> void 
       reclaimHGeometry(GEO * p_geo) const {
-      assert ((p_geo->get_property(_pid_is_shared) == NULL));
+      assert ((p_geo->get_property(_pid_is_shared) == nullptr));
       delete p_geo;
     }
   };

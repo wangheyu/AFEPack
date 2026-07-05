@@ -13,8 +13,6 @@
 #include <algorithm>
 #include <string>
 
-//#include <deal.II/base/exceptions.h>
-
 #include <AFEPack/Miscellaneous.h>
 #include <AFEPack/Geometry.h>
 
@@ -150,14 +148,14 @@ template <class value_type, int DIM>
     hesse(const std::vector<Point<DIM> >&, const double **) const;
 #endif //QUADRATIC_ELEMENT_SUPPORT
 
-  DeclException1(ExcFileOpen, char *,
-                 << "Can't open library "
-                 << arg1);
-  DeclException2(ExcLoadFunction, char *, char *,
-                 << "Can't load function "
-                 << arg1
-                 << " from library "
-                 << arg2);	
+  // DeclException1(ExcFileOpen, char *,
+  //                << "Can't open library "
+  //                << arg1);
+  // DeclException2(ExcLoadFunction, char *, char *,
+  //                << "Can't load function "
+  //                << arg1
+  //                << " from library "
+  //                << arg2);	
  public:
   template <class STREAM,class VT,int GDIM> 
     friend STREAM& operator>>(STREAM&, ShapeFunction<VT,GDIM>&); /**< Stream input. */
@@ -292,7 +290,7 @@ class TemplateDOF : public DegreeOfFreedom
  private:
   TemplateGeometry<DIM> * geometry; /**< Pointer to the template element geometry. */
  public:
-  TemplateDOF() : geometry(NULL) {}
+  TemplateDOF() : geometry(nullptr) {}
   TemplateDOF(TemplateGeometry<DIM>&); /**< Default constructor. */
   TemplateDOF(const TemplateDOF<DIM>&); /**< Copy Contructor. */
   ~TemplateDOF(); /**< Destructor. */
@@ -425,14 +423,14 @@ template <int TDIM, int DIM=TDIM>
   void readData(const std::string&); /**< Read in the information from a file. */
   void writeData(const std::string&) const; /**< Write out the information to a file. */
 
-  DeclException1(ExcFileOpen, char *,
-                 << "Can't open library "
-                 << arg1);
-  DeclException2(ExcLoadFunction, char *, char *,
-                 << "Can't load function "
-                 << arg1
-                 << " from library "
-                 << arg2);	
+  // DeclException1(ExcFileOpen, char *,
+  //                << "Can't open library "
+  //                << arg1);
+  // DeclException2(ExcLoadFunction, char *, char *,
+  //                << "Can't load function "
+  //                << arg1
+  //                << " from library "
+  //                << arg2);	
   public:
   template <class STREAM,int TGDIM,int GDIM> 
   friend STREAM& operator>>(STREAM&, CoordTransform<TGDIM,GDIM>&); /**< Stream input. */
@@ -579,14 +577,14 @@ class UnitOutNormal
   void readData(const std::string&); /**< Read in the information from a file. */
   void writeData(const std::string&) const; /**< Write out the information to a file. */
 
-  DeclException1(ExcFileOpen, char *,
-                 << "Can't open library "
-                 << arg1);
-  DeclException2(ExcLoadFunction, char *, char *,
-                 << "Can't load function "
-                 << arg1
-                 << " from library "
-                 << arg2);	
+  // DeclException1(ExcFileOpen, char *,
+  //                << "Can't open library "
+  //                << arg1);
+  // DeclException2(ExcLoadFunction, char *, char *,
+  //                << "Can't load function "
+  //                << arg1
+  //                << " from library "
+  //                << arg2);	
  public:
   template <class STREAM,int GDIM> 
     friend STREAM& operator>>(STREAM&, UnitOutNormal<GDIM>&); /**< Stream input. */
@@ -647,7 +645,7 @@ template <class value_type, int DIM, int TDIM=DIM>
                   TemplateDOF<TDIM>&, 
                   coord_trans_t&, 
                   basis_func_admin_t&, 
-                  unit_normal_t& = *((unit_normal_t *)NULL)); 
+                  unit_normal_t& = *((unit_normal_t *)nullptr)); 
   TemplateElement(const template_t&); /**< Copy constructor. */
   ~TemplateElement(); /**< Destructor. */
   public:
@@ -656,7 +654,7 @@ template <class value_type, int DIM, int TDIM=DIM>
               TemplateDOF<TDIM>&,
               coord_trans_t&,
               basis_func_admin_t&,
-              unit_normal_t& = *((unit_normal_t *)NULL)); /**< Reinitialization. */
+              unit_normal_t& = *((unit_normal_t *)nullptr)); /**< Reinitialization. */
   /** Template element geometry. */
   const geometry_t& geometry() const {return *geo;}
   /** Template element geometry. */

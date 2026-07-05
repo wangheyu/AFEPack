@@ -1,7 +1,0 @@
-#!/bin/bash
-
-export LD_LIBRARY_PATH=prefix/of/AFEPack/lib
-export AFEPACK_PATH=prefix/of/AFEPack/include/AFEPack
-export AFEPACK_TEMPLATE_PATH=$AFEPACK_PATH/template/triangle
-
-./main $1

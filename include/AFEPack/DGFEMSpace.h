@@ -5,7 +5,7 @@
 #ifndef _DGFEMSpace_h_
 #define _DGFEMSpace_h_
 
-//#include <deal.II/lac/full_matrix.h>
+
 #include <AFEPack/DenseMatrix.h>
 
 #include <AFEPack/Miscellaneous.h>
@@ -119,7 +119,7 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, int TDIM1=DIM-1>
   std::vector<double> unitNormal() const;
 
   public:
-  DeclException1(ExcMeshData, std::string, << "Mesh data uncompatible: " << arg1);
+    //  DeclException1(ExcMeshData, std::string, << "Mesh data uncompatible: " << arg1);
   public:
   friend std::vector<double> unitOutNormal <>(const Point<DIM>&, 
                                               const element_t&, 
@@ -172,8 +172,8 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, int TDIM1=DIM-1>
   virtual ~DGFEMSpace();
   public:
   void reinit(Mesh<DIM,DOW>&, 
-              std::vector<template_t>& = *((std::vector<template_t> *)NULL),
-              std::vector<dg_template_t>& = *((std::vector<dg_template_t> *)NULL));
+              std::vector<template_t>& = *((std::vector<template_t> *)nullptr),
+              std::vector<dg_template_t>& = *((std::vector<dg_template_t> *)nullptr));
   fe_space_t& operator=(const fe_space_t&);
   const std::vector<dg_template_t>& templateDGElement() const {return *tmp_dgele;};
   std::vector<dg_template_t>& templateDGElement() {return *tmp_dgele;}

@@ -28,11 +28,7 @@
 
 #include <boost/iostreams/filtering_stream.hpp>
 
-#include <exception>
-//#include <deal.II/lac/vector.h>
-
-//namespace dealii {};
-//using namespace dealii;
+#include <AFEPack/Vector.h>
 
 #ifndef __SERIALIZATION__
 #define __SERIALIZATION__
@@ -44,53 +40,9 @@
 
 #define AFEPACK_OPEN_NAMESPACE namespace AFEPack {
 #define AFEPACK_CLOSE_NAMESPACE }
-#include <AFEPack/Vector.h>
+
 AFEPACK_OPEN_NAMESPACE
 
-#ifndef DeclException0
-#define DeclException0(Exception0, outsequence) \
-class Exception0 : public std::exception { \
-public: \
-    Exception0() {} \
-    ~Exception0() throw() {} \
-    void print_info(std::ostream &out) const { \
-      out outsequence << std::endl;	       \
-    } \
-}
-#endif
-#define DeclException1(Exception1, type1, outsequence)                    \
-  class Exception1 : public std::exception {					\
-  public:                                                                 \
-    Exception1 (const type1 a1) : arg1 (a1) {}                            \
-    ~Exception1 () throw () {}                                    \
-    void print_info (std::ostream &out) const {                   \
-      out outsequence << std::endl;                                     \
-    }                                                                     \
-  private:                                                                \
-    const type1 arg1;                                                     \
-  }
-
-#define DeclException2(Exception2, type1, type2, outsequence)             \
-  class Exception2 : public std::exception {					\
-  public:                                                                 \
-    Exception2 (const type1 a1, const type2 a2) :                         \
-      arg1 (a1), arg2(a2) {}                                              \
-     ~Exception2 () throw () {}                                    \
-     void print_info (std::ostream &out) const {                   \
-      out outsequence << std::endl;                                       \
-    }                                                                     \
-  private:                                                                \
-    const type1 arg1;                                                     \
-    const type2 arg2;                                                     \
-  };
-
-#define Assert(expr, Exce) \
-if (!(expr)) { \
- std::cout << "Assertion failed: " #expr ", "; \
- Exce.print_info(std::cout);\
-std::abort();					\
- }
-///////////////////////////////////////////////////////
 typedef void * dlhandle_t;
 typedef boost::iostreams::filtering_istream filtering_istream;
 
@@ -226,8 +178,8 @@ class FunctionFunction : public Function<value_type>
   GradientPrototype			gf;
  public:
   /** Constructor */
- FunctionFunction(value_type (*v)(const double *) = NULL, 
-                  std::vector<value_type> (*g)(const double *) = NULL) :
+ FunctionFunction(value_type (*v)(const double *) = nullptr, 
+                  std::vector<value_type> (*g)(const double *) = nullptr) :
   vf(v), gf(g) {};
  FunctionFunction(const FunctionFunction<value_type>& f) :
   vf(f.vf), gf(f.gf) {};
@@ -274,77 +226,6 @@ template <int n, class _Tp>
     return *this;
   };
 };
-
-//#define Assert(exp, msg) assert(((void)(msg), exp))
-/*
-#define Assert(expr, fun)			\
-if (!(expr)) { \
-  const char* result = (fun);					\
-  std::cout << "Assertion failed: " << result << std::endl;	\
-  std::abort(); \
- }
-*/
-
-//DeclException0(ExcInternalError,  << "There is an internal error." );
-class ExcInternalError : public std::exception{
-  public:
-    ExcInternalError(){};
-    ~ExcInternalError(){};
-    void print_info (std::ostream &out) const {                   
-     out << "There is an internal error." << std::endl;                           
-    }                        
-  };
-
-//DeclException0(ExcOutOfMemory,  << "Out of memory." );
-class ExcOutOfMemory : public std::exception{
-  public:
-    ExcOutOfMemory(){};
-    ~ExcOutOfMemory(){};
-    void print_info (std::ostream &out) const {                   
-     out << "Out of memory." << std::endl;                           
-    }                        
-  };
-
-//DeclException0(ExcNotInitialized, << "Not Initialized" );
-class ExcNotInitialized : public std::exception{
-  public:
-    ExcNotInitialized(){};
-    ~ExcNotInitialized(){};
-    void print_info (std::ostream &out) const {                   
-     out << "Not Initialized." << std::endl;                           
-    }                        
-  };
-
-//DeclException0(ExcNotImplemented, << "Not Implemented");
-class ExcNotImplemented : public std::exception{
-  public:
-    ExcNotImplemented(){};
-    ~ExcNotImplemented(){};
-    void print_info (std::ostream &out) const {                   
-     out << "Not Implemented." << std::endl;                           
-    }                        
-  };
-
-/*DeclException2(ExcDimensionMismatch, int, int,
-                 << "Can't load function "
-                 << arg1
-                 << " from library "
-                 << arg2);*/
-class ExcDimensionMismatch: public std::exception{
-  public:
-  ExcDimensionMismatch(int _a, int _b):a(_a),b(_b){};
-    ~ExcDimensionMismatch(){};
-    void print_info (std::ostream &out) const {                   
-      out << "The dimensions " << a << " and " << b << " do not match properly.";
-   }
-    int a;
-    int b;
-  };
-
-//const char* ExcInternalError();
-//const char* ExcNotImplemented();
-//const char* ExcLoadFunction(const char* a, const char* b);
-//const char* ExcOutOfMemory();
 
 AFEPACK_CLOSE_NAMESPACE
 

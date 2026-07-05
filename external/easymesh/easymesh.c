@@ -150,7 +150,7 @@ double dist(struct nod *na, struct nod *nb)
 
 
 /*=========================================================================*/
-in_elem(struct nod *n)
+int in_elem(struct nod *n)
 {
  int e;
  
@@ -166,46 +166,8 @@ in_elem(struct nod *n)
 }
 /*-in_elem-----------------------------------------------------------------*/
 
-
 /*=========================================================================*/
-bowyer(int n, int spac)
-{
- int e, i, s, swap;
- struct nod vor;
-
- do  
-  { 
-   swap=0;
-   for(s=0; s<Ns; s++)
-   if(side[s].mark==0)
-/* if( !( (node[side[s].c].inserted>1 && node[side[s].d].bound==OFF && side[s].s<(node[side[s].c].F+node[side[s].d].F) ) ||
-	  (node[side[s].d].inserted>1 && node[side[s].c].bound==OFF && side[s].s<(node[side[s].c].F+node[side[s].d].F) ) ) ) */
-    {
-     if(side[s].a==n)
-      {e=side[s].eb; 
-       if(e!=OFF)
-	{vor.x=elem[e].xv; 
-	 vor.y=elem[e].yv;
-	 if( dist(&vor, &node[n]) < elem[e].R )
-	  {swap_side(s); swap=1;}}}
-   
-     else if(side[s].b==n)
-      {e=side[s].ea; 
-       if(e!=OFF)
-	{vor.x=elem[e].xv; 
-	 vor.y=elem[e].yv;
-	 if( dist(&vor, &node[n]) < elem[e].R )
-	  {swap_side(s); swap=1;}}}
-    }
-  }
- while(swap==1);
-
-}
-/*-bowyer------------------------------------------------------------------*/
-
-
-/*=========================================================================*/
-circles(int e)
+void circles(int e)
 /*---------------------------------------------------+
 |  This function calculates radii of inscribed and   |
 |  circumscribed circle for a given element (int e)  |
@@ -247,7 +209,133 @@ circles(int e)
 
 
 /*=========================================================================*/
-spacing(int e, int n)
+int swap_side(int s)
+{
+ int    a, b, c, d, ea, eb, eac, ead, ebc, ebd, sad, sac, sbc, sbd;
+ double sx, sy;
+ 
+ ea=side[s].ea; 
+ eb=side[s].eb;
+ a=side[s].a; b=side[s].b; c=side[s].c; d=side[s].d;
+
+ if(elem[ea].ei==eb) {ead=elem[ea].ej; eac=elem[ea].ek; 
+		      sad=elem[ea].sj; sac=elem[ea].sk;}
+ 
+ if(elem[ea].ej==eb) {ead=elem[ea].ek; eac=elem[ea].ei; 
+		      sad=elem[ea].sk; sac=elem[ea].si;}   
+ 
+ if(elem[ea].ek==eb) {ead=elem[ea].ei; eac=elem[ea].ej;
+		      sad=elem[ea].si; sac=elem[ea].sj;}
+
+ if(elem[eb].ei==ea) {ebc=elem[eb].ej; ebd=elem[eb].ek;
+		      sbc=elem[eb].sj; sbd=elem[eb].sk;}
+
+ if(elem[eb].ej==ea) {ebc=elem[eb].ek; ebd=elem[eb].ei;
+		      sbc=elem[eb].sk; sbd=elem[eb].si;}
+ 
+ if(elem[eb].ek==ea) {ebc=elem[eb].ei; ebd=elem[eb].ej;
+		      sbc=elem[eb].si; sbd=elem[eb].sj;}
+
+ elem[ea].i =a;   elem[ea].j =b;   elem[ea].k =d;  
+ elem[ea].ei=ebd; elem[ea].ej=ead; elem[ea].ek=eb;  
+ elem[ea].si=sbd; elem[ea].sj=sad; elem[ea].sk=s;  
+  
+ elem[eb].i =a;   elem[eb].j =c;   elem[eb].k =b;  
+ elem[eb].ei=ebc; elem[eb].ej=ea;  elem[eb].ek=eac;  
+ elem[eb].si=sbc; elem[eb].sj=s;   elem[eb].sk=sac;  
+
+ if(eac!=-1)
+  {
+   if(elem[eac].ei==ea) elem[eac].ei=eb;
+   if(elem[eac].ej==ea) elem[eac].ej=eb;
+   if(elem[eac].ek==ea) elem[eac].ek=eb; 
+  }
+ 
+ if(ebd!=-1)
+  {
+   if(elem[ebd].ei==eb) elem[ebd].ei=ea;
+   if(elem[ebd].ej==eb) elem[ebd].ej=ea;
+   if(elem[ebd].ek==eb) elem[ebd].ek=ea; 
+  }
+ 
+ if(side[sad].ea==ea) {side[sad].a=b;}
+ if(side[sad].eb==ea) {side[sad].b=b;}
+
+ if(side[sbc].ea==eb) {side[sbc].a=a;}
+ if(side[sbc].eb==eb) {side[sbc].b=a;}
+
+ if(side[sbd].ea==eb) {side[sbd].ea=ea; side[sbd].a=a;}
+ if(side[sbd].eb==eb) {side[sbd].eb=ea; side[sbd].b=a;}
+ 
+ if(a<b)
+  {side[s].c=a; side[s].d=b; side[s].a=d; side[s].b=c;
+   side[s].ea=ea; side[s].eb=eb;}
+ else 
+  {side[s].c=b; side[s].d=a; side[s].a=c; side[s].b=d;
+   side[s].ea=eb; side[s].eb=ea;}
+
+ sx = node[side[s].c].x - node[side[s].d].x;
+ sy = node[side[s].c].y - node[side[s].d].y;
+ side[s].s = sqrt(sx*sx+sy*sy);
+
+ if(side[sac].ea==ea) {side[sac].ea=eb; side[sac].a=b;}
+ if(side[sac].eb==ea) {side[sac].eb=eb; side[sac].b=b;}
+ 
+ if(side[sad].ea==ea) {side[sad].a=b;}
+ if(side[sad].eb==ea) {side[sad].b=b;}
+
+ if(side[sbc].ea==eb) {side[sbc].a=a;}
+ if(side[sbc].eb==eb) {side[sbc].b=a;}
+
+ if(side[sbd].ea==eb) {side[sbd].ea=ea; side[sbd].a=a;}
+ if(side[sbd].eb==eb) {side[sbd].eb=ea; side[sbd].b=a;}
+
+ circles(ea);
+ circles(eb);
+}
+/*-swap_side---------------------------------------------------------------*/
+
+/*=========================================================================*/
+int bowyer(int n, int spac)
+{
+  int e, i, s, swap;
+  struct nod vor;
+
+  do  
+    { 
+      swap=0;
+      for(s=0; s<Ns; s++)
+	if(side[s].mark==0)
+	  /* if( !( (node[side[s].c].inserted>1 && node[side[s].d].bound==OFF && side[s].s<(node[side[s].c].F+node[side[s].d].F) ) ||
+	     (node[side[s].d].inserted>1 && node[side[s].c].bound==OFF && side[s].s<(node[side[s].c].F+node[side[s].d].F) ) ) ) */
+	  {
+	    if(side[s].a==n)
+	      {e=side[s].eb; 
+		if(e!=OFF)
+		  {vor.x=elem[e].xv; 
+		    vor.y=elem[e].yv;
+		    if( dist(&vor, &node[n]) < elem[e].R )
+		      {swap_side(s); swap=1;}}}
+   
+	    else if(side[s].b==n)
+	      {e=side[s].ea; 
+		if(e!=OFF)
+		  {vor.x=elem[e].xv; 
+		    vor.y=elem[e].yv;
+		    if( dist(&vor, &node[n]) < elem[e].R )
+		      {swap_side(s); swap=1;}}}
+	  }
+    }
+  while(swap==1);
+
+}
+/*-bowyer------------------------------------------------------------------*/
+
+
+
+
+/*=========================================================================*/
+void spacing(int e, int n)
 /*----------------------------------------------------------------+
 |  This function calculates the value of the spacing function in  |
 |  a new node 'n' which is inserted in element 'e' by a linear    |
@@ -277,8 +365,8 @@ spacing(int e, int n)
 
 
 /*=========================================================================*/
-insert_node(double x, double y, int spac,
-	 int prev_n, int prev_s_mark, int mark, int next_s_mark, int next_n)
+int insert_node(double x, double y, int spac,
+		int prev_n, int prev_s_mark, int mark, int next_s_mark, int next_n)
 {
  int    i,j,k,en, n, e,ei,ej,ek, s,si,sj,sk;
  double sx, sy;
@@ -384,92 +472,6 @@ insert_node(double x, double y, int spac,
 /*-insert_node-------------------------------------------------------------*/
 
 
-/*=========================================================================*/
-swap_side(int s)
-{
- int    a, b, c, d, ea, eb, eac, ead, ebc, ebd, sad, sac, sbc, sbd;
- double sx, sy;
- 
- ea=side[s].ea; 
- eb=side[s].eb;
- a=side[s].a; b=side[s].b; c=side[s].c; d=side[s].d;
-
- if(elem[ea].ei==eb) {ead=elem[ea].ej; eac=elem[ea].ek; 
-		      sad=elem[ea].sj; sac=elem[ea].sk;}
- 
- if(elem[ea].ej==eb) {ead=elem[ea].ek; eac=elem[ea].ei; 
-		      sad=elem[ea].sk; sac=elem[ea].si;}   
- 
- if(elem[ea].ek==eb) {ead=elem[ea].ei; eac=elem[ea].ej;
-		      sad=elem[ea].si; sac=elem[ea].sj;}
-
- if(elem[eb].ei==ea) {ebc=elem[eb].ej; ebd=elem[eb].ek;
-		      sbc=elem[eb].sj; sbd=elem[eb].sk;}
-
- if(elem[eb].ej==ea) {ebc=elem[eb].ek; ebd=elem[eb].ei;
-		      sbc=elem[eb].sk; sbd=elem[eb].si;}
- 
- if(elem[eb].ek==ea) {ebc=elem[eb].ei; ebd=elem[eb].ej;
-		      sbc=elem[eb].si; sbd=elem[eb].sj;}
-
- elem[ea].i =a;   elem[ea].j =b;   elem[ea].k =d;  
- elem[ea].ei=ebd; elem[ea].ej=ead; elem[ea].ek=eb;  
- elem[ea].si=sbd; elem[ea].sj=sad; elem[ea].sk=s;  
-  
- elem[eb].i =a;   elem[eb].j =c;   elem[eb].k =b;  
- elem[eb].ei=ebc; elem[eb].ej=ea;  elem[eb].ek=eac;  
- elem[eb].si=sbc; elem[eb].sj=s;   elem[eb].sk=sac;  
-
- if(eac!=-1)
-  {
-   if(elem[eac].ei==ea) elem[eac].ei=eb;
-   if(elem[eac].ej==ea) elem[eac].ej=eb;
-   if(elem[eac].ek==ea) elem[eac].ek=eb; 
-  }
- 
- if(ebd!=-1)
-  {
-   if(elem[ebd].ei==eb) elem[ebd].ei=ea;
-   if(elem[ebd].ej==eb) elem[ebd].ej=ea;
-   if(elem[ebd].ek==eb) elem[ebd].ek=ea; 
-  }
- 
- if(side[sad].ea==ea) {side[sad].a=b;}
- if(side[sad].eb==ea) {side[sad].b=b;}
-
- if(side[sbc].ea==eb) {side[sbc].a=a;}
- if(side[sbc].eb==eb) {side[sbc].b=a;}
-
- if(side[sbd].ea==eb) {side[sbd].ea=ea; side[sbd].a=a;}
- if(side[sbd].eb==eb) {side[sbd].eb=ea; side[sbd].b=a;}
- 
- if(a<b)
-  {side[s].c=a; side[s].d=b; side[s].a=d; side[s].b=c;
-   side[s].ea=ea; side[s].eb=eb;}
- else 
-  {side[s].c=b; side[s].d=a; side[s].a=c; side[s].b=d;
-   side[s].ea=eb; side[s].eb=ea;}
-
- sx = node[side[s].c].x - node[side[s].d].x;
- sy = node[side[s].c].y - node[side[s].d].y;
- side[s].s = sqrt(sx*sx+sy*sy);
-
- if(side[sac].ea==ea) {side[sac].ea=eb; side[sac].a=b;}
- if(side[sac].eb==ea) {side[sac].eb=eb; side[sac].b=b;}
- 
- if(side[sad].ea==ea) {side[sad].a=b;}
- if(side[sad].eb==ea) {side[sad].b=b;}
-
- if(side[sbc].ea==eb) {side[sbc].a=a;}
- if(side[sbc].eb==eb) {side[sbc].b=a;}
-
- if(side[sbd].ea==eb) {side[sbd].ea=ea; side[sbd].a=a;}
- if(side[sbd].eb==eb) {side[sbd].eb=ea; side[sbd].b=a;}
-
- circles(ea);
- circles(eb);
-}
-/*-swap_side---------------------------------------------------------------*/
 
 
 /*=========================================================================*/
@@ -538,7 +540,7 @@ void erase()
 
 
 /*=========================================================================*/
-diamond()
+void diamond()
 {
  int    ea, eb, eac, ead, ebc, ebd, s;
  
@@ -569,7 +571,7 @@ diamond()
 
 
 /*=========================================================================*/
-classify()
+void classify()
 /*----------------------------------------------------------+
 |  This function searches through all elements every time.  |
 |  Some optimisation will definitely bee needed             |
@@ -665,7 +667,7 @@ classify()
 
 
 /*=========================================================================*/
-new_node()
+void new_node()
 /*---------------------------------------------------+
 |  This function is very important.                  |
 |  It determines the position of the inserted node.  |
@@ -739,7 +741,7 @@ new_node()
 
 
 /*=========================================================================*/
-neighbours() 
+void neighbours() 
 /*--------------------------------------------------------------+
 |  Counting the elements which surround each node.              |
 |  It is important for the two functions: 'relax' and 'smooth'  |
@@ -761,7 +763,7 @@ neighbours()
 
 
 /*=========================================================================*/
-materials()
+void materials()
 {
  int e, c, mater, iter, over, s;
  int ei, ej, ek, si, sj, sk;
@@ -830,7 +832,7 @@ materials()
 
 
 /*=========================================================================*/
-relax()
+void relax()
 {
  int s, T, E;
  
@@ -890,7 +892,7 @@ int smooth()
 
 
 /*=========================================================================*/
-renum()
+void renum()
 {
  int n, o, s, e, e2, c, d, i, j, k;
  int new_elem=0, new_node=0, new_side=0, next_e, next_s, lowest;
@@ -1025,7 +1027,7 @@ renum()
 char name[80]=""; int len;
 
 /*=========================================================================*/
-load_i(FILE *in, int *numb)
+void load_i(FILE *in, int *numb)
 {
  char dum, dummy[128];
 
@@ -1036,7 +1038,7 @@ load_i(FILE *in, int *numb)
    else                   {*numb=atoi(dummy); break;} }
 }
 
-load_d(FILE *in, double *numb)
+void load_d(FILE *in, double *numb)
 {
  char dum, dummy[128];
 
@@ -1047,7 +1049,7 @@ load_d(FILE *in, double *numb)
    else                   {*numb=atof(dummy); break;} }
 }
 
-load_s(FILE *in, char *string)
+int load_s(FILE *in, char *string)
 {
  char dum, dummy[128];
 
@@ -1061,7 +1063,7 @@ load_s(FILE *in, char *string)
 
 
 /*=========================================================================*/
-load()
+int load()
 {
  int  c, n, s, Fl, M, N0, chains, bound;
  char dummy[80];
@@ -1329,7 +1331,7 @@ load()
 
 
 /*=========================================================================*/
-save()
+int save()
 {
  int  e, s, n, r_Nn=0, r_Ns=0, r_Ne=0;
 
@@ -1506,7 +1508,7 @@ FILE *dxf_file;
 char dxf_name[81];
 
 /*=========================================================================*/
-start_dxf()
+int start_dxf()
 {
  if((dxf_file=fopen(dxf_name,"w"))==NULL)
   {
@@ -1527,9 +1529,9 @@ start_dxf()
 
 
 /*=========================================================================*/
-line_dxf(double x1, double y1, double z1, 
-	 double x2, double y2, double z2, 
-	 char *layer)
+int line_dxf(double x1, double y1, double z1, 
+	     double x2, double y2, double z2, 
+	     char *layer)
 {
  fprintf(dxf_file, "0\n");
  fprintf(dxf_file, "LINE\n");
@@ -1554,7 +1556,7 @@ line_dxf(double x1, double y1, double z1,
 
 
 /*=========================================================================*/
-end_dxf()
+int end_dxf()
 {
  fprintf(dxf_file, "0\n");
  fprintf(dxf_file, "ENDSEC\n");
@@ -1568,7 +1570,7 @@ end_dxf()
 
 
 /*=========================================================================*/
-draw_dxf()
+void draw_dxf()
 {
  int    e, n, s, ei, ej, ek, ea, eb;
  double x, y, xc, yc, xd, yd, xa, ya, xb, yb;
@@ -1625,7 +1627,7 @@ FILE *fig_file;
 char fig_name[81];
 
 /*=========================================================================*/
-start_fig()
+int start_fig()
 {
  if((fig_file=fopen(fig_name,"w"))==NULL)
   {
@@ -1647,9 +1649,9 @@ start_fig()
 
 
 /*=========================================================================*/
-line_fig(int x1, int y1, 
-	 int x2, int y2, 
-	 int style, int width, int color, float le)
+int line_fig(int x1, int y1, 
+	     int x2, int y2, 
+	     int style, int width, int color, float le)
 {
  fprintf(fig_file, "2 ");
  fprintf(fig_file, "1 ");
@@ -1680,7 +1682,7 @@ line_fig(int x1, int y1,
 
 
 /*=========================================================================*/
-end_fig()
+int end_fig()
 {
  fclose(fig_file);
 
@@ -1693,7 +1695,7 @@ end_fig()
  Let's say that drawing area is 20 x 20 cm. One cm in xfig is 450 poins.
  It means that drawing area is 9000 x 9000 points.
 ---------------------------------------------------------------------------*/
-draw_fig()
+void draw_fig()
 {
  int    e, n, s, ei, ej, ek, ea, eb;
  double x, y, xc, yc, xd, yd, xa, ya, xb, yb,

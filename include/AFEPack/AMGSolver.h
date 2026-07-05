@@ -16,15 +16,12 @@
 #include <cmath>
 #include <vector>
 #include <list>
-// #include <deal.II/base/exceptions.h>
-// #include <deal.II/lac/vector.h>
-// #include <deal.II/lac/full_matrix.h>
-// #include <deal.II/lac/sparsity_pattern.h>
-// #include <deal.II/lac/sparse_matrix.h>
+
 #include <AFEPack/Vector.h>
 #include <AFEPack/DenseMatrix.h>
 #include <AFEPack/SparsityPattern.h>
 #include <AFEPack/SparseMatrix.h>
+
 
 #include <AFEPack/Miscellaneous.h>
 
@@ -117,7 +114,7 @@ class AMGSolver {
   void solve(Vector<double>& x, 
 	     const Vector<double>& r, 
 	     double tol = 0.0, 
-	     u_int step = 20,
+	     size_t step = 20,
 	     int mode = 0) const; 
 
   void lazyReinit(const Matrix&); /// reinitialize using another matrix in lazy mode

@@ -14,7 +14,6 @@
 
 @SET_MAKE@
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -99,9 +98,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(headerinclude_HEADERS) \
-	$(am__DIST_COMMON)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
@@ -131,8 +129,7 @@ am__uninstall_files_from_dir = { \
   || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
        $(am__cd) "$$dir" && echo $$files | $(am__xargs_n) 40 $(am__rm_f); }; \
   }
-am__installdirs = "$(DESTDIR)$(libdir)" \
-	"$(DESTDIR)$(headerincludedir)"
+am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libAFEPack_mpi_la_LIBADD =
 am_libAFEPack_mpi_la_OBJECTS = MPI.lo MPI_Controller.lo \
@@ -186,7 +183,6 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-HEADERS = $(headerinclude_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -204,26 +200,29 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp \
-	$(top_srcdir)/mkinstalldirs
+am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_CXXFLAGS = @AM_CXXFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AM_LDFLAGS = @AM_LDFLAGS@
 AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
+BOOST_LDFLAGS = @BOOST_LDFLAGS@
+BOOST_SERIALIZATION_LIB = @BOOST_SERIALIZATION_LIB@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
 CSCOPE = @CSCOPE@
 CTAGS = @CTAGS@
-CXX = @CXX@
+CXX = @MPICXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
@@ -241,6 +240,8 @@ ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 FILECMD = @FILECMD@
+GMSH = @GMSH@
+GMSH_TESTS = @GMSH_TESTS@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -259,6 +260,7 @@ LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
+MPICXX = @MPICXX@
 NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
@@ -274,6 +276,7 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+RPATH_FLAGS = @RPATH_FLAGS@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -336,28 +339,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = libAFEPack_mpi.la
-libAFEPack_mpi_la_SOURCES = MPI.cpp\
-			MPI_Controller.cpp\
-			MPI_LoadBalance.cpp\
-			MPI_Migration.cpp
-
-headerincludedir = $(includedir)/AFEPack/mpi
-headerinclude_HEADERS = $(top_srcdir)/include/AFEPack/mpi/MPI.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_Controller.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_DOF.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_DOF.templates.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_FaceData.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_HGeometry.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_HGeometry.templates.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_HGeometry_archive.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_LoadBalance.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_MemoryReclaimer.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_Migration.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_PeriodHandler.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_SyncDOF.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_SyncProp.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_UGeometry_archive.h\
-		$(top_srcdir)/include/AFEPack/mpi/MPI_ULoadBalance.h
+libAFEPack_mpi_la_SOURCES = $(srcdir)/MPI.cpp\
+			$(srcdir)/MPI_Controller.cpp\
+			$(srcdir)/MPI_LoadBalance.cpp\
+			$(srcdir)/MPI_Migration.cpp
 
 all: all-am
 
@@ -475,27 +460,6 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-headerincludeHEADERS: $(headerinclude_HEADERS)
-	@$(NORMAL_INSTALL)
-	@list='$(headerinclude_HEADERS)'; test -n "$(headerincludedir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(headerincludedir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(headerincludedir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(headerincludedir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(headerincludedir)" || exit $$?; \
-	done
-
-uninstall-headerincludeHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(headerinclude_HEADERS)'; test -n "$(headerincludedir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(headerincludedir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -583,9 +547,9 @@ distdir-am: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(headerincludedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -644,7 +608,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-headerincludeHEADERS
+install-data-am:
 
 install-dvi: install-dvi-am
 
@@ -693,7 +657,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-headerincludeHEADERS uninstall-libLTLIBRARIES
+uninstall-am: uninstall-libLTLIBRARIES
 
 .MAKE: install-am install-strip
 
@@ -703,22 +667,18 @@ uninstall-am: uninstall-headerincludeHEADERS uninstall-libLTLIBRARIES
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-headerincludeHEADERS install-html \
-	install-html-am install-info install-info-am \
-	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-libLTLIBRARIES install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am \
-	uninstall-headerincludeHEADERS uninstall-libLTLIBRARIES
+	tags tags-am uninstall uninstall-am uninstall-libLTLIBRARIES
 
 .PRECIOUS: Makefile
 
 
-#AM_LDFLAGS = -L/home/gary/local/lib
-#AM_CPPFLAGS = -I/home/gary/local/include -I/home/gary/local/include/deal.II -I../include
-#AM_CXXFLAGS = -D__SERIALIZATION -DMULTITHREAD -pthread -fno-delete-null-pointer-checks
+# libAFEPack_mpi_la_CPPFLAGS = -I$(top_srcdir)/include
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

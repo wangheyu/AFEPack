@@ -20,13 +20,12 @@
 #include <iterator>
 #include <algorithm>
 
-//#include <deal.II/base/exceptions.h>
-//#include <deal.II/lac/vector.h>
-//#include <deal.II/lac/sparsity_pattern.h>
-//#include <deal.II/lac/sparse_matrix.h>
+
 #include <AFEPack/Vector.h>
+#include <AFEPack/DenseMatrix.h>
 #include <AFEPack/SparsityPattern.h>
 #include <AFEPack/SparseMatrix.h>
+
 
 #include <AFEPack/AMGSolver.h>
 #include <AFEPack/Geometry.h>

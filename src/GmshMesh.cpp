@@ -416,7 +416,7 @@ void GmshMesh::readData(const std::string& filename)
 	ele[j ++].template_element = 3;
 	break;
       default:
-	Assert(false, ExcMeshData("Unknown geometry type."));
+	assert(false);
       }
     }
     ele.resize(j);
@@ -548,7 +548,7 @@ void GmshMesh::readData(const std::string& filename)
       ele[j ++].template_element = 3;
       break;
     default:
-      Assert(false, ExcMeshData("Unknown geometry type."));
+      assert(false);
     }
   }
   ele.resize(j);
@@ -731,7 +731,7 @@ void GmshMesh::generateMesh(Mesh<3,3>& m)
 	break;
       }
     }
-    Assert(i < m.n_geometry(2), ExcInternalError());
+    assert(i < m.n_geometry(2));
   }
   for (i = 0;i < m.n_geometry(2);i ++) {
     if (m.boundaryMark(2,i) == 0) continue;
@@ -748,7 +748,7 @@ void GmshMesh::generateMesh(Mesh<3,3>& m)
 	break;
       }
     }
-    Assert(i < m.n_geometry(1), ExcInternalError());
+    assert(i < m.n_geometry(1));
   }
   for (i = 0;i < m.n_geometry(1);i ++) {
     if (m.boundaryMark(1,i) == 0) continue;
@@ -765,7 +765,7 @@ void GmshMesh::generateMesh(Mesh<3,3>& m)
 	break;
       }
     }
-    Assert(i < m.n_geometry(0), ExcInternalError());
+    assert(i < m.n_geometry(0));
   }
 }
 

@@ -19,10 +19,10 @@ void AMGSolver::Project(const Matrix& M,
 			Matrix *& P, 
 			Matrix *& PMPt)
 {
-  Assert(M.m() == M.n(), ExcDimensionMismatch(M.m(), M.n()));
+  assert(M.m() == M.n());
   const SparsityPattern& spM = M.get_sparsity_pattern();
   const std::size_t * M_rowstart = spM.get_rowstart_indices();
-  const u_int * M_colnums = spM.get_column_numbers();
+  const size_t * M_colnums = spM.get_column_numbers();
   /**
    * choose the core points and influenced points. the procedure is divided into
    * two steps: the first step is to choose the dependent and influenced points.
@@ -131,7 +131,7 @@ void AMGSolver::Project(const Matrix& M,
   std::vector<double> sigma(M.m(), 0.0);
   for (u_int i = 0, n = 0;i < M.m();i ++) {
     if (flag[i] != -1) continue;
-    Assert(flag[i] == -1, ExcInternalError());
+    assert(flag[i] == -1);
     core_point[n] = i;
     core_at[i] = n; //! 
     for (u_int j = M_rowstart[i];j < M_rowstart[i+1];j ++) {
@@ -166,9 +166,9 @@ void AMGSolver::Project(const Matrix& M,
    * 
    */
   const std::size_t * P_rowstart = spP.get_rowstart_indices();
-  const u_int * P_colnums = spP.get_column_numbers();
+  const size_t * P_colnums = spP.get_column_numbers();
   const std::size_t * Pt_rowstart = spPt.get_rowstart_indices();
-  const u_int * Pt_colnums = spPt.get_column_numbers();
+  const size_t * Pt_colnums = spPt.get_column_numbers();
   P = new Matrix(spP);
   Matrix Pt(spPt);
   for (u_int i = 0;i < M.m(); i ++) {
@@ -183,8 +183,8 @@ void AMGSolver::Project(const Matrix& M,
 	if (fabs(M.global_entry(j)) < beta[i])
 	  aii += M.global_entry(j);
       }
-      const u_int * dep_begin = &Pt_colnums[Pt_rowstart[i]];
-      const u_int * dep_end = &Pt_colnums[Pt_rowstart[i + 1]];
+      const size_t * dep_begin = &Pt_colnums[Pt_rowstart[i]];
+      const size_t * dep_end = &Pt_colnums[Pt_rowstart[i + 1]];
 
       for (u_int j = M_rowstart[i] + 1;j < M_rowstart[i + 1];j ++) {
 	const u_int &l = M_colnums[j];
@@ -239,10 +239,10 @@ void AMGSolver::lazyProject(const Matrix& M,
 {
   std::vector<u_int> counter(M.m());
   std::vector<u_int> core_point(M.m());
-  // std::cout<<"ooooooooooooo" << std::endl;
   const SparsityPattern& spM = M.get_sparsity_pattern();
   const std::size_t * M_rowstart = spM.get_rowstart_indices();
-  const u_int * M_colnums = spM.get_column_numbers();
+  const size_t * M_colnums = spM.get_column_numbers();
+
   u_int n_core_point = 0;
   const std::size_t * rowstart_indices = spM.get_rowstart_indices();
   for (u_int i = 0;i < M.m();i ++) {
@@ -251,11 +251,9 @@ void AMGSolver::lazyProject(const Matrix& M,
       counter[M_colnums[j]] ++;
     core_point[n_core_point ++] = i;
   }
-  // std::cout<<"qqqqqqqqqqqqqq" << std::endl;
-  
+
   SparsityPattern& spP = *new SparsityPattern(n_core_point, M.n(), spM.max_entries_per_row());
   SparsityPattern& spPt = *new SparsityPattern(M.n(), n_core_point, spM.max_entries_per_row());
-  // std::cout<<"eeeeeeeeeeeeeee" <<std::endl;
   for (u_int i = 0;i < n_core_point;i ++) {
     const u_int& k = core_point[i];
     spP.add(i, k);
@@ -266,7 +264,6 @@ void AMGSolver::lazyProject(const Matrix& M,
       spPt.add(l, i);
     }
   }
-  // std::cout<<"qewqewqewqewqeqweq" << std::endl;
   spP.compress();
   spPt.compress();
 
@@ -283,7 +280,6 @@ void AMGSolver::lazyProject(const Matrix& M,
     }
   }
 
-  //std::cout<<"wwwwwwwwwwww" << std::endl;
   PMPt = getPMPt(*P, M, *Pt);
 }
 
@@ -297,11 +293,11 @@ Matrix * AMGSolver::getPMPt(const Matrix& P,
   const SparsityPattern& spM = M.get_sparsity_pattern();
   const SparsityPattern& spPt = Pt.get_sparsity_pattern();
   const std::size_t * P_rowstart = spP.get_rowstart_indices();
-  const u_int * P_colnums = spP.get_column_numbers();
+  const size_t * P_colnums = spP.get_column_numbers();
   const std::size_t * M_rowstart = spM.get_rowstart_indices();
-  const u_int * M_colnums = spM.get_column_numbers();
+  const size_t * M_colnums = spM.get_column_numbers();
   const std::size_t * Pt_rowstart = spPt.get_rowstart_indices();
-  const u_int * Pt_colnums = spPt.get_column_numbers();
+  const size_t * Pt_colnums = spPt.get_column_numbers();
 
   std::vector<u_int> row_length(P.m(), 0);
   std::vector<bool> flag(P.m(), true);
@@ -331,7 +327,7 @@ Matrix * AMGSolver::getPMPt(const Matrix& P,
     }
   }
 
-  SparsityPattern& spA = *(new SparsityPattern(P.m(), P.m(), row_length));
+  SparsityPattern& spA = *(new SparsityPattern(P.m(), row_length));
   for (u_int i = 0;i < P.m();i ++) {
     for (u_int j = 0;j < row_length[i];j ++) {
       spA.add(i, col_index[i][j]);
@@ -370,7 +366,7 @@ void AMGSolver::GaussSidel(const Matrix& M,
 {
   const SparsityPattern& spM = M.get_sparsity_pattern();
   const std::size_t * rowstart = spM.get_rowstart_indices();
-  const u_int * colnums = spM.get_column_numbers();
+  const size_t * colnums = spM.get_column_numbers();
   for (u_int i = 0;i < s;i ++) {
     /// here we test openmp
     //#pragma omp parallel for
@@ -391,8 +387,8 @@ void AMGSolver::reinit(const Matrix& M)
 	
   std::cerr << "AMGSolver initializing ..." << std::flush;
   const SparsityPattern& spM = M.get_sparsity_pattern();
-  Assert(spM.is_compressed(), SparsityPattern::ExcNotCompressed());
-  Assert(M.m() == M.n(), ExcDimensionMismatch(M.m(), M.n()));
+  assert(spM.is_compressed());
+  assert(M.m() == M.n());
   u_int k, m;
   k = m = M.m();
   float sparse_degree = M.n_nonzero_elements()/(float(m)*m);
@@ -428,7 +424,7 @@ void AMGSolver::reinit(const Matrix& M)
     M_n.reinit(projected_matrix[n_project]->m(), projected_matrix[n_project]->n());
     const std::size_t * row_start = projected_matrix[n_project]
       ->get_sparsity_pattern().get_rowstart_indices();
-    const u_int * col_index = projected_matrix[n_project]
+    const size_t * col_index = projected_matrix[n_project]
       ->get_sparsity_pattern().get_column_numbers();
     for (k = 0;k < projected_matrix[n_project]->m();k ++) {
       for (m = row_start[k];m < row_start[k + 1];m ++) {
@@ -447,32 +443,18 @@ void AMGSolver::lazyInit(const Matrix& M)
 {
   std::cerr << "AMGSolver initializing in lazy mode ..." << std::flush;
   const SparsityPattern& spM = M.get_sparsity_pattern();
-  // std::cout<<"\n Flag1 ..........." << std::endl;
-  Assert(spM.is_compressed(), SparsityPattern::ExcNotCompressed());
-  // std::cout<<"iscompressed............" << std::endl;
-  Assert(M.m() == M.n(), ExcDimensionMismatch(M.m(), M.n()));
-  // std::cout<<"m() == n() ............" << std::endl;
+  assert(spM.is_compressed());
+  assert(M.m() == M.n());
   u_int k, m;
   k = m = M.m();
-  // std::cout<<"M nonzero elements number is: " << M.n_nonzero_elements() << std::endl;
   float sparse_degree = M.n_nonzero_elements()/(float(m)*m);
-  
-  //std::cout << "sparse_degree is computed..." << std::endl; 
   projected_matrix.push_back(&M);
-  //std::cout << "project_matrix is done..." << std::endl;						 
   n_project = 0;
   is_most_project_full = true;
-  // std::cout<<"\n Flag2 ..........." << std::endl;
   while(m > n_most_project_order || sparse_degree < n_most_project_sparse_degree) {
-    //std::cout<< m <<" " << n_most_project_order << std::endl;
-    //std::cout<< sparse_degree<<" " << n_most_project_sparse_degree << std::endl;
     Matrix *PMPt, *P, *Pt;
-
-    //std::cout<< "AAAAAAAAAAAAAA......" <<std::endl;
     lazyProject(*projected_matrix[n_project], P, PMPt, Pt);
-    // std::cout<<"BBBBBBBBBBBBBBBBBBBBB..............." << std::endl;
     m = PMPt->m();
-    //std::cout<<"FFFFFFFFFF...." << std::endl;
     if (k == m) {
       is_most_project_full = false;
       const SparsityPattern& spP = P->get_sparsity_pattern();
@@ -483,18 +465,11 @@ void AMGSolver::lazyInit(const Matrix& M)
       delete PMPt; delete (&spM);
       break;
     }
-    //std::cout<<"\n Flag3 ..........." << std::endl;
     k = m;
     project_matrix.push_back(P);
-    // std::cout<<"In "<<n_project<<"-th project:::::" << std::endl;
-    //std::cout<<"P m(): "<<P->m() <<", n(): "<<P->n() << std::endl;
-    //std::cout<<"Pt m(): "<<Pt->m() <<", n():" << Pt->n()<< std::endl;
-    //std::cout<<"PMPt m(): "<<PMPt->m()<<", n():" <<PMPt->n() << std::endl;
     project_matrix_r.push_back(Pt);
     projected_matrix.push_back(PMPt);
     sparse_degree = PMPt->n_nonzero_elements()/(float(m)*m);
-    //std::cout<<sparse_degree << std::endl;
-    //std::cout<<"\n Flag4....." << std::endl;
     n_project ++;
 #ifdef DEBUG
     std::cerr << "\tlevel " << n_project - 1
@@ -503,25 +478,18 @@ void AMGSolver::lazyInit(const Matrix& M)
 	      << std::endl;
 #endif // DEGUG
   };
-  //std::cout<<"Flag5....." << std::endl;
   if (is_most_project_full) {
     M_n.reinit(projected_matrix[n_project]->m(), projected_matrix[n_project]->n());
     const std::size_t * row_start = projected_matrix[n_project]
       ->get_sparsity_pattern().get_rowstart_indices();
-    const u_int * col_index = projected_matrix[n_project]
+    const size_t * col_index = projected_matrix[n_project]
       ->get_sparsity_pattern().get_column_numbers();
     for (k = 0;k < projected_matrix[n_project]->m();k ++) {
       for (m = row_start[k];m < row_start[k + 1];m ++) {
 	M_n(k, col_index[m]) = projected_matrix[n_project]->global_entry(m);
       }
     }
-    //std::cout<<"M_n is: "<<std::endl;
-    //M_n.print();
-    //std::cout<<"Flag6......" << std::endl;
     M_n.gauss_jordan();
-    //std::cout<<"After gauss jordan process, the full matrix is: "<< std::endl;
-    //M_n.print();
-    //std::cout<<"Flag7......" << std::endl;
   }
   is_initialized = true;
   std::cerr << " OK! grid levels: " << n_project << std::endl;
@@ -536,7 +504,6 @@ void AMGSolver::lazyInit(const Matrix& M)
  */
 void AMGSolver::lazyReinit(const Matrix& M)
 {
-  //std::cout<<"\n Flag1............." << std::endl;
   const SparsityPattern& spM = M.get_sparsity_pattern();
   if (is_initialized) {
     if (&(projected_matrix[0]->get_sparsity_pattern()) != &spM) {
@@ -550,7 +517,6 @@ void AMGSolver::lazyReinit(const Matrix& M)
     return;
   }
 
-  //std::cout<<"\n Flag2............." << std::endl;
   int i, j, k, m;
   std::cerr << "AMGSolver reinitializing in lazy mode ..." << std::flush;
   projected_matrix[0] = &M;
@@ -558,20 +524,15 @@ void AMGSolver::lazyReinit(const Matrix& M)
     const SparsityPattern& spP = projected_matrix[j + 1]->get_sparsity_pattern();
     delete projected_matrix[j + 1];
     delete (&spP);
-    //std::cout<<"project_matrix["<<j<<"] m():  " << project_matrix[j]->m() << ", n(): "<<project_matrix[j]->n()<<std::endl;
-    //std::cout<<"projected_matrix["<<j<<"] m():  " << projected_matrix[j]->m() << ", n(): "<<projected_matrix[j]->n()<<std::endl;
-    // std::cout<<"project_matrix_r["<<j<<"] m():  " << project_matrix_r[j]->m() << ", n(): "<<project_matrix_r[j]->n()<<std::endl;
     projected_matrix[j + 1] = getPMPt(*project_matrix[j], 
 				      *projected_matrix[j], 
 				      *project_matrix_r[j]);
   };
-  
-  //std::cout<<"\n Flag3............." << std::endl;
   if (is_solve_most_project_exactly && is_most_project_full) {
     M_n.reinit(projected_matrix[n_project]->m(), projected_matrix[n_project]->n());
     const std::size_t * row_start = projected_matrix[n_project]
       ->get_sparsity_pattern().get_rowstart_indices();
-    const u_int * col_index = projected_matrix[n_project]
+    const size_t * col_index = projected_matrix[n_project]
       ->get_sparsity_pattern().get_column_numbers();
     for (i = 0;i < projected_matrix[n_project]->m();i ++) {
       for (j = row_start[i];j < row_start[i + 1];j ++) {
@@ -580,8 +541,6 @@ void AMGSolver::lazyReinit(const Matrix& M)
     }
     M_n.gauss_jordan();
   }
-  
-  //std::cout<<"\n Flag4............." << std::endl;
   std::cerr << " OK! grid levels: " << n_project << std::endl;
 }
 
@@ -590,22 +549,19 @@ void AMGSolver::lazyReinit(const Matrix& M)
 void AMGSolver::solve(Vector<double>& x, 
 		      const Vector<double>& r, 
 		      double tol, 
-		      u_int s1,
+		      size_t s1,
 		      int mode) const
 {
-  Assert(is_initialized == true, ExcNotInitialized());
-  Assert(projected_matrix[0]->m() == r.size(), 
-         ExcDimensionMismatch(projected_matrix[0]->m(), r.size()));
-  Assert(x.size() == r.size(), 
-	 ExcDimensionMismatch(x.size(), r.size()));
+  assert(is_initialized == true);
+  assert(projected_matrix[0]->m() == r.size());
+         
+  assert(x.size() == r.size());
+
   if (tol == 0.0) tol = tolerence();
   Vector<double> r1(r), v0, v1, v2(r.size());
- 
   projected_matrix[0]->vmult(v2, x);
   v2.add(-1.0, r);
-
   double residual = v2.l1_norm();
-  std::cout<<"residual is: " << residual << std::endl;
   double init_residual = residual;
   if ((mode&0x0001) == 0) { // mode == 0 is the solve mode, mode == 1 is the precondition mode
     std::cerr << "AMGSolver begin with initial residual " << residual << " ..." << std::endl;
@@ -620,9 +576,8 @@ void AMGSolver::solve(Vector<double>& x,
     projected_r[i] = new Vector<double>(projected_matrix[i]->m());
     projected_x[i] = new Vector<double>(projected_matrix[i]->m());
   }
-
-  while(residual >= tol*init_residual) { ///relative error
-  //while(1) {/// using max_iteration_steps
+  //while(residual >= tol*init_residual) { ///relative error
+  while(1) {/// using max_iteration_steps
     for (int i = 0;i < n_project;i ++) {
       GaussSidel(*projected_matrix[i], *projected_x[i], *projected_r[i], smooth_step);
       v0.reinit(projected_x[i]->size());
@@ -632,11 +587,10 @@ void AMGSolver::solve(Vector<double>& x,
       project_matrix[i]->vmult(*projected_r[i+1], v1);
       (*projected_x[i+1]) = 0;
     }
-
+		
     if (is_solve_most_project_exactly) {
       if (is_most_project_full) {
         M_n.vmult(*projected_x[n_project], *projected_r[n_project]);
-	
       }
       else {
         for (u_int j = 0;j < projected_matrix[n_project]->m();j ++) {
@@ -650,17 +604,17 @@ void AMGSolver::solve(Vector<double>& x,
                  *projected_r[n_project],
                  smooth_step);
     }
-    //std::cout<<"cccccccccc"<<std::endl;	
+		
     for (int i = n_project-1;i >= 0;i --) {
       v0.reinit(projected_x[i]->size());
       project_matrix[i]->Tvmult(v0, *projected_x[i+1]);
       (*projected_x[i]) += v0;
       GaussSidel(*projected_matrix[i], *projected_x[i], *projected_r[i], smooth_step);
     }
+		
     projected_matrix[0]->vmult(v2, x);
     v2.add(-1.0, r);
     residual = v2.l1_norm();
-    //break;
     iteration_step ++;
     if (iteration_step > s1) break;
     if ((mode&0x0002) != 0) {

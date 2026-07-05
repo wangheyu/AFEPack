@@ -16,9 +16,9 @@ HGeometry<0,DOW>::HGeometry()
 template <>
 HGeometry<1,DOW>::HGeometry() 
 : index(0),
-  vertex(n_vertex, NULL),
-  parent(NULL),
-  child(n_child, NULL),
+  vertex(n_vertex, nullptr),
+  parent(nullptr),
+  child(n_child, nullptr),
   bmark(0) {}
 
 
@@ -26,10 +26,10 @@ HGeometry<1,DOW>::HGeometry()
 template <>
 HGeometry<2,DOW>::HGeometry()
 : index(0),
-  vertex(n_vertex, NULL),
-  boundary(n_boundary, NULL),
-  parent(NULL),
-  child(n_child, NULL),
+  vertex(n_vertex, nullptr),
+  boundary(n_boundary, nullptr),
+  parent(nullptr),
+  child(n_child, nullptr),
   bmark(0) {}
 
 
@@ -37,17 +37,17 @@ HGeometry<2,DOW>::HGeometry()
 template <>
 HGeometry<3,DOW>::HGeometry()
 : index(0),
-  vertex(n_vertex, NULL),
-  boundary(n_boundary, NULL),
-  parent(NULL),
-  child(n_child, NULL),
+  vertex(n_vertex, nullptr),
+  boundary(n_boundary, nullptr),
+  parent(nullptr),
+  child(n_child, nullptr),
   bmark(0) {}
 
 
 template <>
 bool HGeometry<1,DOW>::isRefined() const
 {
-  return (child.size() > 0 && child[0] != NULL);
+  return (child.size() > 0 && child[0] != nullptr);
 }
 
 
@@ -55,7 +55,7 @@ bool HGeometry<1,DOW>::isRefined() const
 template <>
 bool HGeometry<2,DOW>::isRefined() const
 {
-  return (child.size() > 0 && child[0] != NULL);
+  return (child.size() > 0 && child[0] != nullptr);
 }
 
 
@@ -63,7 +63,7 @@ bool HGeometry<2,DOW>::isRefined() const
 template <>
 bool HGeometry<3,DOW>::isRefined() const
 {
-  return (child.size() > 0 && child[0] != NULL);
+  return (child.size() > 0 && child[0] != nullptr);
 }
 
 
@@ -75,8 +75,8 @@ void HGeometry<1,DOW>::refine()
 	
   // add the midpoint of the edge at first
   HGeometry<0,DOW> * new_point = new HGeometry<0,DOW>();
-  Assert(new_point != NULL, ExcOutOfMemory());
-  if (mid_point == NULL) {
+  assert(new_point != nullptr);
+  if (mid_point == nullptr) {
     *dynamic_cast<Point<DOW> *>(new_point) = midpoint(*vertex[0], *vertex[1]);
   }
   else {
@@ -86,7 +86,7 @@ void HGeometry<1,DOW>::refine()
 
   // construct the 0th child for the edge
   child[0] = new HGeometry<1,DOW>();
-  Assert(child[0] != NULL, ExcOutOfMemory());
+  assert(child[0] != nullptr);
   child[0]->parent = this;
   child[0]->vertex[0] = vertex[0];
   child[0]->vertex[1] = new_point;
@@ -94,7 +94,7 @@ void HGeometry<1,DOW>::refine()
 
   // construct the 1st child for the edge
   child[1] = new HGeometry<1,DOW>();
-  Assert(child[1] != NULL, ExcOutOfMemory());
+  assert(child[1] != nullptr);
   child[1]->parent = this;
   child[1]->vertex[0] = new_point;
   child[1]->vertex[1] = vertex[1];
@@ -121,7 +121,7 @@ void HGeometry<2,DOW>::refine()
   HGeometry<1,DOW> * new_edge[3];
   for (i = 0;i < 3;i ++) {
     new_edge[i] = new HGeometry<1,DOW>();
-    Assert(new_edge[i] != NULL, ExcOutOfMemory());
+    assert(new_edge[i] != nullptr);
     new_edge[i]->vertex[0] = edge_midpoint[ii[i+1]];
     new_edge[i]->vertex[1] = edge_midpoint[ii[i+2]];
     new_edge[i]->bmark = bmark;
@@ -133,7 +133,7 @@ void HGeometry<2,DOW>::refine()
       child[i] = (HGeometry<2,DOW> *) new HGeometry<2, DOW>();
     else
       child[i] = new HGeometry<2,DOW>();
-    Assert(child[i] != NULL, ExcOutOfMemory());
+    assert(child[i] != nullptr);
     child[i]->parent = this;
     child[i]->vertex[0] = vertex[i];
     child[i]->vertex[1] = edge_midpoint[ii[i+2]];
@@ -152,7 +152,7 @@ void HGeometry<2,DOW>::refine()
 	
   // construct the 3rd child, the center child, for the triangle
   child[3] = new HGeometry<2,DOW>();
-  Assert(child[3] != NULL, ExcOutOfMemory());
+  assert(child[3] != nullptr);
   child[3]->parent = this;
   child[3]->vertex[0] = edge_midpoint[0];
   child[3]->vertex[1] = edge_midpoint[1];
@@ -193,12 +193,12 @@ void HGeometry<3,DOW>::refine()
     for (start = 0;start < 3; start ++)
       if (boundary[0]->vertex[start] == vertex[1])
 	break;
-    Assert (start < 3,ExcInternalError());
+    assert(start < 3);
     if (boundary[0]->vertex[ii[start+1]] == vertex[2])
       step = 1;
     else {
-      Assert(boundary[0]->vertex[ii[start+1]] == vertex[3], ExcInternalError());
-      Assert(boundary[0]->vertex[ii[start+2]] == vertex[2], ExcInternalError());
+      assert(boundary[0]->vertex[ii[start+1]] == vertex[3]);
+      assert(boundary[0]->vertex[ii[start+2]] == vertex[2]);
       step = 2;
     }
     edge_midpoint[3] = boundary[0]->boundary[start]->child[0]->vertex[1];
@@ -216,15 +216,15 @@ void HGeometry<3,DOW>::refine()
     for (start = 0;start < 3; start ++)
       if (boundary[1]->vertex[start] == vertex[0])
 	break;
-    Assert (start < 3,ExcInternalError());
+    assert(start < 3);
     if (boundary[1]->vertex[ii[start+1]] == vertex[2])
       step = 1;
     else {
-      Assert(boundary[1]->vertex[ii[start+1]] == vertex[3], ExcInternalError());
-      Assert(boundary[1]->vertex[ii[start+2]] == vertex[2], ExcInternalError());
+      assert(boundary[1]->vertex[ii[start+1]] == vertex[3]);
+      assert(boundary[1]->vertex[ii[start+2]] == vertex[2]);
       step = 2;
     }
-    Assert(edge_midpoint[3] == boundary[1]->boundary[start]->child[0]->vertex[1], ExcInternalError());
+    assert(edge_midpoint[3] == boundary[1]->boundary[start]->child[0]->vertex[1]);
     edge_midpoint[2] = boundary[1]->boundary[ii[start+step]]->child[0]->vertex[1];
     edge_midpoint[1] = boundary[1]->boundary[ii[start+2*step]]->child[0]->vertex[1];
 
@@ -239,16 +239,16 @@ void HGeometry<3,DOW>::refine()
     for (start = 0;start < 3; start ++)
       if (boundary[2]->vertex[start] == vertex[0])
 	break;
-    Assert (start < 3,ExcInternalError());
+    assert(start < 3);
     if (boundary[2]->vertex[ii[start+1]] == vertex[1])
       step = 1;
     else {
-      Assert(boundary[2]->vertex[ii[start+1]] == vertex[3], ExcInternalError());
-      Assert(boundary[2]->vertex[ii[start+2]] == vertex[1], ExcInternalError());
+      assert(boundary[2]->vertex[ii[start+1]] == vertex[3]);
+      assert(boundary[2]->vertex[ii[start+2]] == vertex[1]);
       step = 2;
     }
-    Assert(edge_midpoint[4] == boundary[2]->boundary[start]->child[0]->vertex[1], ExcInternalError());
-    Assert(edge_midpoint[2] == boundary[2]->boundary[ii[start+step]]->child[0]->vertex[1], ExcInternalError());
+    assert(edge_midpoint[4] == boundary[2]->boundary[start]->child[0]->vertex[1]);
+    assert(edge_midpoint[2] == boundary[2]->boundary[ii[start+step]]->child[0]->vertex[1]);
     edge_midpoint[0] = boundary[2]->boundary[ii[start+2*step]]->child[0]->vertex[1];
 
     surface_child[2][0] = boundary[2]->child[start];
@@ -262,17 +262,17 @@ void HGeometry<3,DOW>::refine()
     for (start = 0;start < 3; start ++)
       if (boundary[3]->vertex[start] == vertex[0])
 	break;
-    Assert (start < 3,ExcInternalError());
+    assert(start < 3);
     if (boundary[3]->vertex[ii[start+1]] == vertex[1])
       step = 1;
     else {
-      Assert(boundary[3]->vertex[ii[start+1]] == vertex[2], ExcInternalError());
-      Assert(boundary[3]->vertex[ii[start+2]] == vertex[1], ExcInternalError());
+      assert(boundary[3]->vertex[ii[start+1]] == vertex[2]);
+      assert(boundary[3]->vertex[ii[start+2]] == vertex[1]);
       step = 2;
     }
-    Assert(edge_midpoint[5] == boundary[3]->boundary[start]->child[0]->vertex[1], ExcInternalError());
-    Assert(edge_midpoint[1] == boundary[3]->boundary[ii[start+step]]->child[0]->vertex[1], ExcInternalError());
-    Assert(edge_midpoint[0] == boundary[3]->boundary[ii[start+2*step]]->child[0]->vertex[1], ExcInternalError());
+    assert(edge_midpoint[5] == boundary[3]->boundary[start]->child[0]->vertex[1]);
+    assert(edge_midpoint[1] == boundary[3]->boundary[ii[start+step]]->child[0]->vertex[1]);
+    assert(edge_midpoint[0] == boundary[3]->boundary[ii[start+2*step]]->child[0]->vertex[1]);
 
     surface_child[3][0] = boundary[3]->child[start];
     surface_child[3][1] = boundary[3]->child[ii[start+step]];
@@ -285,7 +285,7 @@ void HGeometry<3,DOW>::refine()
   HGeometry<2,DOW> * triangle[8];
   for (i = 0;i < 8;i ++) {
     triangle[i] = new HGeometry<2,DOW>();
-    Assert(triangle[i] != NULL, ExcOutOfMemory());
+    assert(triangle[i] != nullptr);
   }
   triangle[0]->vertex[0] = edge_midpoint[0];
   triangle[0]->vertex[1] = edge_midpoint[1];
@@ -322,7 +322,7 @@ void HGeometry<3,DOW>::refine()
   // the four child tetrahedrons on the four verteics
   for (i = 0;i < 8;i ++) {
     child[i] = new HGeometry<3,DOW>();
-    Assert (child[i] != NULL, ExcOutOfMemory());
+    assert(child[i] != nullptr);
   }
 	
   child[0]->parent = this;
@@ -394,7 +394,7 @@ void HGeometry<3,DOW>::refine()
   case REFINE_MODEL_03:
     // add the main axis at first
     axis = new HGeometry<1,DOW>();
-    Assert (axis != NULL, ExcOutOfMemory());
+    assert(axis != nullptr);
     axis->vertex[0] = edge_midpoint[0];
     axis->vertex[1] = edge_midpoint[3];
     axis->bmark = bmark;
@@ -482,7 +482,7 @@ void HGeometry<3,DOW>::refine()
   case REFINE_MODEL_14:
     // add the main axis at first
     axis = new HGeometry<1,DOW>();
-    Assert (axis != NULL, ExcOutOfMemory());
+    assert(axis != nullptr);
     axis->vertex[0] = edge_midpoint[1];
     axis->vertex[1] = edge_midpoint[4];
     axis->bmark = bmark;
@@ -570,7 +570,7 @@ void HGeometry<3,DOW>::refine()
   case REFINE_MODEL_25:
     // add the main axis at first
     axis = new HGeometry<1,DOW>();
-    Assert (axis != NULL, ExcOutOfMemory());
+    assert(axis != nullptr);
     axis->vertex[0] = edge_midpoint[2];
     axis->vertex[1] = edge_midpoint[5];
     axis->bmark = bmark;
@@ -656,7 +656,7 @@ void HGeometry<3,DOW>::refine()
     break;
 
   default:
-    Assert(false, ExcInternalError());
+    assert(false);
   }	
 }
 
@@ -684,7 +684,7 @@ void HGeometry<2,DOW>::checkIntegrity() const
 	if (b->vertex[j] == vertex[k])
 	  break;
       }
-      Assert(k < n_vertex, ExcInternalError());
+      assert(k < n_vertex);
     }
   }
   if (!isRefined()) return;
@@ -707,7 +707,7 @@ void HGeometry<3,DOW>::checkIntegrity() const
 	if (b->vertex[j] == vertex[k])
 	  break;
       }
-      Assert(k < n_vertex, ExcInternalError());
+      assert(k < n_vertex);
     }
   }
   if (!isRefined()) return;
@@ -773,7 +773,7 @@ void HElement<1, DOW>::refine()
   // construct its own child
   for (int i = 0;i < n_child;i ++) {
     child[i] = new HElement<1, DOW>();
-    Assert (child[i] != NULL, ExcOutOfMemory());
+    assert(child[i] != nullptr);
     child[i]->h_element = h_element->child[i];
     child[i]->parent = this;
   }
@@ -791,7 +791,7 @@ void HElement<2, DOW>::refine()
   // construct its own child
   for (int i = 0;i < n_child;i ++) {
     child[i] = new HElement<2, DOW>();
-    Assert (child[i] != NULL, ExcOutOfMemory());
+    assert(child[i] != nullptr);
     child[i]->h_element = h_element->child[i];
     child[i]->parent = this;
   }
@@ -810,7 +810,7 @@ void HElement<3, DOW>::refine()
   // construct its own child
   for (int i = 0;i < n_child;i ++) {
     child[i] = new HElement<3, DOW>();
-    Assert (child[i] != NULL, ExcOutOfMemory());
+    assert(child[i] != nullptr);
     child[i]->h_element = h_element->child[i];
     child[i]->parent = this;
   }
@@ -843,7 +843,7 @@ std::ostream& operator<<(std::ostream& os, const HGeometry<0,DOW>& geometry)
 template <>
 void IrregularMesh<1, DOW>::regularize(bool renumerate)
 {
-  if (regular_mesh != NULL)
+  if (regular_mesh != nullptr)
     delete regular_mesh;
   std::cerr << "Generating regular mesh from the semiregular mesh ..." << std::flush; 
   int i, j, k, n_node, n_element;
@@ -893,7 +893,7 @@ void IrregularMesh<1, DOW>::regularize(bool renumerate)
   std::cerr << "\n\tbuilding the regular mesh ..." << std::flush;
   // 建立正则化的网格
   regular_mesh = new RegularMesh<1, DOW>(this);
-  Assert (regular_mesh != NULL, ExcOutOfMemory());
+  assert(regular_mesh != nullptr);
   regular_mesh->point().resize(n_node);
   regular_mesh->geometry(0).resize(n_node);
   regular_mesh->geometry(1).resize(n_element);
@@ -926,7 +926,7 @@ void IrregularMesh<1, DOW>::regularize(bool renumerate)
     j = h_element->index;
     assert (j == the_ele->index);
     GeometryBM& element = regular_mesh->geometry(1,j);
-    Assert(element.index() == -1, ExcInternalError());
+    assert(element.index() == -1);
 #ifdef __SERIALIZATION__
     h_geometry[1][j] = h_element;
 #endif
@@ -945,7 +945,7 @@ void IrregularMesh<1, DOW>::regularize(bool renumerate)
 template <>
 void IrregularMesh<2, DOW>::regularize(bool renumerate)
 {
-  if (regular_mesh != NULL)
+  if (regular_mesh != nullptr)
     delete regular_mesh;
   std::cerr << "Generating regular mesh from the semiregular mesh ..." << std::flush; 
   int i, j, k, n_node, n_side, n_element;
@@ -1044,7 +1044,7 @@ void IrregularMesh<2, DOW>::regularize(bool renumerate)
   std::cerr << "\n\tbuilding the regular mesh ..." << std::flush;
   // 建立正则化的网格
   regular_mesh = new RegularMesh<2, DOW>(this);
-  Assert (regular_mesh != NULL, ExcOutOfMemory());
+  assert(regular_mesh != nullptr);
   regular_mesh->point().resize(n_node);
   regular_mesh->geometry(0).resize(n_node);
   regular_mesh->geometry(1).resize(n_side);
@@ -1124,7 +1124,7 @@ void IrregularMesh<2, DOW>::regularize(bool renumerate)
     j = h_element->index;
     assert (j == the_ele->index);
     GeometryBM& element = regular_mesh->geometry(2,j);
-    Assert(element.index() == -1, ExcInternalError());
+    assert(element.index() == -1);
 #ifdef __SERIALIZATION__
     h_geometry[2][j] = h_element;
 #endif
@@ -1154,7 +1154,7 @@ void IrregularMesh<2, DOW>::regularize(bool renumerate)
 template <>
 void IrregularMesh<3, DOW>::regularize(bool renumerate)
 {
-  if (regular_mesh != NULL)
+  if (regular_mesh != nullptr)
     delete regular_mesh;
   std::cerr << "Generating regular mesh from the semiregular mesh ..." << std::flush; 
   int ii[] = {0, 1, 2, 0, 1, 2, 0, 1, 2};
@@ -1220,7 +1220,7 @@ void IrregularMesh<3, DOW>::regularize(bool renumerate)
         abort();
       }
     }
-    Assert(tools.isGeometryActive(*h_element), ExcInternalError());
+    assert(tools.isGeometryActive(*h_element));
     if (! tools.isGeometryActive(*h_element)) abort();
     tools.setParentInactive(*h_element);
   }
@@ -1293,7 +1293,7 @@ void IrregularMesh<3, DOW>::regularize(bool renumerate)
         }
       }
     }
-    Assert(tools.isGeometryActive(*h_element),  ExcInternalError());
+    assert(tools.isGeometryActive(*h_element));
     if (! tools.isGeometryActive(*h_element)) abort();
     h_element->index = n_element ++;
     the_ele->index = h_element->index;
@@ -1340,7 +1340,7 @@ void IrregularMesh<3, DOW>::regularize(bool renumerate)
     // 然后处理单元的表面和棱
     int n_twin_triangle_surface = 0, twin_triangle_surface[3];
     int n_nonactive_neighbour = 0, nonactive_neighbour;
-    HGeometry<1, DOW> * refined_edge = NULL;
+    HGeometry<1, DOW> * refined_edge = nullptr;
     for (int i = 0;i < the_ele->n_boundary;++ i) {
       HGeometry<2, DOW> * bnd = h_element->boundary[i];
       if (tools.isGeometryIndexed(*bnd)) { // 是一个active面
@@ -1425,7 +1425,7 @@ void IrregularMesh<3, DOW>::regularize(bool renumerate)
                 * 尽管不一定是这样(细分的邻居可能在其它分区上)。
                 */
 	n_nonactive_neighbour ++;
-	Assert(n_nonactive_neighbour == 1, ExcInternalError());
+	assert(n_nonactive_neighbour == 1);
 	nonactive_neighbour = i; // 记下数就可以了
 
         for (int j = 0;j < bnd->n_child;++ j) {
@@ -1471,7 +1471,7 @@ void IrregularMesh<3, DOW>::regularize(bool renumerate)
     h_geometry[3][j] = h_element;
 #endif
     if (n_nonactive_neighbour == 1) { // 四胞胎的情形
-      Assert((n_twin_triangle_surface == 3), ExcInternalError());
+      assert((n_twin_triangle_surface == 3));
 
       int tt[4][4] = {{0, 1, 2, 3}, {1, 2, 0, 3}, {2, 3, 0, 1}, {3, 0, 2, 1}};
       int * t = &tt[nonactive_neighbour][0]; /// 四面体的姿态
@@ -1505,7 +1505,7 @@ void IrregularMesh<3, DOW>::regularize(bool renumerate)
       tetra.boundaryMark() = h_element->bmark;
       n_four_tetrahedron ++;
     } else if (n_twin_triangle_surface > 0) { // 双胞胎的情形
-      Assert (n_twin_triangle_surface == 2, ExcInternalError());
+      assert(n_twin_triangle_surface == 2);
 
       // 先判断是哪条边细分了
       int rei = (1<<twin_triangle_surface[0]) + (1<<twin_triangle_surface[1]);
@@ -1514,7 +1514,7 @@ void IrregularMesh<3, DOW>::regularize(bool renumerate)
         -1,  5,  1, -1,  0, -1, -1, -1,
       };
       int refined_edge_idx = tt[rei];
-      Assert ((refined_edge_idx >= 0), ExcInternalError());
+      assert((refined_edge_idx >= 0));
 
       tetra.vertex().resize(5);
       tetra.boundary().resize(4);
@@ -1533,7 +1533,7 @@ void IrregularMesh<3, DOW>::regularize(bool renumerate)
       tetra.boundaryMark() = h_element->bmark;
       n_twin_tetrahedron ++;	
     } else { // 最后是正常的四面体情形
-      Assert((n_nonactive_neighbour == 0 && n_twin_triangle_surface == 0), ExcInternalError());
+      assert((n_nonactive_neighbour == 0 && n_twin_triangle_surface == 0));
 		
       tetra.vertex().resize(4);
       tetra.boundary().resize(4);
@@ -1580,7 +1580,7 @@ void RegularMesh<2, DOW>::writeEasyMesh(const std::string& filename) const
     else if (j == 4)
       index[i] = n_twin_triangle ++;
     else
-      Assert(false, ExcInternalError());
+      assert(false);
   }
 	
   /**< 准备边的邻居单元的数据 */
@@ -1593,15 +1593,15 @@ void RegularMesh<2, DOW>::writeEasyMesh(const std::string& filename) const
 	k = the_ele.boundary(j);
 	const GeometryBM& the_side = geometry(1, k);
 	if (the_side.vertex(0) == the_ele.vertex(ii[j+1])) {
-	  Assert(the_side.vertex(1) == the_ele.vertex(ii[j+2]), ExcInternalError());
+	  assert(the_side.vertex(1) == the_ele.vertex(ii[j+2]));
 	  side_neighbour[1][k] = i;
 	}
 	else if (the_side.vertex(0) == the_ele.vertex(ii[j+2])) {
-	  Assert(the_side.vertex(1) == the_ele.vertex(ii[j+1]), ExcInternalError());
+	  assert(the_side.vertex(1) == the_ele.vertex(ii[j+1]));
 	  side_neighbour[0][k] = i;
 	}
 	else {
-	  Assert(false, ExcInternalError()); // something must be wrong!
+	  assert(false); // something must be wrong!
 	}
       }
     }
@@ -1610,57 +1610,57 @@ void RegularMesh<2, DOW>::writeEasyMesh(const std::string& filename) const
       k = the_ele.boundary(0);
       const GeometryBM& the_side_0 = geometry(1, k);
       if (the_side_0.vertex(0) == the_ele.vertex(0)) {
-	Assert(the_side_0.vertex(1) == the_ele.vertex(1), ExcInternalError());
+	assert(the_side_0.vertex(1) == the_ele.vertex(1));
 	side_neighbour[1][k] = i;
       }
       else if (the_side_0.vertex(0) == the_ele.vertex(1)) {
-	Assert(the_side_0.vertex(1) == the_ele.vertex(0), ExcInternalError());
+	assert(the_side_0.vertex(1) == the_ele.vertex(0));
 	side_neighbour[0][k] = i;
       }
       else {
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       // the 1-st side
       k = the_ele.boundary(1);
       const GeometryBM& the_side_1 = geometry(1, k);
       if (the_side_1.vertex(0) == the_ele.vertex(1)) {
-	Assert(the_side_1.vertex(1) == the_ele.vertex(2), ExcInternalError());
+	assert(the_side_1.vertex(1) == the_ele.vertex(2));
 	side_neighbour[1][k] = i;
       }
       else if (the_side_1.vertex(0) == the_ele.vertex(2)) {
-	Assert(the_side_1.vertex(1) == the_ele.vertex(1), ExcInternalError());
+	assert(the_side_1.vertex(1) == the_ele.vertex(1));
 	side_neighbour[0][k] = i;
       }
       else {
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       // the 2-nd side
       k = the_ele.boundary(2);
       const GeometryBM& the_side_2 = geometry(1, k);
       if (the_side_2.vertex(0) == the_ele.vertex(2)) {
-	Assert(the_side_2.vertex(1) == the_ele.vertex(3), ExcInternalError());
+	assert(the_side_2.vertex(1) == the_ele.vertex(3));
 	side_neighbour[1][k] = n_element + index[i];
       }
       else if (the_side_2.vertex(0) == the_ele.vertex(3)) {
-	Assert(the_side_2.vertex(1) == the_ele.vertex(2), ExcInternalError());
+	assert(the_side_2.vertex(1) == the_ele.vertex(2));
 	side_neighbour[0][k] = n_element + index[i];
       }
       else {
-	Assert(false, ExcInternalError());
+	assert(false);
       }
       // the 3th side
       k = the_ele.boundary(3);
       const GeometryBM& the_side_3 = geometry(1, k);
       if (the_side_3.vertex(0) == the_ele.vertex(3)) {
-	Assert(the_side_3.vertex(1) == the_ele.vertex(0), ExcInternalError());
+	assert(the_side_3.vertex(1) == the_ele.vertex(0));
 	side_neighbour[1][k] = n_element + index[i];
       }
       else if (the_side_3.vertex(0) == the_ele.vertex(0)) {
-	Assert(the_side_3.vertex(1) == the_ele.vertex(3), ExcInternalError());
+	assert(the_side_3.vertex(1) == the_ele.vertex(3));
 	side_neighbour[0][k] = n_element + index[i];
       }
       else {
-	Assert(false, ExcInternalError());
+	assert(false);
       }
     }
   }
@@ -1847,7 +1847,7 @@ void RegularMesh<2, DOW>::writeTecplotData(const std::string& filename) const
 	 << geometry(0,geometry(2,i).vertex(2)).vertex(0)+1 << "\n";
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os.close();
@@ -1898,7 +1898,7 @@ void RegularMesh<3, DOW>::writeTecplotData(const std::string& filename) const
 	 << geometry(0,geometry(3,i).vertex(3)).vertex(0) + 1 << "\n";
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os.close();
@@ -1967,7 +1967,7 @@ void RegularMesh<2, DOW>::writeOpenDXData(const std::string& filename) const
       j += 2;
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os << "\nobject 2 class array type int rank 1 shape 3 item "
@@ -1988,7 +1988,7 @@ void RegularMesh<2, DOW>::writeOpenDXData(const std::string& filename) const
 	 << geometry(2,i).vertex(3) << "\t\n";
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os << "attribute \"element type\" string \"triangles\"\n"
@@ -2032,7 +2032,7 @@ void RegularMesh<3, DOW>::writeOpenDXData(const std::string& filename) const
       j += 4;
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os << "\nobject 2 class array type int rank 1 shape 4 item "
@@ -2074,7 +2074,7 @@ void RegularMesh<3, DOW>::writeOpenDXData(const std::string& filename) const
 	 << geometry(3,i).vertex(6) << "\t\n";
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os << "attribute \"element type\" string \"tetrahedra\"\n"
@@ -2106,7 +2106,7 @@ void HGeometryTree<2, DOW>::readEasyMesh(const std::string& filename)
   std::cerr << "\treading the nodes data ..." << std::flush;
   for (i = 0;i < n_node;i ++) {
     node[i] = new HGeometry<0, DOW>();
-    Assert(node[i] != NULL, ExcOutOfMemory());
+    assert(node[i] != nullptr);
     is >> j
        >> *(dynamic_cast<Point<DOW> *>(node[i]))
        >> node[i]->bmark;
@@ -2116,11 +2116,11 @@ void HGeometryTree<2, DOW>::readEasyMesh(const std::string& filename)
 	
   is.open((filename + ".s").c_str());
   is >> i;
-  Assert(i == n_side, ExcInternalError());
+  assert(i == n_side);
   std::cerr << "\treading the sides data ..." << std::flush;	
   for (i = 0;i < n_side;i ++) {
     side[i] = new HGeometry<1, DOW>();
-    Assert(side[i] != NULL, ExcOutOfMemory());
+    assert(side[i] != nullptr);
     is >> l >> j >> k;
     side[i]->vertex[0] = node[j];
     side[i]->vertex[1] = node[k];
@@ -2131,14 +2131,14 @@ void HGeometryTree<2, DOW>::readEasyMesh(const std::string& filename)
 
   is.open((filename + ".e").c_str());
   is >> i >> j >> k;
-  Assert(i == n_element, ExcInternalError());
-  Assert(j == n_node, ExcInternalError());
-  Assert(k == n_side, ExcInternalError());
+  assert(i == n_element);
+  assert(j == n_node);
+  assert(k == n_side);
   is.getline(dummy, 64);
   std::cerr << "\treading the elements data ..." << std::flush;	
   for (i = 0;i < n_element;i ++) {
     element[i] = new HGeometry<2, DOW>();
-    Assert(element[i] != NULL, ExcOutOfMemory());
+    assert(element[i] != nullptr);
     is >> l >> j >> k >> l;
     element[i]->vertex[0] = node[j];
     element[i]->vertex[1] = node[k];
@@ -2187,7 +2187,7 @@ void RegularMesh<2, DOW>::writeSimplestSimplexMesh(const std::string& filename) 
       j += 2;
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os << j << "\n";
@@ -2207,7 +2207,7 @@ void RegularMesh<2, DOW>::writeSimplestSimplexMesh(const std::string& filename) 
 	 << geometry(2,i).vertex(3) << "\t\n";
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os.close();
@@ -2243,7 +2243,7 @@ void RegularMesh<3, DOW>::writeSimplestSimplexMesh(const std::string& filename) 
       j += 4;
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os << j << "\n";
@@ -2284,7 +2284,7 @@ void RegularMesh<3, DOW>::writeSimplestSimplexMesh(const std::string& filename) 
 	 << geometry(3,i).vertex(6) << "\t\n";
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os.close();
@@ -2367,7 +2367,7 @@ void RegularMesh<2, DOW>::writeSimplexMesh(const std::string& filename) const
          << geo.boundaryMark() << "\n";
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   os.close();
@@ -2458,7 +2458,7 @@ void RegularMesh<3, DOW>::writeSimplexMesh(const std::string& filename) const
          << geo.boundaryMark() << "\n";
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
   }
   for (i = 0, j = 0;i < n_face;i ++) {

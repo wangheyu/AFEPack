@@ -1,0 +1,108 @@
+#!/bin/sh
+
+set -eu
+
+top_srcdir="@top_srcdir@"
+top_builddir="@top_builddir@"
+gmsh="@GMSH@"
+gmsh_tests="@GMSH_TESTS@"
+
+if test "x$gmsh_tests" != xyes; then
+  echo "SKIP: gmsh not available or gmsh tests disabled"
+  exit 77
+fi
+
+abs_top_srcdir=`cd "$top_srcdir" && pwd`
+abs_top_builddir=`cd "$top_builddir" && pwd`
+abs_builddir=`pwd`
+
+workdir="$abs_builddir/check-3d-work"
+templates="$workdir/templates"
+tetra_templates="$templates/tetrahedron"
+
+fail()
+{
+  echo "FAIL: $*" >&2
+  exit 1
+}
+
+need_file()
+{
+  test -s "$1" || fail "expected file not found or empty: $1"
+}
+
+run_example()
+{
+  program="$1"
+  shift
+  log="$1"
+  shift
+  if ! "$program" "$@" >"$log" 2>&1; then
+    cat "$log" >&2
+    fail "$program failed"
+  fi
+}
+
+prepare_tetrahedron_templates()
+{
+  mkdir -p "$tetra_templates"
+  cp "$abs_top_srcdir/include/AFEPack/template/tetrahedron/tetrahedron.tmp_geo" "$tetra_templates/"
+  cp "$abs_top_srcdir/include/AFEPack/template/tetrahedron/tetrahedron.crd_trs" "$tetra_templates/"
+  cp "$abs_top_srcdir/include/AFEPack/template/tetrahedron/tetrahedron.1/tetrahedron.1.tmp_dof" "$tetra_templates/"
+  cp "$abs_top_srcdir/include/AFEPack/template/tetrahedron/tetrahedron.1/tetrahedron.1.bas_fun" "$tetra_templates/"
+
+  geom_so="$abs_top_builddir/include/AFEPack/template/tetrahedron/.libs/libtetrahedron.geometry.so"
+  basis_so="$abs_top_builddir/include/AFEPack/template/tetrahedron/tetrahedron.1/.libs/libtetrahedron.1.bas_fun.so"
+  need_file "$geom_so"
+  need_file "$basis_so"
+  ln -sf "$geom_so" "$tetra_templates/libtetrahedron.geometry.so"
+  ln -sf "$basis_so" "$tetra_templates/libtetrahedron.1.bas_fun.so"
+}
+
+run_gmsh()
+{
+  geo="$1"
+  log="$2"
+  if ! "$gmsh" -3 "$geo" >"$log" 2>&1; then
+    cat "$log" >&2
+    fail "gmsh failed for $geo"
+  fi
+}
+
+rm -rf "$workdir"
+mkdir -p "$workdir"
+trap 'rm -rf "$workdir"' EXIT INT TERM
+
+prepare_tetrahedron_templates
+
+LD_LIBRARY_PATH="$abs_top_builddir/src/.libs:${LD_LIBRARY_PATH-}"
+AFEPACK_TEMPLATE_PATH="$tetra_templates"
+export LD_LIBRARY_PATH AFEPACK_TEMPLATE_PATH
+
+poisson3d_work="$workdir/poisson_equation_3D"
+mkdir -p "$poisson3d_work"
+cp "$abs_top_srcdir/examples/poisson_equation_3D/Cube.geo" "$poisson3d_work/"
+cd "$poisson3d_work"
+run_gmsh Cube.geo gmsh.log
+need_file Cube.msh
+run_example "$abs_top_builddir/tools/gmsh2mesh" gmsh2mesh.log Cube.msh Cube.mesh
+need_file Cube.mesh
+run_example "$abs_top_builddir/tools/mesh_refine" mesh_refine.log 3 Cube.mesh Cube3.mesh 3 0
+need_file Cube3.mesh
+run_example "$abs_top_builddir/examples/poisson_equation_3D/main" poisson3d.log Cube3.mesh
+need_file u.dx
+grep "L2 error" poisson3d.log >/dev/null || fail "poisson_equation_3D did not report L2 error"
+echo "PASS: poisson_equation_3D"
+
+dyson_work="$workdir/DysonSphere"
+mkdir -p "$dyson_work"
+cp "$abs_top_srcdir/examples/DysonSphere/Cube.geo" "$dyson_work/"
+cd "$dyson_work"
+run_gmsh Cube.geo gmsh.log
+need_file Cube.msh
+run_example "$abs_top_builddir/tools/gmsh2mesh" gmsh2mesh.log Cube.msh Cube.mesh
+need_file Cube.mesh
+run_example "$abs_top_builddir/examples/DysonSphere/main" dyson.log Cube.mesh 0 --test-once
+need_file Cube.dx
+echo "PASS: DysonSphere"
+

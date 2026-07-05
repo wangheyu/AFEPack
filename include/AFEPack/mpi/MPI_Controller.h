@@ -53,7 +53,7 @@ namespace MPI {
 
   void registerController(const char * name,
                           void (*function)(const char *),
-                          const char * desc = NULL);
+                          const char * desc = nullptr);
   void controllerScript(const char * filename, MPI_Comm = MPI_COMM_WORLD);
   void getControl();
 
@@ -61,14 +61,14 @@ namespace MPI {
     void registerController(const char * name,
                             T * obj,
                             void (T::*function)(const char *),
-                            const char * desc = NULL)
+                            const char * desc = nullptr)
     {
       details::controller_packer_impl<T> * 
         cnt_ptr = new details::controller_packer_impl<T>;
       cnt_ptr->name = name;
       cnt_ptr->obj_ptr = obj;
       cnt_ptr->fun_ptr = function;
-      if (desc != NULL) {
+      if (desc != nullptr) {
         cnt_ptr->description = desc;
       }
       details::setControllerEntry(cnt_ptr);
@@ -78,14 +78,14 @@ namespace MPI {
     void registerController(const char * name,
                             const T * obj,
                             void (T::*function)(const char *) const,
-                            const char * desc = NULL)
+                            const char * desc = nullptr)
     {
       details::controller_packer_impl<const T> * 
         cnt_ptr = new details::controller_packer_impl<const T>;
       cnt_ptr->name = name;
       cnt_ptr->obj_ptr = obj;
       cnt_ptr->fun_ptr = function;
-      if (desc != NULL) {
+      if (desc != nullptr) {
         cnt_ptr->description = desc;
       }
       details::setControllerEntry(cnt_ptr);

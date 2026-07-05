@@ -26,14 +26,14 @@ namespace SparseMatrixTool {
      * 检查这个两个模板是否都已经压缩过了。
      * 
      */
-    Assert(sp0.is_compressed(), SparsityPattern::ExcNotCompressed());
-    Assert(sp1.is_compressed(), ExcNotCompressed());
+    assert(sp0.is_compressed());
+    assert(sp1.is_compressed());
 
     /**
      * 检查这两个模板是否具有相同的行数。
      * 
      */
-    Assert (m0 == sp1.n_rows(), ExcDimensionDontMatch(m0, sp1.n_rows()));
+    assert(m0 == sp1.n_rows());
   
     int i, j;
     u_int n1 = sp1.n_cols();
@@ -42,9 +42,9 @@ namespace SparseMatrixTool {
       row_length[i] = sp0.row_length(i) + sp1.row_length(i);
     sp.reinit(m0, n0 + n1, row_length);
     const std::size_t * p_rowstart0 = sp0.get_rowstart_indices();
-    const u_int * p_column0 = sp0.get_column_numbers();
+    const size_t * p_column0 = sp0.get_column_numbers();
     const std::size_t * p_rowstart1 = sp1.get_rowstart_indices();
-    const u_int * p_column1 = sp1.get_column_numbers();
+    const size_t * p_column1 = sp1.get_column_numbers();
     for (i = 0;i < m0;i ++) {
       for (j = p_rowstart0[i];j < p_rowstart0[i + 1];j ++)
 	sp.add(i, p_column0[j]);
@@ -73,14 +73,14 @@ namespace SparseMatrixTool {
      * 检查这个两个模板是否都已经压缩过了。
      * 
      */
-    Assert(sp0.is_compressed(), ExcNotCompressed());
-    Assert(sp1.is_compressed(), ExcNotCompressed());
+    assert(sp0.is_compressed());
+    assert(sp1.is_compressed());
 
     /**
      * 检查这两个模板是否具有相同的列数。
      * 
      */
-    Assert (n0 == sp1.n_cols(), ExcDimensionDontMatch(m0, sp1.n_cols()));
+    assert(n0 == sp1.n_cols());
   
     u_int i, j, m1 = sp1.n_rows();
     std::vector<u_int> row_length(m0 + m1, 0);
@@ -90,9 +90,9 @@ namespace SparseMatrixTool {
       row_length[i + m0] = sp1.row_length(i);
     sp.reinit(m0 + m1, n0, row_length);
     const std::size_t * p_rowstart0 = sp0.get_rowstart_indices();
-    const u_int * p_column0 = sp0.get_column_numbers();
+    const size_t * p_column0 = sp0.get_column_numbers();
     const std::size_t * p_rowstart1 = sp1.get_rowstart_indices();
-    const u_int * p_column1 = sp1.get_column_numbers();
+    const size_t * p_column1 = sp1.get_column_numbers();
     for (i = 0;i < m0;i ++)
       for (j = p_rowstart0[i];j < p_rowstart0[i + 1];j ++)
 	sp.add(i, p_column0[j]);
@@ -130,16 +130,16 @@ namespace SparseMatrixTool {
      * 检查这个两个模板是否都已经压缩过了。
      * 
      */
-    Assert(sp0.is_compressed(), ExcNotCompressed());
-    Assert(sp1.is_compressed(), ExcNotCompressed());
+    assert(sp0.is_compressed());
+    assert(sp1.is_compressed());
 
     /**
      * 检查这两个模板是否具有相同的行数以及第一个模板是否
      * 是一个方阵的模板。
      * 
      */
-    Assert (m == sp0.n_cols(), ExcDimensionDontMatch(m, sp0.n_cols()));
-    Assert (m == sp1.n_rows(), ExcDimensionDontMatch(m, sp1.n_rows()));
+    assert(m == sp0.n_cols());
+    assert(m == sp1.n_rows());
 
     int i, j;
     u_int n1 = sp1.n_cols();
@@ -147,9 +147,9 @@ namespace SparseMatrixTool {
     for (i = 0;i < m;i ++)
       row_length[i] = sp0.row_length(i) + sp1.row_length(i);
     const std::size_t * p_rowstart0 = sp0.get_rowstart_indices();
-    const u_int * p_column0 = sp0.get_column_numbers();
+    const size_t * p_column0 = sp0.get_column_numbers();
     const std::size_t * p_rowstart1 = sp1.get_rowstart_indices();
-    const u_int * p_column1 = sp1.get_column_numbers();
+    const size_t * p_column1 = sp1.get_column_numbers();
     for (i = 0;i < m;i ++)
       for (j = p_rowstart1[i];j < p_rowstart1[i + 1];j ++)
 	row_length[m + p_column1[j]] += 1;
@@ -183,8 +183,8 @@ namespace SparseMatrixTool {
      * 检查这个两个模板是否都已经压缩过了。
      * 
      */
-    Assert(sp0.is_compressed(), SparsityPattern::ExcNotCompressed());
-    Assert(sp1.is_compressed(), ExcNotCompressed());
+    assert(sp0.is_compressed());
+    assert(sp1.is_compressed());
 
     int i = 0, j;
     if (m0 + m1 == n0 + n1) i = 1;
@@ -195,9 +195,9 @@ namespace SparseMatrixTool {
       row_length[i + m0] += sp1.row_length(i);
     sp.reinit(m0 + m1, n0 + n1, row_length);
     const std::size_t * p_rowstart0 = sp0.get_rowstart_indices();
-    const u_int * p_column0 = sp0.get_column_numbers();
+    const size_t * p_column0 = sp0.get_column_numbers();
     const std::size_t * p_rowstart1 = sp1.get_rowstart_indices();
-    const u_int * p_column1 = sp1.get_column_numbers();
+    const size_t * p_column1 = sp1.get_column_numbers();
     for (i = 0;i < m0;i ++)
       for (j = p_rowstart0[i];j < p_rowstart0[i + 1];j ++)
 	sp.add(i, p_column0[j]);

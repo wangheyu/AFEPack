@@ -24,19 +24,19 @@ THIS::HGeometry() : HGeometryBase()
 {
   index = 0;
   for (int i = 0;i < THIS::n_vertex;i ++)
-    vertex[i] = NULL;
+    vertex[i] = nullptr;
   for (int i = 0;i < THIS::n_boundary;i ++)
-    boundary[i] = NULL;
-  parent = NULL;
+    boundary[i] = nullptr;
+  parent = nullptr;
   for (int i = 0;i < THIS::n_child;i ++)
-    child[i] = NULL;
+    child[i] = nullptr;
   bmark = 0;
 }
 
 TEMPLATE
 bool THIS::isRefined() const
 {
-  return (child[0] != NULL);
+  return (child[0] != nullptr);
 }
 
 TEMPLATE
@@ -59,7 +59,7 @@ void THIS::checkIntegrity() const
 	  break;
         }
       }
-      Assert(k < THIS::n_vertex, ExcInternalError());
+      assert(k < THIS::n_vertex);
     }
   }
   /**
@@ -144,7 +144,7 @@ void THIS::readMesh(const std::string& filename)
   std::vector<Point<DOW> > point(n_point);
   for (u_int i = 0;i < n_point;i ++) is >> point[i];
   is >> n_point;
-  std::vector<HGeometry<0,DOW> *> geo_0d(n_point, (HGeometry<0,DOW> *)NULL);
+  std::vector<HGeometry<0,DOW> *> geo_0d(n_point, (HGeometry<0,DOW> *)nullptr);
   for (u_int i = 0;i < n_point;i ++) {
     u_int j, k;
     is >> j; geo_0d[j] = new HGeometry<0,DOW>();
@@ -159,7 +159,7 @@ void THIS::readMesh(const std::string& filename)
   if (DIM >= 1) {/// 读入一维几何体的信息
     is >> n_geo_1d;
     std::cerr << "\t# 1D-geometry: " << n_geo_1d << std::endl;
-    geo_1d.resize(n_geo_1d, NULL);
+    geo_1d.resize(n_geo_1d, nullptr);
     for (u_int i = 0;i < n_geo_1d;i ++) {
       u_int j, k, l;
       is >> j >> k; geo_1d[j] = new HGeometry<GDIM,DOW>();
@@ -181,7 +181,7 @@ void THIS::readMesh(const std::string& filename)
   if (DIM >= 2) {/// 读入二维几何体的信息
     is >> n_geo_2d;
     std::cerr << "\t# 2D-geometry: " << n_geo_2d << std::endl;
-    geo_2d.resize(n_geo_2d, NULL);
+    geo_2d.resize(n_geo_2d, nullptr);
     for (u_int i = 0;i < n_geo_2d;i ++) {
       u_int j, k, l;
       is >> j >> k; geo_2d[j] = new HGeometry<GDIM,DOW>();
@@ -203,7 +203,7 @@ void THIS::readMesh(const std::string& filename)
   if (DIM >= 3) { /// 读入三维几何体的信息
     is >> n_geo_3d;
     std::cerr << "\t# 3D-geometry: " << n_geo_3d << std::endl;
-    geo_3d.resize(n_geo_3d, NULL);
+    geo_3d.resize(n_geo_3d, nullptr);
     for (u_int i = 0;i < n_geo_3d;i ++) {
       u_int j, k, l;
       is >> j >> k; geo_3d[j] = new HGeometry<GDIM,DOW>();
@@ -243,7 +243,7 @@ void THIS::readMesh(const std::string& filename)
 
 TEMPLATE
 THIS::HElement() 
-: value(-1), parent(NULL), child(THIS::n_child, NULL) {}
+: value(-1), parent(nullptr), child(THIS::n_child, nullptr) {}
 
 TEMPLATE
 THIS::HElement(const element_t& ele) :
@@ -271,7 +271,7 @@ typename THIS::element_t& THIS::operator=(const element_t& ele) {
 TEMPLATE
 bool THIS::isRefined() const
 {
-  return (child.size() > 0 && child[0] != NULL);
+  return (child.size() > 0 && child[0] != nullptr);
 }
 
 TEMPLATE
@@ -379,7 +379,7 @@ TEMPLATE
 THIS::IrregularMesh(tree_t& h_geometry_tree)
 {
   setGeometryTree(&h_geometry_tree);
-  regular_mesh = NULL;
+  regular_mesh = nullptr;
 }
 
 TEMPLATE void 
@@ -444,8 +444,8 @@ THIS::~IrregularMesh()
 TEMPLATE
 void THIS::clear()
 {
-  if (geometry_tree != NULL)
-    geometry_tree = NULL;
+  if (geometry_tree != nullptr)
+    geometry_tree = nullptr;
 
   RootIterator the_ele = beginRootElement();
   RootIterator end_ele = endRootElement();
@@ -454,9 +454,9 @@ void THIS::clear()
   }
   root_element.clear();
 
-  if (regular_mesh != NULL) {
+  if (regular_mesh != nullptr) {
     delete regular_mesh;
-    regular_mesh = NULL;
+    regular_mesh = nullptr;
   }
 }
 
@@ -525,18 +525,18 @@ void THIS::writeFormatted(const std::string& filename)
 
 TEMPLATE
 THIS::IrregularMesh() :
-geometry_tree(NULL), regular_mesh(NULL)
+geometry_tree(nullptr), regular_mesh(nullptr)
 {}
 
 
 TEMPLATE
 THIS::IrregularMesh(const ir_mesh_t& mesh)
 {
-  if (mesh.geometry_tree != NULL) {
+  if (mesh.geometry_tree != nullptr) {
     setGeometryTree(mesh.geometry_tree);
     copyNonnegtiveSubtree(mesh);
   }
-  regular_mesh = NULL;
+  regular_mesh = nullptr;
 }
 
 
@@ -591,7 +591,7 @@ TEMPLATE
 typename THIS::RootFirstIterator THIS::endRootFirstElement()
 {
   typename std::list<element_t *>::iterator element = root_element.end();
-  return RootFirstIterator(this, element, NULL);
+  return RootFirstIterator(this, element, nullptr);
 }
 
 
@@ -610,7 +610,7 @@ TEMPLATE
 typename THIS::ActiveIterator THIS::endActiveElement()
 {
   typename std::list<element_t *>::iterator element = root_element.end();
-  return ActiveIterator(this, element, NULL);
+  return ActiveIterator(this, element, nullptr);
 }
 
 TEMPLATE
@@ -625,7 +625,7 @@ void THIS::refineElement(element_t& ele) {
 TEMPLATE
 void THIS::renumerateElement()
 {
-  Assert (regular_mesh != NULL, ExcInternalError());
+  assert(regular_mesh != nullptr);
   int i, j, k, l, m, n;
 
   std::cerr << "Renumerating element of the mesh ..." << std::endl;
@@ -746,7 +746,7 @@ std::ostream& operator<<(std::ostream& os, const HElement<DIM, DOW>& element)
     os << *(element.h_element);
   }
   else {
-    Assert(false, ExcInternalError()); // what happeden? something must be wrong!
+    assert(false); // what happeden? something must be wrong!
   }
   return os;
 }
@@ -768,7 +768,7 @@ std::ostream& operator<<(std::ostream& os, IrregularMesh<DIM, DOW>& mesh)
 
 TEMPLATE
 ElementIterator<DIM, DOW>::ElementIterator() :
-  mesh(NULL), element(NULL) {}
+  mesh(nullptr), element(nullptr) {}
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -828,7 +828,7 @@ TEMPLATE
 RootFirstElementIterator<DIM, DOW>& 
   RootFirstElementIterator<DIM, DOW>::operator++()
 {
-  if (element == NULL) return *this; // do nothing
+  if (element == nullptr) return *this; // do nothing
   else if (element->value == 1) { /// 非叶子节点会进入其后代
     element = element->child[0];
   } else {
@@ -836,15 +836,15 @@ RootFirstElementIterator<DIM, DOW>&
 
     HElement<DIM, DOW> * child = element;
     HElement<DIM, DOW> * parent = child->parent;
-    while (parent != NULL) {
+    while (parent != nullptr) {
       if (child != parent->child[n_child - 1]) break;
       child = parent;
       parent = child->parent;
     };
-    if (parent == NULL) {
+    if (parent == nullptr) {
       ++ root_element;
       if (root_element == mesh->rootElement().end()) {
-	element = NULL;
+	element = nullptr;
       } else {
 	element = *(root_element);
       }
@@ -863,7 +863,7 @@ ActiveElementIterator<DIM, DOW>&
 {
   do {
     RootFirstElementIterator<DIM, DOW>::operator++();
-    if (this->element == NULL) break;
+    if (this->element == nullptr) break;
   } while (this->element->value > 0);
   return *this;
 }
@@ -876,14 +876,14 @@ TEMPLATE
 THIS::IrregularMeshPair(ir_mesh_t& m0, ir_mesh_t& m1) :
 mesh0(&m0), mesh1(&m1)
 {
-  Assert(mesh0->geometry_tree == mesh1->geometry_tree, ExcInternalError());
+  assert(mesh0->geometry_tree == mesh1->geometry_tree);
 }
 
 TEMPLATE
 THIS::IrregularMeshPair(ir_mesh_t * m0, ir_mesh_t * m1) :
 mesh0(m0), mesh1(m1)
 {
-  Assert(mesh0->geometry_tree == mesh1->geometry_tree, ExcInternalError());
+  assert(mesh0->geometry_tree == mesh1->geometry_tree);
 }
 
 TEMPLATE
@@ -949,20 +949,20 @@ THIS& THIS::operator=(const THIS& i)
 TEMPLATE
 THIS& THIS::operator++()
 {
-  if (iterator0.element == NULL && iterator1.element == NULL) {
-    Assert(st == EQUAL, ExcInternalError());
+  if (iterator0.element == nullptr && iterator1.element == nullptr) {
+    assert(st == EQUAL);
   } else if (st == EQUAL) {
     ++ iterator0;
     ++ iterator1;
-    if (iterator0.element == NULL || iterator1.element == NULL) {
-      Assert (iterator0.element == NULL && iterator1.element == NULL, ExcInternalError());
+    if (iterator0.element == nullptr || iterator1.element == nullptr) {
+      assert(iterator0.element == nullptr && iterator1.element == nullptr);
       return *this;
     }
     while (iterator0->value > 0 && iterator1->value > 0) {
       ++ iterator0;
       ++ iterator1;
-      if (iterator0.element == NULL || iterator1.element == NULL) {
-        Assert(iterator0.element == NULL && iterator1.element == NULL, ExcInternalError());
+      if (iterator0.element == nullptr || iterator1.element == nullptr) {
+        assert(iterator0.element == nullptr && iterator1.element == nullptr);
         return *this;
       }
     };
@@ -979,11 +979,11 @@ THIS& THIS::operator++()
     RootFirstElementIterator<DIM, DOW> next0 = iterator0;
     ++ next0;
     ++ iterator1;
-    if (iterator1.element == NULL) {
-      Assert(next0.element == NULL, ExcInternalError());
+    if (iterator1.element == nullptr) {
+      assert(next0.element == nullptr);
       iterator0 = next0;
       st = EQUAL;
-    } else if (next0.element == NULL) {
+    } else if (next0.element == nullptr) {
       while (iterator1->value > 0) ++ iterator1;
     } else if (next0->h_element == iterator1->h_element) {
       iterator0 = next0;
@@ -1007,11 +1007,11 @@ THIS& THIS::operator++()
     RootFirstElementIterator<DIM, DOW> next1 = iterator1;
     ++ next1;
     ++ iterator0;
-    if (iterator0.element == NULL) {
-      Assert(next1.element == NULL, ExcInternalError());
+    if (iterator0.element == nullptr) {
+      assert(next1.element == nullptr);
       iterator1 = next1;
       st = EQUAL;
-    } else if (next1.element == NULL) {
+    } else if (next1.element == nullptr) {
       while (iterator0->value > 0) ++ iterator0;
     } else if (next1->h_element == iterator0->h_element) {
       iterator1 = next1;
@@ -1063,9 +1063,9 @@ bool operator!=(const THIS& i0,
 
 TEMPLATE
 THIS::MeshAdaptor() :
-from_mesh(NULL),
-  to_mesh(NULL),
-  ind(NULL),
+from_mesh(nullptr),
+  to_mesh(nullptr),
+  ind(nullptr),
   convergence_order(1),
   refine_step(1),
   refine_threshold(1.33333),
@@ -1079,7 +1079,7 @@ TEMPLATE
 THIS::MeshAdaptor(ir_mesh_t& f) :
 from_mesh(&f), 
   to_mesh(&f),
-  ind(NULL),
+  ind(nullptr),
   convergence_order(1),
   refine_step(1),
   refine_threshold(1.33333),
@@ -1093,7 +1093,7 @@ TEMPLATE
 THIS::MeshAdaptor(ir_mesh_t& f, ir_mesh_t& t) :
 from_mesh(&f), 
   to_mesh(&t),
-  ind(NULL),
+  ind(nullptr),
   convergence_order(1),
   refine_step(1),
   refine_threshold(1.33333),
@@ -1269,7 +1269,7 @@ void THIS::renumerateElementHSFC(void (*f)(const double *, double *))
       pnt += this->point(vtx_idx);
     }
     pnt /= n_vtx;
-    if (f != NULL) {
+    if (f != nullptr) {
       Point<DOW> pnt1(pnt);
       f(&(pnt1[0]), &(pnt[0]));
     }
@@ -1313,7 +1313,7 @@ void THIS::renumerateElementHSFC(void (*f)(const double *, double *))
 TEMPLATE
 void THIS::writeEasyMesh(const std::string& filename) const
 {
-  Assert (DIM == 2, ExcInternalError());
+  assert(DIM == 2);
 }
 
 

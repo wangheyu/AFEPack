@@ -116,7 +116,7 @@ namespace MPI {
   public:
     template <class GEO> void
       set_is_saved(const GEO& geo) const {
-      if (geo.get_property(_pid_is_saved) == NULL) {
+      if (geo.get_property(_pid_is_saved) == nullptr) {
 	geo.new_property(_pid_is_saved);
       }
     }
@@ -198,7 +198,7 @@ namespace MPI {
 	  print_geo_rank_map(const GEO& geo) const {
 	  std::cerr << "[" << _forest->rank() << ":" << geo.dimension;
 	  rank_map_t * p_map = get_rank_map(geo);
-	  if (p_map != NULL) print_rank_map(p_map);
+	  if (p_map != nullptr) print_rank_map(p_map);
 	  std::cerr << "]";
 	}
 
@@ -221,7 +221,7 @@ namespace MPI {
 	  is_on_this_new_rank(const GEO& geo,
 			      int new_rank) const {
 	  rank_map_t * p_map = this->get_rank_map(geo);
-	  if (p_map == NULL) return false;
+	  if (p_map == nullptr) return false;
 	  typename rank_map_t::iterator
 	    the_pair = p_map->find(new_rank);
 	  return (the_pair != p_map->end());
@@ -239,7 +239,7 @@ namespace MPI {
 	  is_save_on_this_rank(const GEO& geo,
 			       int new_rank) const {
 	  rank_map_t * p_map = this->get_rank_map(geo);
-	  assert (p_map != NULL);
+	  assert (p_map != nullptr);
 	  typename rank_map_t::iterator
 	    the_pair = p_map->find(new_rank);
 	  /// 如果几何体的 rank_map 性质中没有 new_rank 的入口
@@ -390,7 +390,7 @@ namespace MPI {
 #define OBJ Shared_object<GEO>
 		GEO * p_geo = (GEO *)(the_pair.second);
 		OBJ * p_info = _forest->get_shared_info(*p_geo);
-		if (p_info == NULL) p_info = _forest->new_shared_info(*p_geo);
+		if (p_info == nullptr) p_info = _forest->new_shared_info(*p_geo);
 		p_info->add_clone(*the_rank, (GEO *)remote_obj);
 #undef OBJ
 #undef GEO
@@ -401,7 +401,7 @@ namespace MPI {
 #define OBJ Shared_object<GEO>
 		GEO * p_geo = (GEO *)(the_pair.second);
 		OBJ * p_info = _forest->get_shared_info(*p_geo);
-		if (p_info == NULL) p_info = _forest->new_shared_info(*p_geo);
+		if (p_info == nullptr) p_info = _forest->new_shared_info(*p_geo);
 		p_info->add_clone(*the_rank, (GEO *)remote_obj);
 #undef OBJ
 #undef GEO
@@ -412,7 +412,7 @@ namespace MPI {
 #define OBJ Shared_object<GEO>
 		GEO * p_geo = (GEO *)(the_pair.second);
 		OBJ * p_info = _forest->get_shared_info(*p_geo);
-		if (p_info == NULL) p_info = _forest->new_shared_info(*p_geo);
+		if (p_info == nullptr) p_info = _forest->new_shared_info(*p_geo);
 		p_info->add_clone(*the_rank, (GEO *)remote_obj);
 #undef OBJ
 #undef GEO
@@ -423,7 +423,7 @@ namespace MPI {
 #define OBJ Shared_object<GEO>
 		GEO * p_geo = (GEO *)(the_pair.second);
 		OBJ * p_info = _forest->get_shared_info(*p_geo);
-		if (p_info == NULL) p_info = _forest->new_shared_info(*p_geo);
+		if (p_info == nullptr) p_info = _forest->new_shared_info(*p_geo);
 		p_info->add_clone(*the_rank, (GEO *)remote_obj);
 #undef OBJ
 #undef GEO
@@ -448,28 +448,28 @@ namespace MPI {
 #define GDIM 0
 #define GEO HGeometry<GDIM,dow>
 		GEO * p_geo = (GEO *)p_obj;
-		assert (_forest->get_shared_info(*p_geo) != NULL);
+		assert (_forest->get_shared_info(*p_geo) != nullptr);
 #undef GEO
 #undef GDIM
 	      } else if (dimension == 1) {
 #define GDIM 1
 #define GEO HGeometry<GDIM,dow>
 		GEO * p_geo = (GEO *)p_obj;
-		assert (_forest->get_shared_info(*p_geo) != NULL);
+		assert (_forest->get_shared_info(*p_geo) != nullptr);
 #undef GEO
 #undef GDIM
 	      } else if (dimension == 2) {
 #define GDIM 2
 #define GEO HGeometry<GDIM,dow>
 		GEO * p_geo = (GEO *)p_obj;
-		assert (_forest->get_shared_info(*p_geo) != NULL);
+		assert (_forest->get_shared_info(*p_geo) != nullptr);
 #undef GEO
 #undef GDIM
 	      } else if (dimension == 3) {
 #define GDIM 3
 #define GEO HGeometry<GDIM,dow>
 		GEO * p_geo = (GEO *)p_obj;
-		assert (_forest->get_shared_info(*p_geo) != NULL);
+		assert (_forest->get_shared_info(*p_geo) != nullptr);
 #undef GEO
 #undef GDIM
 	      }
@@ -506,9 +506,9 @@ namespace MPI {
 	    HGeometry<dim,dow> * p_geo = mesh.template h_geometry<dim>(i);
 	    double * p_loading = p_geo->get_property(_pid_loading);
 	    double loading = (loader.*value)(mesh.geometry(dim,i));
-	    if (p_loading == NULL) {
+	    if (p_loading == nullptr) {
 	      p_loading = p_geo->new_property(_pid_loading);
-	      if (p_geo->get_property(_pid_leaf_loading) == NULL) {
+	      if (p_geo->get_property(_pid_leaf_loading) == nullptr) {
 		p_geo->new_property(_pid_leaf_loading);
 	      }
 	      (*p_loading) = loading;
@@ -596,7 +596,7 @@ namespace MPI {
 	void partition(u_int n_new_rank = 0,
 		       double tol_percent = 0.2,
 		       bool is_renumerate_root = false,
-		       void (*f)(const double*, double*) = NULL) {
+		       void (*f)(const double*, double*) = nullptr) {
 	  int rank =  _forest->rank();
 	  int n_rank = _forest->n_rank();
 
@@ -636,7 +636,7 @@ namespace MPI {
 	  for (;the_ele != end_ele;++ the_ele) {
 	    idx += 1;
 	    double * p_ele_loading = the_ele->get_property(_pid_loading);
-	    assert ((p_ele_loading != NULL));
+	    assert ((p_ele_loading != nullptr));
 	    loading += (*p_ele_loading);
 	    u_int the_rank = (u_int)(floor(loading/mean_loading) + 0.001);
 	    the_rank = std::min(the_rank, n_new_rank - 1); /// 最后一个进程上会多几个单元
@@ -680,9 +680,9 @@ namespace MPI {
 	 */
 	template <class GEO> double
 	  get_loading(const GEO& geo) const {
-	  if (&geo == NULL) return 0; /// 对空指针返回 0
+	  if (&geo == nullptr) return 0; /// 对空指针返回 0
 	  double * p_loading = geo.get_property(_pid_loading);
-	  if (p_loading == NULL) {
+	  if (p_loading == nullptr) {
 	    p_loading = geo.new_property(_pid_loading);
 	    (*p_loading) = 0;
 	  }
@@ -691,7 +691,7 @@ namespace MPI {
 	    for (u_int i = 0;i < geo.n_child;++ i) {
 	      (*p_loading) += get_loading(*geo.child[i]);
 	    }
-	    if (geo.get_property(_pid_leaf_loading) != NULL) {
+	    if (geo.get_property(_pid_leaf_loading) != nullptr) {
 	      for (u_int i = 0;i < geo.n_child;++ i) {
 		geo.child[i]->free_property(_pid_loading);
 	      }
@@ -733,10 +733,10 @@ namespace MPI {
 				 typename forest_t::container_t& nre) const {
 	  double * p_loading = geo.get_property(_pid_loading);
 	  double loading = 0.0;
-	  if (p_loading != NULL) loading = *p_loading;
+	  if (p_loading != nullptr) loading = *p_loading;
 	  if ((loading > tol) &&  /// 负载足够大
 	      (geo.isRefined()) && /// 几何体有被细分
-	      (geo.child[0]->get_property(_pid_loading) != NULL)) { /// 孩子上也有负载
+	      (geo.child[0]->get_property(_pid_loading) != nullptr)) { /// 孩子上也有负载
 	    for (u_int i = 0;i < geo.n_child;++ i) {
 	      this->refine_root_element(tol, *geo.child[i], nre);
 	    }
@@ -766,9 +766,9 @@ namespace MPI {
 	void coarse_root_element(const property_id_t<bool>& pid,
 				 HGeometry<dim,dow>& geo,
 				 typename forest_t::container_t& nre) const {
-	  if (geo.get_property(pid) != NULL) return;
-	  if ((geo.parent != NULL) &&
-	      (_forest->get_shared_info(*geo.parent) == NULL)) {
+	  if (geo.get_property(pid) != nullptr) return;
+	  if ((geo.parent != nullptr) &&
+	      (_forest->get_shared_info(*geo.parent) == nullptr)) {
 	    this->coarse_root_element(pid, *geo.parent, nre);
 	  } else {
 	    nre.push_back(&geo);
@@ -819,10 +819,10 @@ namespace MPI {
 	  pack_set_new_rank(HGeometry<GDIM,dow> * geo,
 			    int remote_rank,
 			    Migration::ostream<>& os) {
-	  assert ((_forest->get_shared_info(*geo) != NULL));
+	  assert ((_forest->get_shared_info(*geo) != nullptr));
 
 	  rank_map_t * p_map = get_rank_map(*geo);
-	  if (p_map == NULL) {
+	  if (p_map == nullptr) {
 	    p_map = new_rank_map(*geo);
 	  }
 
@@ -851,7 +851,7 @@ namespace MPI {
 	  unpack_set_new_rank(HGeometry<GDIM,dow> * geo,
 			      int remote_rank,
 			      Migration::istream<>& is) {
-	  assert ((_forest->get_shared_info(*geo) != NULL));
+	  assert ((_forest->get_shared_info(*geo) != nullptr));
 
 	  /**
 	   * 在每个新分区上，对于每个几何体我们确保只有一个旧分区进行一次的数
@@ -862,7 +862,7 @@ namespace MPI {
 	   *    先权；
 	   */
 	  rank_map_t * p_map = get_rank_map(*geo);
-	  assert (p_map != NULL);
+	  assert (p_map != nullptr);
 
 	  int new_rank;
 	  std::size_t n;
@@ -918,7 +918,7 @@ namespace MPI {
 			      int remote_rank,
 			      Migration::ostream<>& os) {
 	  rank_map_t * p_map = get_rank_map(*geo);
-	  assert (p_map != NULL);
+	  assert (p_map != nullptr);
 
 	  os << p_map->size();
 	  typename rank_map_t::iterator
@@ -936,10 +936,10 @@ namespace MPI {
 	  unpack_check_new_rank(HGeometry<GDIM,dow> * geo,
 				int remote_rank,
 				Migration::istream<>& is) {
-	  assert ((_forest->get_shared_info(*geo) != NULL));
+	  assert ((_forest->get_shared_info(*geo) != nullptr));
 
 	  rank_map_t * p_map = get_rank_map(*geo);
-	  assert (p_map != NULL);
+	  assert (p_map != nullptr);
 
 	  std::size_t n;
 	  is >> n;
@@ -995,7 +995,7 @@ namespace MPI {
 	template <class GEO> void
 	  geometry_set_new_rank_down(const GEO& geo, int new_rank) const {
 	  rank_map_t * p_map = get_rank_map(geo);
-	  if (p_map == NULL) {
+	  if (p_map == nullptr) {
 	    p_map = new_rank_map(geo);
 	  } else if (p_map->find(new_rank) != p_map->end()) {
 	    return; /// 已经设置过的情形
@@ -1041,7 +1041,7 @@ namespace MPI {
 	template <class GEO> void
 	  geometry_set_new_rank_up(const GEO& geo, int new_rank) const {
 	  rank_map_t * p_map = get_rank_map(geo);
-	  if (p_map == NULL) p_map = new_rank_map(geo);
+	  if (p_map == nullptr) p_map = new_rank_map(geo);
 
 	  (*p_map)[new_rank].old_rank = _forest->rank(); /// 将存储秩设为当前的秩
 
@@ -1053,7 +1053,7 @@ namespace MPI {
 	    geometry_set_new_rank_up(*geo.boundary[i], new_rank);
 	  }
 	  GEO* const& p_parent = geo.parent;
-	  if (p_parent != NULL) {
+	  if (p_parent != nullptr) {
 	    if (! is_on_this_new_rank(*p_parent, new_rank)) {
 	      geometry_set_new_rank_up(*p_parent, new_rank);
 	    }
@@ -1113,7 +1113,7 @@ namespace MPI {
 	  for (;the_ele != end_ele;++ the_ele) {
 	    HGeometry<dim,dow> * p_geo = &(*the_ele);
 	    do {
-	      if (p_geo->parent != NULL) {
+	      if (p_geo->parent != nullptr) {
 		p_geo = p_geo->parent;
 	      } else break;
 	    } while (true);
@@ -1137,7 +1137,7 @@ namespace MPI {
 	  for (;the_ele != end_ele;++ the_ele) {
 	    HGeometry<dim,dow> * p_geo = &(*the_ele);
 	    do {
-	      if (p_geo->parent != NULL) {
+	      if (p_geo->parent != nullptr) {
 		p_geo = p_geo->parent;
 	      } else break;
 	    } while (true);
@@ -1170,7 +1170,7 @@ namespace MPI {
 			    int remote_rank,
 			    Migration::ostream<>& os) {
 	  unsigned long * p_idx = get_global_idx(*geo);
-	  assert (p_idx != NULL);
+	  assert (p_idx != nullptr);
 
 	  os << *p_idx; /// 传输自身的原始全局标号
 	}
@@ -1184,10 +1184,10 @@ namespace MPI {
 	  unpack_global_index(HGeometry<GDIM,dow> * geo,
 			      int remote_rank,
 			      Migration::istream<>& is) {
-	  assert ((_forest->get_shared_info(*geo) != NULL));
+	  assert ((_forest->get_shared_info(*geo) != nullptr));
 
 	  unsigned long * p_idx = get_global_idx(*geo);
-	  assert (p_idx != NULL);
+	  assert (p_idx != nullptr);
 
 	  unsigned long remote_idx;
 	  is >> remote_idx;
@@ -1204,11 +1204,11 @@ namespace MPI {
 	  geometry_global_index(GEO& geo, 
 				unsigned long& idx) const {
 	  unsigned long * p_idx = get_global_idx(geo);
-	  if (p_idx != NULL) return; /// 跳过已经处理过的几何体
+	  if (p_idx != nullptr) return; /// 跳过已经处理过的几何体
 
 	  rank_map_t * p_map = get_rank_map(geo);
-	  if (_forest->get_shared_info(geo) != NULL || /// 原本是共享的几何体
-	      (p_map != NULL && p_map->size() > 1)) { /// 或者新秩个数大于 1 的情形都编号
+	  if (_forest->get_shared_info(geo) != nullptr || /// 原本是共享的几何体
+	      (p_map != nullptr && p_map->size() > 1)) { /// 或者新秩个数大于 1 的情形都编号
 	    p_idx = new_global_idx(geo);
 	    *p_idx = idx ++;
 	  }
@@ -1262,10 +1262,10 @@ namespace MPI {
 	  geometry_collect_orphans(GEO& geo, 
 				   const property_id_t<>& pid,
 				   int new_rank) {
-	  if (geo.get_property(pid) != NULL) return;
+	  if (geo.get_property(pid) != nullptr) return;
 	  geo.new_property(pid);
 
-	  if ((geo.get_property(_pid_is_saved) == NULL) &&
+	  if ((geo.get_property(_pid_is_saved) == nullptr) &&
 	      is_save_on_this_rank(geo, new_rank)) {
 	    _n_orphans[GEO::dim] += 1;
 	    _orphans_ptr[GEO::dim].push_back((void *)(&geo));
@@ -1300,7 +1300,7 @@ namespace MPI {
 	  for (;the_ele != end_ele;++ the_ele) {
 	    HGeometry<dim,dow> * p_geo = &(*the_ele);
 	    do {
-	      if (p_geo->parent != NULL) {
+	      if (p_geo->parent != nullptr) {
 		p_geo = p_geo->parent;
 	      } else break;
 	    } while (true);
@@ -1468,7 +1468,7 @@ namespace MPI {
 	 */
 	template <class GEO>
 	  void set_dummy_flag(GEO& geo) const {
-	  if ((_forest->get_shared_info(geo) != NULL) &&
+	  if ((_forest->get_shared_info(geo) != nullptr) &&
 	      (! _forest->is_dummy(geo))) {
 	    _forest->dummy(geo);
 	  }
@@ -1519,7 +1519,7 @@ namespace MPI {
 	  for (;the_ele != end_ele;++ the_ele) {
 	    const HGeometry<dim,dow> * p_geo = &(*the_ele);
 	    do {
-	      if (p_geo->parent != NULL) {
+	      if (p_geo->parent != nullptr) {
 		p_geo = p_geo->parent;
 	      } else break;
 	    } while (true);
@@ -1566,7 +1566,7 @@ namespace MPI {
 	  /**
 	   * 如果父亲不是空指针，检查自己确实是父亲的孩子。
 	   */
-	  if (geo.parent != NULL) {
+	  if (geo.parent != nullptr) {
 	    u_int i = 0;
 	    for (;i < geo.parent->n_child;++ i) {
 	      if (&geo == geo.parent->child[i]) break;
@@ -1578,7 +1578,7 @@ namespace MPI {
 	   * 对边界几何体做递归。
 	   */
 	  for (u_int i = 0;i < geo.n_boundary;++ i) {
-	    assert ((geo.boundary[i] != NULL));
+	    assert ((geo.boundary[i] != nullptr));
 	    geometry_check_integrity(*geo.boundary[i]);
 	  }
 	  if (geo.isRefined()) {
@@ -1587,7 +1587,7 @@ namespace MPI {
 	     * 针都是自己。
 	     */
 	    for (u_int i = 0;i < geo.n_child;++ i) {
-	      assert ((geo.child[i] != NULL));
+	      assert ((geo.child[i] != nullptr));
 	      assert ((&geo == geo.child[i]->parent));
 	      geometry_check_integrity(*geo.child[i]);
 	    }
@@ -1596,7 +1596,7 @@ namespace MPI {
 	     * 如果自己没有加密，确认所有的孩子指针都是空指针。
 	     */
 	    for (u_int i = 0;i < geo.n_child;++ i) {
-	      assert (geo.child[i] == NULL);
+	      assert (geo.child[i] == nullptr);
 	    }
 	  }
 	}
@@ -1610,7 +1610,7 @@ namespace MPI {
 	  for (;the_ele != end_ele;++ the_ele) {
 	    HGeometry<dim,dow> * p_geo = &(*the_ele);
 	    do {
-	      if (p_geo->parent != NULL) {
+	      if (p_geo->parent != nullptr) {
 		p_geo = p_geo->parent;
 	      } else break;
 	    } while (true);

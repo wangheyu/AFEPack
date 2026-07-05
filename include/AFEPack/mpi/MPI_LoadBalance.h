@@ -274,7 +274,7 @@ namespace MPI {
 #define OBJ Shared_object<GEO>
           GEO * p_geo = (GEO *)local_obj;
           OBJ * p_info = _forest->get_shared_info(*p_geo);
-          if (p_info == NULL) p_info = _forest->new_shared_info(*p_geo);
+          if (p_info == nullptr) p_info = _forest->new_shared_info(*p_geo);
           p_info->add_clone(*the_rank, (GEO *)remote_obj);
 #undef OBJ
 #undef GEO
@@ -285,7 +285,7 @@ namespace MPI {
 #define OBJ Shared_object<GEO>
           GEO * p_geo = (GEO *)local_obj;
           OBJ * p_info = _forest->get_shared_info(*p_geo);
-          if (p_info == NULL) p_info = _forest->new_shared_info(*p_geo);
+          if (p_info == nullptr) p_info = _forest->new_shared_info(*p_geo);
           p_info->add_clone(*the_rank, (GEO *)remote_obj);
 #undef OBJ
 #undef GEO
@@ -296,7 +296,7 @@ namespace MPI {
 #define OBJ Shared_object<GEO>
           GEO * p_geo = (GEO *)local_obj;
           OBJ * p_info = _forest->get_shared_info(*p_geo);
-          if (p_info == NULL) p_info = _forest->new_shared_info(*p_geo);
+          if (p_info == nullptr) p_info = _forest->new_shared_info(*p_geo);
           p_info->add_clone(*the_rank, (GEO *)remote_obj);
 #undef OBJ
 #undef GEO
@@ -307,7 +307,7 @@ namespace MPI {
 #define OBJ Shared_object<GEO>
           GEO * p_geo = (GEO *)local_obj;
           OBJ * p_info = _forest->get_shared_info(*p_geo);
-          if (p_info == NULL) p_info = _forest->new_shared_info(*p_geo);
+          if (p_info == nullptr) p_info = _forest->new_shared_info(*p_geo);
           p_info->add_clone(*the_rank, (GEO *)remote_obj);
 #undef OBJ
 #undef GEO
@@ -341,7 +341,7 @@ namespace MPI {
     for (u_int i = 0;i < n_ele;++ i) {
       HGeometry<dim,dow> * p_geo = mesh.template h_geometry<dim>(i);
       double * p_loading = p_geo->get_property(_pid_loading);
-      if (p_loading == NULL) {
+      if (p_loading == nullptr) {
         p_loading = p_geo->new_property(_pid_loading);
       }
       (*p_loading) = (loader.*value)(mesh.geometry(dim,i));
@@ -362,7 +362,7 @@ namespace MPI {
     for (u_int i = 0;i < n_ele;++ i) {
       const HGeometry<dim,dow> * p_geo = mesh.template h_geometry<dim>(i);
       double * p_loading = p_geo->get_property(_pid_loading);
-      if (p_loading == NULL) {
+      if (p_loading == nullptr) {
         p_loading = p_geo->new_property(_pid_loading);
       }
       (*p_loading) = (*value)(mesh.geometry(dim,i));
@@ -463,7 +463,7 @@ namespace MPI {
   template <class GEO> double
   get_loading(GEO& geo) const {
     double * p_loading = geo.get_property(_pid_loading);
-    if (p_loading == NULL) {
+    if (p_loading == nullptr) {
       p_loading = geo.new_property(_pid_loading);
       for (u_int i = 0;i < geo.n_child;++ i) {
         (*p_loading) += get_loading(*geo.child[i]);
@@ -521,7 +521,7 @@ namespace MPI {
                     int remote_rank,
                     Migration::ostream<>& os) {
     std::map<int,int> * p_map = get_rank_map(*geo);
-    assert (p_map != NULL);
+    assert (p_map != nullptr);
 
     os << p_map->size();
     typename std::map<int,int>::iterator
@@ -543,7 +543,7 @@ namespace MPI {
      * 小秩进程作为最后对其进行输出的进程。
      */
     std::map<int,int> * p_map = get_rank_map(*geo);
-    assert (p_map != NULL);
+    assert (p_map != nullptr);
 
     int new_rank, old_rank;
     std::size_t n;
@@ -571,7 +571,7 @@ namespace MPI {
   template <class GEO> void
   geometry_set_new_rank(GEO& geo, int new_rank) const {
     std::map<int,int> * p_map = get_rank_map(geo);
-    if (p_map == NULL) p_map = new_rank_map(geo);
+    if (p_map == nullptr) p_map = new_rank_map(geo);
     p_map->insert(std::pair<int,int>(new_rank, _forest->rank())); /// 将存储秩设为当前的秩
     
     /// 然后对顶点、边界和后代做递归    
@@ -663,7 +663,7 @@ namespace MPI {
                     int remote_rank,
                     Migration::ostream<>& os) {
     unsigned long * p_idx = get_global_idx(*geo);
-    assert (p_idx != NULL);
+    assert (p_idx != nullptr);
 
     os << *p_idx; /// 传输自身的原始全局标号
   }
@@ -678,7 +678,7 @@ namespace MPI {
                       int remote_rank,
                       Migration::istream<>& is) {
     unsigned long * p_idx = get_global_idx(*geo);
-    assert (p_idx != NULL);
+    assert (p_idx != nullptr);
 
     unsigned long remote_idx;
     is >> remote_idx;
@@ -695,10 +695,10 @@ namespace MPI {
   geometry_global_index(GEO& geo, 
                         unsigned long& idx) const {
     unsigned long * p_idx = get_global_idx(geo);
-    if (p_idx != NULL) return; /// 跳过已经处理过的几何体
+    if (p_idx != nullptr) return; /// 跳过已经处理过的几何体
 
     std::map<int,int> * p_map = get_rank_map(geo);
-    if (_forest->get_shared_info(geo) != NULL || /// 原本是共享的几何体
+    if (_forest->get_shared_info(geo) != nullptr || /// 原本是共享的几何体
         p_map->size() > 1) { /// 或者新秩个数大于 1 的情形都编号
       p_idx = new_global_idx(geo);
       *p_idx = idx ++;
@@ -859,7 +859,7 @@ namespace MPI {
    */
   template <class GEO>
     void set_shared_info_sent(GEO& geo) const {
-    if ((_forest->get_shared_info(geo) != NULL) &
+    if ((_forest->get_shared_info(geo) != nullptr) &
         (! _forest->is_shared_info_sent(geo))) {
       _forest->set_shared_info_sent(geo);
     }

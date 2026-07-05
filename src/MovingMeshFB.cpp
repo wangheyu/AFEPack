@@ -34,7 +34,7 @@ void MovingMeshFB::readDomain(const std::string& filename)
   n_interior_node = 0;
   n_boundary_node = 0;
   for (i = 0;i < n_geometry(0);i ++) {
-    Assert(geometry(0,i).vertex(0) == i, ExcInternalError());
+    assert(geometry(0,i).vertex(0) == i);
     if (geometry(0, i).boundaryMark() != 0)
       index[i] = n_boundary_node ++;
     else

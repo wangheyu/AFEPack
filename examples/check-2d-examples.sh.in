@@ -1,0 +1,101 @@
+#!/bin/sh
+
+set -eu
+
+top_srcdir="@top_srcdir@"
+top_builddir="@top_builddir@"
+
+abs_top_srcdir=`cd "$top_srcdir" && pwd`
+abs_top_builddir=`cd "$top_builddir" && pwd`
+abs_builddir=`pwd`
+
+workdir="$abs_builddir/check-2d-work"
+templates="$workdir/templates"
+triangle_templates="$templates/triangle"
+
+fail()
+{
+  echo "FAIL: $*" >&2
+  exit 1
+}
+
+need_file()
+{
+  test -s "$1" || fail "expected file not found or empty: $1"
+}
+
+run_easymesh()
+{
+  base="$1"
+  "$abs_top_builddir/external/easymesh/easymesh" "$base" >/dev/null 2>&1 || true
+  need_file "$base.n"
+  need_file "$base.s"
+  need_file "$base.e"
+}
+
+run_example()
+{
+  program="$1"
+  shift
+  log="$1"
+  shift
+  if ! "$program" "$@" >"$log" 2>&1; then
+    cat "$log" >&2
+    fail "$program failed"
+  fi
+}
+
+prepare_triangle_templates()
+{
+  mkdir -p "$triangle_templates"
+  cp "$abs_top_srcdir/include/AFEPack/template/triangle/triangle.tmp_geo" "$triangle_templates/"
+  cp "$abs_top_srcdir/include/AFEPack/template/triangle/triangle.crd_trs" "$triangle_templates/"
+  cp "$abs_top_srcdir/include/AFEPack/template/triangle/triangle.1/triangle.1.tmp_dof" "$triangle_templates/"
+  cp "$abs_top_srcdir/include/AFEPack/template/triangle/triangle.1/triangle.1.bas_fun" "$triangle_templates/"
+
+  geom_so="$abs_top_builddir/include/AFEPack/template/triangle/.libs/libtriangle.geometry.so"
+  basis_so="$abs_top_builddir/include/AFEPack/template/triangle/triangle.1/.libs/libtriangle.1.bas_fun.so"
+  need_file "$geom_so"
+  need_file "$basis_so"
+  ln -sf "$geom_so" "$triangle_templates/libtriangle.geometry.so"
+  ln -sf "$basis_so" "$triangle_templates/libtriangle.1.bas_fun.so"
+}
+
+rm -rf "$workdir"
+mkdir -p "$workdir"
+trap 'rm -rf "$workdir"' EXIT INT TERM
+
+prepare_triangle_templates
+
+LD_LIBRARY_PATH="$abs_top_builddir/src/.libs:${LD_LIBRARY_PATH-}"
+AFEPACK_TEMPLATE_PATH="$triangle_templates"
+export LD_LIBRARY_PATH AFEPACK_TEMPLATE_PATH
+
+poisson_work="$workdir/poisson_equation"
+mkdir -p "$poisson_work"
+cp "$abs_top_srcdir/examples/poisson_equation/D.d" "$poisson_work/"
+cd "$poisson_work"
+run_easymesh D
+run_example "$abs_top_builddir/examples/poisson_equation/main" poisson.log D
+need_file u.dx
+grep "L2 error" poisson.log >/dev/null || fail "poisson_equation did not report L2 error"
+echo "PASS: poisson_equation"
+
+elliptic_work="$workdir/elliptic_equation"
+mkdir -p "$elliptic_work"
+cp "$abs_top_srcdir/examples/elliptic_equation/D.d" "$elliptic_work/"
+cd "$elliptic_work"
+run_easymesh D
+run_example "$abs_top_builddir/examples/elliptic_equation/main" elliptic.log D
+need_file u.dx
+echo "PASS: elliptic_equation"
+
+taichi_work="$workdir/TaiChiYinYang"
+mkdir -p "$taichi_work"
+cp "$abs_top_srcdir/examples/TaiChiYinYang/D.d" "$taichi_work/"
+cd "$taichi_work"
+run_easymesh D
+run_example "$abs_top_builddir/examples/TaiChiYinYang/main" taichi.log D 0 --test-once
+need_file D.dx
+echo "PASS: TaiChiYinYang"
+

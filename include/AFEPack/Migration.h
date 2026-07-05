@@ -47,7 +47,7 @@ namespace Migration {
     typedef typename BUFFER::const_iterator const_iterator;
   public:
     /// 空构造函数
-  stream_base() : _buf(NULL) {}
+  stream_base() : _buf(nullptr) {}
     /// 提供一个数据缓存的构造函数 
   stream_base(BUFFER& buf) : _buf(&buf) {}
     /// 析构函数
@@ -146,7 +146,7 @@ namespace Migration {
    * 
    */
   void reset() {
-    if (_buf != NULL) {
+    if (_buf != nullptr) {
       _pos = _buf->begin();
     }
   }
@@ -362,7 +362,7 @@ namespace Migration {
       } else {
         buffer_t::iterator it = buffer.find(data_id);
         if (it == buffer.end()) {
-          return *((BinaryBuffer<> *)NULL);
+          return *((BinaryBuffer<> *)nullptr);
         }
         return it->second;
       }
@@ -392,7 +392,7 @@ namespace Migration {
       } else {
         buffer_t::iterator it = buffer.find(data_id);
         if (it == buffer.end()) {
-          return *((BinaryBuffer<> *)NULL);
+          return *((BinaryBuffer<> *)nullptr);
         }
         return it->second;
       }

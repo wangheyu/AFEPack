@@ -1,5 +1,11 @@
 SUBDIRS = template
 
+if ENABLE_MPI
+SUBDIRS += mpi
+endif
+
+DIST_SUBDIRS = template mpi
+
 headerincludedir = $(includedir)/AFEPack
 
 headerinclude_HEADERS = AMGSolver.h\
@@ -10,8 +16,8 @@ headerinclude_HEADERS = AMGSolver.h\
 			DBMesh.h\
 			DGFEMSpace.h\
 			DGFEMSpace.templates.h\
-			DerefIterator.h\
 			DenseMatrix.h\
+			DerefIterator.h\
 			EasyMesh.h\
 			EasyMesh.templates.h\
 			FEMSpace.h\
@@ -26,13 +32,12 @@ headerinclude_HEADERS = AMGSolver.h\
 			HGeometry.templates.h\
 			HGeometry.templates.nd.h\
 			HybridFEMSpace.h\
-			LOBPCG.h\
+			MatrixBase.h\
 			MemoryReclaimer.h\
 			MemoryReclaimer.templates.h\
 			Migration.details.h\
 			Migration.h\
 			Miscellaneous.h\
-			MovingMesh.h\
 			MovingMesh2D.h\
 			MovingMesh3D.h\
 			MovingMeshFB.h\
@@ -44,16 +49,15 @@ headerinclude_HEADERS = AMGSolver.h\
 			PropertyTable.h\
 			Serialization.h\
 			SimplestSimplexMesh.h\
+			Solvers.h\
 			SparseMatrix.h\
+			SparsityPattern.h\
 			SparseMatrixTool.h\
 			SparseMatrixTool.templates.h\
-			SparsityPattern.h\
 			TemplateElement.h\
 			TemplateElement.templates.h\
 			Thread.h\
 			ThreadBase.h\
-			Vecma.h\
 			Vector.h\
 			XObject.h
-
 

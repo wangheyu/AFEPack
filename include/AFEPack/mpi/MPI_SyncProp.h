@@ -52,7 +52,7 @@ namespace MPI {
   const property_id_t<PROPIN> * _p_pid_in;
 
   public:
-  PropSyncer() : _p_forest(NULL), _p_pid_out(NULL), _p_pid_in(NULL) {}
+  PropSyncer() : _p_forest(nullptr), _p_pid_out(nullptr), _p_pid_in(nullptr) {}
   PropSyncer(const FOREST& forest,
              const property_id_t<PROPOUT>& pid_out)
   : _p_forest(&forest), _p_pid_out(&pid_out), _p_pid_in(&pid_out) {}
@@ -104,14 +104,14 @@ namespace MPI {
   public:
   template <int D> bool
   is_pack_info(HGeometry<D,FOREST::dow> * p_geo) {
-    return (p_geo->get_property(*_p_pid_out) != NULL);
+    return (p_geo->get_property(*_p_pid_out) != nullptr);
   }
   template <int D>
   void pack(HGeometry<D,FOREST::dow> * p_geo,
             int remote_rank,
             Migration::ostream<>& os) {
     const PROPOUT * p_buf = p_geo->get_property(*_p_pid_out);
-    assert (p_buf != NULL);
+    assert (p_buf != nullptr);
     os << *p_buf;
   }
   template <int D>
@@ -119,7 +119,7 @@ namespace MPI {
               int remote_rank,
               Migration::istream<>& is) {
     PROPIN * p_buf = p_geo->get_property(*_p_pid_in);
-    if (p_buf == NULL) {
+    if (p_buf == nullptr) {
       p_buf = p_geo->new_property(*_p_pid_in);
     }
     is >> *p_buf;
@@ -154,7 +154,7 @@ namespace MPI {
                  int remote_rank,
                  Migration::istream<>& is) {
     PROPIN * p_buf = p_geo->get_property(*_p_pid_in);
-    if (p_buf == NULL) {
+    if (p_buf == nullptr) {
       p_buf = p_geo->new_property(*_p_pid_in);
       is >> *p_buf;
     } else {

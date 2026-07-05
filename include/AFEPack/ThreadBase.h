@@ -404,7 +404,7 @@ fun_ptr = _fd.fun_ptr;
 			    , mfd->arg10
 #endif
 			  );
-    return NULL;
+    return nullptr;
   };
 
   };
@@ -725,7 +725,7 @@ typedef Return (Class::*MemFunPtr)(
 					   , mfd->arg10
 #endif
 					   );
-      return NULL;
+      return nullptr;
     };
 
   };

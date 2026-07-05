@@ -1,4 +1,4 @@
-This is AFEPack.info, produced by makeinfo version 6.5 from
+This is AFEPack.info, produced by makeinfo version 7.1.1 from
 AFEPack.texi.
 
 
@@ -15,7 +15,7 @@ The AFEPack Handbook
 * Understanding the Library::
 * Copyright::
 
-— The Detailed Node Listing —
+-- The Detailed Node Listing --
 
 Introduction
 
@@ -101,7 +101,7 @@ then why we develop AFEPack and who will use it?
      have several different adaptive meshes, AFEPack can build finite
      element spaces on those different meshes respectively and build the
      relationship between those finite element spaces as constructing
-     the matrix of a bilinear operator.  As the authors’ knowledge,
+     the matrix of a bilinear operator.  As the authors' knowledge,
      AFEPack is the only library until now that have such feather.  If
      your problem have more than one variables, and the regularity of
      those variables are different, or even the irregular areas of those
@@ -215,7 +215,7 @@ File: AFEPack.info,  Node: Requirements,  Next: Compilation and installation,  P
      library development package installed, such as the glibc-devel
      package on Linux system.
 
-   Now AFEPack can’t work on HP-UX because the uncompatibility in shared
+   Now AFEPack can't work on HP-UX because the uncompatibility in shared
 library loading from HP-UX to other systems.  Note: in fact the package
 before version 1.5 is only tested on Linux system.
 
@@ -361,7 +361,7 @@ output, dimension independent, able to store geometry in any shape.
      mesh.readData("a.mesh"); // read data from file "a.mesh"
      ... ...
      mesh.writeData("b.mesh"); // write the data to file "b.mesh"
-   It’s clear that the supported data format can be extended very easily
+   It's clear that the supported data format can be extended very easily
 by writing more port if you can get the data format of other mesh data
 file.
 
@@ -371,7 +371,7 @@ File: AFEPack.info,  Node: Construct a template element,  Next: Construct a Fini
 3.1.2 Construct a template element
 ----------------------------------
 
-Now let’s construct a template element, which is a main task to
+Now let's construct a template element, which is a main task to
 construct a finite element space.  We will construct a linear Lagrangian
 element on a triangle, the most often used one in coding.  Most of the
 work needed in this operation should be achieved by hand.  We divide it
@@ -385,7 +385,7 @@ into several steps:
      file have three part.  The following is an example to describe the
      geometry information on a triangle element.  The texts following a
      "#" are comment(When you write such a file of yourself, please
-     remove those comments because until now the library doesn’t support
+     remove those comments because until now the library doesn't support
      comments in this file).
           # the information of the function to calculate the volume of the triangle
           ./triangle.geometry.so                        # the function to calculate the volume of the triangle is in this shared library
@@ -435,9 +435,9 @@ into several steps:
               0.500000    0.000000    0.333333          # coordinate of the quadrature point is (0.500000, 0.000000), weight 0.333333
               0.500000    0.500000    0.333333          # coordinate of the quadrature point is (0.500000, 0.500000), weight 0.333333
               0.000000    0.500000    0.333333          # coordinate of the quadrature point is (0.000000, 0.500000), weight 0.333333
-     Let’s save those information in a file named, such as
+     Let's save those information in a file named, such as
      "triangle.tmp_geo".  Obviously, we need a C source code file for
-     the shared library "triangle.geometry.so".  That’s easy.  We edit
+     the shared library "triangle.geometry.so".  That's easy.  We edit
      such a source file as following:
           /* triangle.geometry.c */
 
@@ -470,7 +470,7 @@ into several steps:
 
      The coordinate transformation is the information to map the point
      from the template geometry to the real element, and vice visa.
-     It’s in fact four C function in a shared library.  We need prepare
+     It's in fact four C function in a shared library.  We need prepare
      a text file as
           ./triangle.geometry.so                            # the shared library in which those functions included
               local_to_global                               # the function to map a point from template to real element
@@ -529,15 +529,15 @@ into several steps:
 
   3. Degree of Freedom
 
-     This is a very simple but important information.  It’s only a text
+     This is a very simple but important information.  It's only a text
      file to tell how many degrees of freedom on certain geometries.
-     Let’s see the following example:
+     Let's see the following example:
           3                                            # there are 3 lines of information in this file
 
           0    0    1                                  # there are 1 dof on the number 0 of 0 dimension geometries
           0    1    1                                  # there are 1 dof on the number 1 of 0 dimension geometries
           0    2    1                                  # there are 1 dof on the number 2 of 0 dimension geometries
-     Let’s save it into a file named as "triangle.1.tmp_dof" and
+     Let's save it into a file named as "triangle.1.tmp_dof" and
      construct the degree of freedom object
           #include <AFEPack/Geometry.h>
           #include <AFEPack/TemplateElement.h>
@@ -622,7 +622,7 @@ into several steps:
           1       0 0     0
           ./triangle.1.bas_fun.so
                   lambda_3        gradient_lambda_3
-     Now let’s construct the basis functions for the template element as
+     Now let's construct the basis functions for the template element as
           #include <AFEPack/Geometry.h>
           #include <AFEPack/TemplateElement.h>
 
@@ -630,7 +630,7 @@ into several steps:
           BasisFunctionAdmin<double,2,2> triangle_basis_function(triangle_template_dof);
           triangle_basis_function.readData("triangle.1.bas_fun");
      With all those steps, we at last can construct a template element
-     for a finite element space.  Let’s collect those codes together as
+     for a finite element space.  Let's collect those codes together as
      following:
           #include <AFEPack/Geometry.h>
           #include <AFEPack/TemplateElement.h>
@@ -675,7 +675,7 @@ File: AFEPack.info,  Node: Construct a Finite Element Space,  Next: Construct a 
 Now we already have mesh data and template elements, and the following
 is to build a finite element space.  This is really easy now - the only
 thing you need to do is: appoint a template for every geometry element.
-Let’s continue the codes in last example:
+Let's continue the codes in last example:
      // read in a mesh at first, assume that there are only triangles in the mesh
      Mesh<2,2> mesh;
      mesh.readData("mesh_data_file");
@@ -705,8 +705,8 @@ File: AFEPack.info,  Node: Construct a Stiff Matrix,  Next: Solve a Laplacian Eq
 3.1.4 Construct a Stiff Matrix
 ------------------------------
 
-Now it’s time to show that the library have done something for you.  We
-will construct a stiff matrix on the finite element space.  It’s again
+Now it's time to show that the library have done something for you.  We
+will construct a stiff matrix on the finite element space.  It's again
 very easy as a continuing of the last example:
      #include <AFEPack/BilinearOperator.h>
 
@@ -778,9 +778,9 @@ condition.  See the following code:
      {
                 return sin(2*PI*p[0]) * sin(2*PI*p[1]);
      }
-   Let’s have a look at the solution
+   Let's have a look at the solution
 
-   hehe, it’s really the solution except the mesh is too coarse(the
+   hehe, it's really the solution except the mesh is too coarse(the
 figure is plotted by IBM Open Data Explorer).
 
 
@@ -790,12 +790,12 @@ File: AFEPack.info,  Node: Mesh Adaptation,  Next: Multi-Mesh Operation,  Prev: 
 ---------------------
 
 Mesh adaptation is only supported for simplex element in the package.
-The class Mesh<DOW,DIM> doesn’t support mesh adaptation automaticly
+The class Mesh<DOW,DIM> doesn't support mesh adaptation automaticly
 because the mesh adaptation is based on the finite element base part.  A
 derived class RegularMesh<DIM> will support mesh adaptation.  The mesh
 adaptation is designed to support multimesh machenism at the beginning
 that even you want to adapt one mesh, it will be taken as multiple mesh
-adaptation.  Let’s see how to write such code.
+adaptation.  Let's see how to write such code.
 
      #include <AFEPack/HGeometry.h>                // the head file declaring those class support mesh adaptation
 
@@ -1329,11 +1329,11 @@ algorithm.
              }
      };
 
-   It’s easy to see that we haven’t give the formation of those
+   It's easy to see that we haven't give the formation of those
 coefficient functions.  Their prototypes are all the same as double
 foo(const double *);
 
-   it’s very convenient to give flexible coefficient functions as such
+   it's very convenient to give flexible coefficient functions as such
 prototype to solve an elliptic system.  Have a try!
 
    In this example, in fact we only used some simple facilities to
@@ -1456,7 +1456,7 @@ choose the following information to construct a geometry:
      };
 
    For the node(0-dimensional) geometry, the index of the vertex and
-boundary is the index of the corresponding point.  Generally, it’s not
+boundary is the index of the corresponding point.  Generally, it's not
 required that the index of the node geometry is the same as the index of
 the point though in most cases, they are the same.  Such mechanism is
 kept for future.  As we can see, the most efficient operation is then to
@@ -1491,10 +1491,10 @@ element.  The order of the vertices of the real element is very
 important because the construction is mainly depended on the information
 of the vertices.  And the numerical quadrature information is also
 include in the geometry information in the library, though we believe
-that it can be took out as an independent part.  Generally we don’t know
+that it can be took out as an independent part.  Generally we don't know
 the algebraic accuracy of the application before the problem has been
 given.  You can look up for the correct quadrature information in a
-table if you give the required algebraic accuracy.  It’s very convenient
+table if you give the required algebraic accuracy.  It's very convenient
 for programmer to code with different quadrature formulas in different
 occasion.
 
@@ -1505,7 +1505,7 @@ File: AFEPack.info,  Node: Coordinate Transformation,  Next: Degree of Freedom D
 -------------------------------
 
 This coordinate transformation is used to map a point in the template
-element to a real element, and vice visa.  It’s constructed according
+element to a real element, and vice visa.  It's constructed according
 the coordinate of the vertices of the template element and the real
 element, too.  With this coordinate transformation, and given a point on
 the template element, you can get the coordinate of the corresponding
@@ -1525,7 +1525,7 @@ geometry in the real triangulation.  Of course, on a geometry in the
 real triangulation shared by several element, the appointment of degree
 of freedom should be coincide on it.  The code will check if the data
 are correct when build the freedom of degree for the finite element
-space.  It’s obvious that with this information, the code can manipulate
+space.  It's obvious that with this information, the code can manipulate
 the degree of freedom of the whole finite element space for you
 automatically.
 
@@ -1535,11 +1535,11 @@ File: AFEPack.info,  Node: Basis Function,  Prev: Degree of Freedom Distribution
 4.1.4 Basis Function
 --------------------
 
-A basis function is related with a degree of freedom.  It’s a function
+A basis function is related with a degree of freedom.  It's a function
 defined on a real element, and can calculate its value and gradient at a
 point provided the coordinate of the vertices of the element.  More
 roughly, it can only be called a shape function from the finite element
-point of view.  And it’s only appointed to related with a certain
+point of view.  And it's only appointed to related with a certain
 geometry of the template element.  The code will relate it with a degree
 of freedom automatically and connect it with other shape functions on
 the neighbours of the real element to construct a REAL basis function.
@@ -1554,7 +1554,7 @@ shape function.
 
    The four parts of the template element are taken as data in the
 library, which means the library can be extended very freely as the
-user’s willing.  That’s why we declare that we can build the finite
+user's willing.  That's why we declare that we can build the finite
 element space for you, only if you can provide the template elements of
 the finite element space.
 
@@ -1571,7 +1571,7 @@ adopted a hierarchy tree structure to store the geometries of all the
 meshes.  This hierarchy is a infinitely refined mesh on the whole domain
 in mind.  Every real mesh is a "cross section" of the hierarchy tree.
 We give the concept "semiregular", to make the real mesh uniquely
-determined by a semiregular mesh.  It’s very convienient to calculate
+determined by a semiregular mesh.  It's very convienient to calculate
 the intersect and the union of two semiregular meshes, which makes it
 possible to analysis the relationship of two different finite element
 space on these two meshes.  And such structure is very convienient for
@@ -1594,7 +1594,7 @@ File: AFEPack.info,  Node: Application Level,  Prev: Mesh Adaptation Level,  Up:
 =====================
 
 This level is called application because they are really applications
-built on the former leverls.  You needn’t to care about this level if
+built on the former leverls.  You needn't to care about this level if
 you are not interest in our research at all.  These applications can
 also be took as examples using the library.  We have developped very
 efficient solver for Possion equation, p-Laplacian problem, variational
@@ -1627,39 +1627,39 @@ Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 
 Tag Table:
-Node: Top75
+Node: Top77
 Node: Introduction1035
 Node: Why AFEPack?1198
-Node: A first glance3365
-Node: Installation6660
-Node: How to obtain AFEPack6865
-Node: Requirements7287
-Node: Compilation and installation8061
-Node: Usage9548
-Node: Step by step tutorial9771
-Node: Mesh Data10112
-Node: Construct a template element14385
-Ref: Geometry Information14910
-Ref: Coordinate transformation19947
-Ref: Degree of Freedom22977
-Ref: Basis function24058
-Node: Construct a Finite Element Space30240
-Node: Construct a Stiff Matrix31783
-Node: Solve a Laplacian Equation32645
-Node: Mesh Adaptation35017
-Node: Multi-Mesh Operation38675
-Node: Data File Format63683
-Node: Advanced Techniques67680
-Node: Hacking Source Code67844
-Node: Understanding the Library67983
-Node: Finite Element Level68221
-Node: Geometry Information (1)70683
-Node: Coordinate Transformation71843
-Node: Degree of Freedom Distribution72502
-Node: Basis Function73353
-Node: Mesh Adaptation Level74877
-Node: Application Level76553
-Node: Copyright77248
+Node: A first glance3363
+Node: Installation6658
+Node: How to obtain AFEPack6863
+Node: Requirements7285
+Node: Compilation and installation8057
+Node: Usage9544
+Node: Step by step tutorial9767
+Node: Mesh Data10108
+Node: Construct a template element14379
+Ref: Geometry Information14902
+Ref: Coordinate transformation19933
+Ref: Degree of Freedom22961
+Ref: Basis function24036
+Node: Construct a Finite Element Space30214
+Node: Construct a Stiff Matrix31755
+Node: Solve a Laplacian Equation32613
+Node: Mesh Adaptation34981
+Node: Multi-Mesh Operation38635
+Node: Data File Format63637
+Node: Advanced Techniques67634
+Node: Hacking Source Code67798
+Node: Understanding the Library67937
+Node: Finite Element Level68175
+Node: Geometry Information (1)70635
+Node: Coordinate Transformation71791
+Node: Degree of Freedom Distribution72448
+Node: Basis Function73297
+Node: Mesh Adaptation Level74813
+Node: Application Level76487
+Node: Copyright77180
 
 End Tag Table
 

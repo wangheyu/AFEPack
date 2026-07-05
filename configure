@@ -657,7 +657,17 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 AM_CXXFLAGS
 AM_CPPFLAGS
+AM_LDFLAGS
+RPATH_FLAGS
 LIBOBJS
+ENABLE_MPI_FALSE
+ENABLE_MPI_TRUE
+MPICXX
+GMSH_TESTS
+GMSH
+BOOST_LDFLAGS
+BOOST_CPPFLAGS
+BOOST_SERIALIZATION_LIB
 CXXCPP
 am__fastdepCXX_FALSE
 am__fastdepCXX_TRUE
@@ -799,6 +809,16 @@ enable_dependency_tracking
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
+enable_mpi
+enable_gmsh_tests
+with_cblas_includedir
+with_cblas_libdir
+with_lapacke_includedir
+with_lapacke_libdir
+with_openblas_libdir
+with_boost
+with_boost_libdir
+enable_debug
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1456,6 +1476,11 @@ Optional Features:
   --disable-dependency-tracking
                           speeds up one-time build
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-mpi            build MPI library and install MPI headers
+                          [default=no]
+  --enable-gmsh-tests=auto|yes|no
+                          run gmsh-based example tests [default=auto]
+  --enable-debug          enable debugging, disables optimizations
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1463,6 +1488,20 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
+  --with-cblas-includedir=DIR
+                          Specify the directory containing CBLAS header files
+  --with-cblas-libdir=DIR Specify the directory containing general CBLAS
+                          libraries
+  --with-lapacke-includedir=DIR
+                          Specify the directory containing LAPACKE header
+                          files
+  --with-lapacke-libdir=DIR
+                          Specify the directory containing general LAPACKE
+                          libraries
+  --with-openblas-libdir=DIR
+                          Specify the directory containing OpenBLAS libraries
+  --with-boost=DIR        Specify the Boost installation prefix
+  --with-boost-libdir=DIR Specify the directory containing Boost libraries
 
 Some influential environment variables:
   CC          C compiler command
@@ -1873,11 +1912,11 @@ fi
 
 } # ac_fn_cxx_try_link
 
-# ac_fn_cxx_check_type LINENO TYPE VAR INCLUDES
-# ---------------------------------------------
-# Tests whether TYPE exists after having included INCLUDES, setting cache
-# variable VAR accordingly.
-ac_fn_cxx_check_type ()
+# ac_fn_cxx_check_header_compile LINENO HEADER VAR INCLUDES
+# ---------------------------------------------------------
+# Tests whether HEADER exists and can be compiled using the include files in
+# INCLUDES, setting the cache variable VAR accordingly.
+ac_fn_cxx_check_header_compile ()
 {
   as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
@@ -1886,41 +1925,17 @@ if eval test \${$3+y}
 then :
   printf %s "(cached) " >&6
 else case e in #(
-  e) eval "$3=no"
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+  e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 $4
-int
-main (void)
-{
-if (sizeof ($2))
-	 return 0;
-  ;
-  return 0;
-}
+#include <$2>
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"
 then :
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$4
-int
-main (void)
-{
-if (sizeof (($2)))
-	    return 0;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"
-then :
-
+  eval "$3=yes"
 else case e in #(
-  e) eval "$3=yes" ;;
+  e) eval "$3=no" ;;
 esac
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext ;;
 esac
@@ -1930,7 +1945,7 @@ eval ac_res=\$$3
 printf "%s\n" "$ac_res" >&6; }
   eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
 
-} # ac_fn_cxx_check_type
+} # ac_fn_cxx_check_header_compile
 
 # ac_fn_cxx_try_run LINENO
 # ------------------------
@@ -14192,7 +14207,7 @@ if test -z "$CXX"; then
     CXX=$CCC
   else
     if test -n "$ac_tool_prefix"; then
-  for ac_prog in mpicxx
+  for ac_prog in g++ clang++
   do
     # Extract the first word of "$ac_tool_prefix$ac_prog", so it can be a program name with args.
 set dummy $ac_tool_prefix$ac_prog; ac_word=$2
@@ -14242,7 +14257,7 @@ fi
 fi
 if test -z "$CXX"; then
   ac_ct_CXX=$CXX
-  for ac_prog in mpicxx
+  for ac_prog in g++ clang++
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -18617,7 +18632,7 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 if test -n "$ac_tool_prefix"; then
-  for ac_prog in mpicc
+  for ac_prog in gcc clang cc
   do
     # Extract the first word of "$ac_tool_prefix$ac_prog", so it can be a program name with args.
 set dummy $ac_tool_prefix$ac_prog; ac_word=$2
@@ -18667,7 +18682,7 @@ fi
 fi
 if test -z "$CC"; then
   ac_ct_CC=$CC
-  for ac_prog in mpicc
+  for ac_prog in gcc clang cc
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -19253,185 +19268,544 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
-# Checks for libraries.
-#AC_CHECK_LIB([deal_II], [main],
-#  [deal_II_library=yes, LIBS="-ldeal_II $LIBS"],
-#  [deal_II_library=no])
-# if test "x$deal_II_library" == xno; then
-#  AC_CHECK_LIB([base], [main],
-#    [deal_II_library=yes, LIBS="-llac -lbase $LIBS"],
-#    [deal_II_library=no])
-#  if test "x$deal_II_library" == xno; then
-#    AC_MSG_ERROR(deal.II library not found)
-#  fi
-# fi
-
-
-# Checks for header files.
-#AC_CHECK_HEADERS([fcntl.h unistd.h])
-#AC_CHECK_HEADERS(deal.II/base/exceptions.h,[],[AC_MSG_ERROR([Could not find deal.II header files])],
-#[#define DEBUG
-  #include <deal.II/base/exceptions.h>
-#])
-
-
-# Checks for typedefs, structures, and compiler characteristics.
-ac_fn_cxx_check_type "$LINENO" "_Bool" "ac_cv_type__Bool" "$ac_includes_default"
-if test "x$ac_cv_type__Bool" = xyes
-then :
-
-printf "%s\n" "#define HAVE__BOOL 1" >>confdefs.h
-
-
-fi
-
-   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for stdbool.h that conforms to C99 or later" >&5
-printf %s "checking for stdbool.h that conforms to C99 or later... " >&6; }
-if test ${ac_cv_header_stdbool_h+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+# Check for C++20 support without requiring autoconf-archive macros.
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether $CXX supports C++20 with -std=c++20" >&5
+printf %s "checking whether $CXX supports C++20 with -std=c++20... " >&6; }
+SAVE_CXX="$CXX"
+CXX="$CXX -std=c++20"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include <stdbool.h>
-
-             /* "true" and "false" should be usable in #if expressions and
-                integer constant expressions, and "bool" should be a valid
-                type name.
-
-                Although C99 requires bool, true, and false to be macros,
-                C23 and C++11 overrule that, so do not test for that.
-                Although C99 requires __bool_true_false_are_defined and
-                _Bool, C23 says they are obsolescent, so do not require
-                them.  */
-
-             #if !true
-               #error "'true' is not true"
-             #endif
-             #if true != 1
-               #error "'true' is not equal to 1"
-             #endif
-             char b[true == 1 ? 1 : -1];
-             char c[true];
-
-             #if false
-               #error "'false' is not false"
-             #endif
-             #if false != 0
-               #error "'false' is not equal to 0"
-             #endif
-             char d[false == 0 ? 1 : -1];
-
-             enum { e = false, f = true, g = false * true, h = true * 256 };
-
-             char i[(bool) 0.5 == true ? 1 : -1];
-             char j[(bool) 0.0 == false ? 1 : -1];
-             char k[sizeof (bool) > 0 ? 1 : -1];
-
-             struct sb { bool s: 1; bool t; } s;
-             char l[sizeof s.t > 0 ? 1 : -1];
-
-             /* The following fails for
-                HP aC++/ANSI C B3910B A.05.55 [Dec 04 2003]. */
-             bool m[h];
-             char n[sizeof m == h * sizeof m[0] ? 1 : -1];
-             char o[-1 - (bool) 0 < 0 ? 1 : -1];
-             /* Catch a bug in an HP-UX C compiler.  See
-                https://gcc.gnu.org/ml/gcc-patches/2003-12/msg02303.html
-                https://lists.gnu.org/r/bug-coreutils/2005-11/msg00161.html
-              */
-             bool p = true;
-             bool *pp = &p;
-
+#include <concepts>
+template <typename T>
+concept Integral = std::integral<T>;
 int
 main (void)
 {
-
-             bool ps = &s;
-             *pp |= p;
-             *pp |= ! p;
-
-             /* Refer to every declared value, so they cannot be
-                discarded as unused.  */
-             return (!b + !c + !d + !e + !f + !g + !h + !i + !j + !k
-                     + !l + !m + !n + !o + !p + !pp + !ps);
-
+static_assert(Integral<int>);
+      return 0;
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"
 then :
-  ac_cv_header_stdbool_h=yes
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+     CXXCPP="$CXXCPP -std=c++20"
 else case e in #(
-  e) ac_cv_header_stdbool_h=no ;;
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+     CXX="$SAVE_CXX"
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Missing required dependency: a C++ compiler with C++20 support" >&5
+printf "%s\n" "$as_me: WARNING: Missing required dependency: a C++ compiler with C++20 support" >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install build-essential" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install build-essential" >&2;}
+     as_fn_error $? "C++20 support is required" "$LINENO" 5 ;;
 esac
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext ;;
-esac
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_header_stdbool_h" >&5
-printf "%s\n" "$ac_cv_header_stdbool_h" >&6; }
-
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for inline" >&5
-printf %s "checking for inline... " >&6; }
-if test ${ac_cv_c_inline+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e) ac_cv_c_inline=no
-for ac_kw in inline __inline__ __inline; do
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#ifndef __cplusplus
-typedef int foo_t;
-static $ac_kw foo_t static_foo (void) {return 0; }
-$ac_kw foo_t foo (void) {return 0; }
-#endif
-
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"
-then :
-  ac_cv_c_inline=$ac_kw
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-  test "$ac_cv_c_inline" != no && break
-done
- ;;
+
+# Initialize variables
+CBLAS_CPPFLAGS=""
+CBLAS_LDFLAGS=""
+LAPACKE_CPPFLAGS=""
+LAPACKE_LDFLAGS=""
+OPENBLAS_LDFLAGS=""
+AM_CPPFLAGS=""
+AM_LDFLAGS=""
+LB_RPATH_FLAGS=""
+AFEPACK_APT_CORE="build-essential libopenblas-dev liblapacke-dev libboost-serialization-dev"
+AFEPACK_APT_MPI="libopenmpi-dev openmpi-bin"
+AFEPACK_APT_GMSH="gmsh"
+
+# Check whether --enable-mpi was given.
+if test ${enable_mpi+y}
+then :
+  enableval=$enable_mpi; enable_mpi=$enableval
+else case e in #(
+  e) enable_mpi=no ;;
 esac
 fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_c_inline" >&5
-printf "%s\n" "$ac_cv_c_inline" >&6; }
 
-case $ac_cv_c_inline in
-  inline | yes) ;;
+case $enable_mpi in #(
+  yes|no) :
+     ;; #(
+  *) :
+    as_fn_error $? "--enable-mpi expects yes or no" "$LINENO" 5 ;;
+esac
+
+# Check whether --enable-gmsh-tests was given.
+if test ${enable_gmsh_tests+y}
+then :
+  enableval=$enable_gmsh_tests; enable_gmsh_tests=$enableval
+else case e in #(
+  e) enable_gmsh_tests=auto ;;
+esac
+fi
+
+case $enable_gmsh_tests in #(
+  auto|yes|no) :
+     ;; #(
+  *) :
+    as_fn_error $? "--enable-gmsh-tests expects auto, yes, or no" "$LINENO" 5 ;;
+esac
+
+# Allow user to specify include path for CBLAS headers
+
+# Check whether --with-cblas-includedir was given.
+if test ${with_cblas_includedir+y}
+then :
+  withval=$with_cblas_includedir; if test "x$withval" != xno && test "x$withval" != x
+then :
+  if test -d "$withval"
+then :
+  CBLAS_CPPFLAGS="$withval"
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: CBLAS include directory $withval does not exist" >&5
+printf "%s\n" "$as_me: WARNING: CBLAS include directory $withval does not exist" >&2;}
+                   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+                   as_fn_error $? "invalid --with-cblas-includedir" "$LINENO" 5 ;;
+esac
+fi
+fi
+fi
+
+
+# Allow user to specify library path for general CBLAS libraries
+
+# Check whether --with-cblas-libdir was given.
+if test ${with_cblas_libdir+y}
+then :
+  withval=$with_cblas_libdir; if test "x$withval" != xno && test "x$withval" != x
+then :
+  if test -d "$withval"
+then :
+  CBLAS_LDFLAGS="$withval"
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: CBLAS library directory $withval does not exist" >&5
+printf "%s\n" "$as_me: WARNING: CBLAS library directory $withval does not exist" >&2;}
+                   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+                   as_fn_error $? "invalid --with-cblas-libdir" "$LINENO" 5 ;;
+esac
+fi
+fi
+fi
+
+
+# Allow user to specify include path for LAPACKE headers
+
+# Check whether --with-lapacke-includedir was given.
+if test ${with_lapacke_includedir+y}
+then :
+  withval=$with_lapacke_includedir; if test "x$withval" != xno && test "x$withval" != x
+then :
+  if test -d "$withval"
+then :
+  LAPACKE_CPPFLAGS="$withval"
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: LAPACKE include directory $withval does not exist" >&5
+printf "%s\n" "$as_me: WARNING: LAPACKE include directory $withval does not exist" >&2;}
+                   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+                   as_fn_error $? "invalid --with-lapacke-includedir" "$LINENO" 5 ;;
+esac
+fi
+fi
+fi
+
+
+# Allow user to specify library path for general LAPACKE libraries
+
+# Check whether --with-lapacke-libdir was given.
+if test ${with_lapacke_libdir+y}
+then :
+  withval=$with_lapacke_libdir; if test "x$withval" != xno && test "x$withval" != x
+then :
+  if test -d "$withval"
+then :
+  LAPACKE_LDFLAGS="$withval"
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: LAPACKE library directory $withval does not exist" >&5
+printf "%s\n" "$as_me: WARNING: LAPACKE library directory $withval does not exist" >&2;}
+                   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+                   as_fn_error $? "invalid --with-lapacke-libdir" "$LINENO" 5 ;;
+esac
+fi
+fi
+fi
+
+
+# Allow user to specify library path for OpenBLAS libraries
+
+# Check whether --with-openblas-libdir was given.
+if test ${with_openblas_libdir+y}
+then :
+  withval=$with_openblas_libdir; if test "x$withval" != xno && test "x$withval" != x
+then :
+  if test -d "$withval"
+then :
+  OPENBLAS_LDFLAGS="$withval"
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: OpenBLAS library directory $withval does not exist" >&5
+printf "%s\n" "$as_me: WARNING: OpenBLAS library directory $withval does not exist" >&2;}
+                   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+                   as_fn_error $? "invalid --with-openblas-libdir" "$LINENO" 5 ;;
+esac
+fi
+fi
+fi
+
+
+# Apply CBLAS and LAPACKE include paths for header checks
+if test "x$CBLAS_CPPFLAGS" != x
+then :
+  AM_CPPFLAGS="$AM_CPPFLAGS -I$CBLAS_CPPFLAGS"
+fi
+if test "x$LAPACKE_CPPFLAGS" != x && test "x$LAPACKE_CPPFLAGS" != "x$CBLAS_CPPFLAGS"
+then :
+  AM_CPPFLAGS="$AM_CPPFLAGS -I$LAPACKE_CPPFLAGS"
+fi
+OLD_CPPFLAGS=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS $AM_CPPFLAGS"
+
+
+# Check for CBLAS and LAPACKE headers
+       for ac_header in cblas.h
+do :
+  ac_fn_cxx_check_header_compile "$LINENO" "cblas.h" "ac_cv_header_cblas_h" "#include <cblas.h>
+"
+if test "x$ac_cv_header_cblas_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_CBLAS_H 1" >>confdefs.h
+
+printf "%s\n" "#define HAVE_CBLAS_H 1" >>confdefs.h
+
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Missing required dependency: cblas.h" >&5
+printf "%s\n" "$as_me: WARNING: Missing required dependency: cblas.h" >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: If CBLAS is installed in a custom prefix, pass --with-cblas-includedir=DIR" >&5
+printf "%s\n" "$as_me: WARNING: If CBLAS is installed in a custom prefix, pass --with-cblas-includedir=DIR" >&2;}
+     as_fn_error $? "cblas.h not found in paths: $CBLAS_CPPFLAGS" "$LINENO" 5 ;;
+esac
+fi
+
+done
+
+       for ac_header in lapacke.h
+do :
+  ac_fn_cxx_check_header_compile "$LINENO" "lapacke.h" "ac_cv_header_lapacke_h" "#include <lapacke.h>
+"
+if test "x$ac_cv_header_lapacke_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_LAPACKE_H 1" >>confdefs.h
+
+printf "%s\n" "#define HAVE_LAPACKE_H 1" >>confdefs.h
+
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Missing required dependency: lapacke.h" >&5
+printf "%s\n" "$as_me: WARNING: Missing required dependency: lapacke.h" >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: If LAPACKE is installed in a custom prefix, pass --with-lapacke-includedir=DIR" >&5
+printf "%s\n" "$as_me: WARNING: If LAPACKE is installed in a custom prefix, pass --with-lapacke-includedir=DIR" >&2;}
+     as_fn_error $? "lapacke.h not found in paths: $LAPACKE_CPPFLAGS" "$LINENO" 5 ;;
+esac
+fi
+
+done
+
+CPPFLAGS=$OLD_CPPFLAGS
+
+# Apply library paths for library checks
+#AM_LDFLAGS="$CBLAS_LDFLAGS $LAPACKE_LDFLAGS $OPENBLAS_LDFLAGS"
+
+# Print the value of MY_VARIABLE
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: The value of OPENBLAS_LDFLAGS is: $OPENBLAS_LDFLAGS" >&5
+printf "%s\n" "$as_me: The value of OPENBLAS_LDFLAGS is: $OPENBLAS_LDFLAGS" >&6;}
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: The value of CBLAS_LDFLAGS is: $CBLAS_LDFLAGS" >&5
+printf "%s\n" "$as_me: The value of CBLAS_LDFLAGS is: $CBLAS_LDFLAGS" >&6;}
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: The value of LAPACKE_LDFLAGS is: $LAPACKE_LDFLAGS" >&5
+printf "%s\n" "$as_me: The value of LAPACKE_LDFLAGS is: $LAPACKE_LDFLAGS" >&6;}
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: The value of CBLAS_CPPFLAGS is: $CBLAS_CPPFLAGS" >&5
+printf "%s\n" "$as_me: The value of CBLAS_CPPFLAGS is: $CBLAS_CPPFLAGS" >&6;}
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: The value of LAPACKE_CPPFLAGS is: $LAPACKE_CPPFLAGS" >&5
+printf "%s\n" "$as_me: The value of LAPACKE_CPPFLAGS is: $LAPACKE_CPPFLAGS" >&6;}
+
+# Detect the platform
+
+case "$host_os" in
+  linux*)
+    LB_RPATH_FLAGS="-Wl,--enable-new-dtags,-rpath,"
+    ;;
+  darwin*)
+    LB_RPATH_FLAGS="-Wl,-rpath,"
+    ;;
+  mingw* | cygwin*)
+    LB_RPATH_FLAGS="" # Windows typically doesn't use rpath; adjust as needed
+    ;;
+  freebsd* | openbsd*)
+    LB_RPATH_FLAGS="-Wl,-rpath,"
+    ;;
   *)
-    case $ac_cv_c_inline in
-      no) ac_val=;;
-      *) ac_val=$ac_cv_c_inline;;
-    esac
-    cat >>confdefs.h <<_ACEOF
-#ifndef __cplusplus
-#define inline $ac_val
-#endif
-_ACEOF
+    as_fn_error $? "Unsupported platform: $host_os" "$LINENO" 5
     ;;
 esac
 
-
-  ac_fn_cxx_check_type "$LINENO" "pid_t" "ac_cv_type_pid_t" "$ac_includes_default
-"
-if test "x$ac_cv_type_pid_t" = xyes
+# Check for BLAS/LAPACKE.  The OpenBLAS path is a combined-provider mode:
+# it must provide both CBLAS and LAPACKE symbols.
+SAVE_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $AM_CPPFLAGS"
+if test "x$OPENBLAS_LDFLAGS" != x
+then :
+  SAVE_LDFLAGS="$LDFLAGS"
+     SAVE_LIBS="$LIBS"
+     LDFLAGS="$LDFLAGS -L$OPENBLAS_LDFLAGS"
+     LIBS="-lopenblas $LIBS"
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether OpenBLAS provides CBLAS and LAPACKE symbols" >&5
+printf %s "checking whether OpenBLAS provides CBLAS and LAPACKE symbols... " >&6; }
+     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <cblas.h>
+#include <lapacke.h>
+int
+main (void)
+{
+double a[1] = {1.0};
+          int ipiv[1];
+          cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                      1, 1, 1, 1.0, a, 1, a, 1, 0.0, a, 1);
+          return LAPACKE_dgetrf(LAPACK_ROW_MAJOR, 1, 1, a, 1, ipiv);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
 then :
 
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+       	  AM_LDFLAGS="$AM_LDFLAGS -L$OPENBLAS_LDFLAGS -lopenblas $LB_RPATH_FLAGS$OPENBLAS_LDFLAGS"
+
+printf "%s\n" "#define HAVE_OPENBLAS 1" >>confdefs.h
+
 else case e in #(
-  e)                                         cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Dependency conflict: --with-openblas-libdir was used, but libopenblas in $OPENBLAS_LDFLAGS does not link both cblas_dgemm and LAPACKE_dgetrf" >&5
+printf "%s\n" "$as_me: WARNING: Dependency conflict: --with-openblas-libdir was used, but libopenblas in $OPENBLAS_LDFLAGS does not link both cblas_dgemm and LAPACKE_dgetrf" >&2;}
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Resolution: use an OpenBLAS build with LAPACKE enabled, or omit --with-openblas-libdir and pass matching --with-cblas-libdir/--with-lapacke-libdir paths" >&5
+printf "%s\n" "$as_me: WARNING: Resolution: use an OpenBLAS build with LAPACKE enabled, or omit --with-openblas-libdir and pass matching --with-cblas-libdir/--with-lapacke-libdir paths" >&2;}
+          as_fn_error $? "OpenBLAS/CBLAS/LAPACKE link check failed" "$LINENO" 5 ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+     LDFLAGS="$SAVE_LDFLAGS"
+     LIBS="$SAVE_LIBS"
+else case e in #(
+  e) # Otherwise, check for general CBLAS and LAPACKE libraries
+     SAVE_LDFLAGS="$LDFLAGS"
+     SAVE_LIBS="$LIBS"
+     if test "x$CBLAS_LDFLAGS" != x
+then :
+  LDFLAGS="$LDFLAGS -L$CBLAS_LDFLAGS"
+fi
+     LIBS="-lcblas $LIBS"
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether CBLAS library links" >&5
+printf %s "checking whether CBLAS library links... " >&6; }
+     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
+#include <cblas.h>
+int
+main (void)
+{
+double a[1] = {1.0};
+          cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                      1, 1, 1, 1.0, a, 1, a, 1, 0.0, a, 1);
+          return 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
 
-          #if defined _WIN64 && !defined __CYGWIN__
-          LLP64
-          #endif
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+          if test "x$CBLAS_LDFLAGS" != x
+then :
+  AM_LDFLAGS="$AM_LDFLAGS -L$CBLAS_LDFLAGS $LB_RPATH_FLAGS$CBLAS_LDFLAGS"
+fi
+          AM_LDFLAGS="$AM_LDFLAGS -lcblas"
 
+printf "%s\n" "#define HAVE_CBLAS 1" >>confdefs.h
+
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Missing or conflicting dependency: libcblas could not be linked" >&5
+printf "%s\n" "$as_me: WARNING: Missing or conflicting dependency: libcblas could not be linked" >&2;}
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: If CBLAS is installed in a custom prefix, pass --with-cblas-libdir=DIR matching the cblas.h include path" >&5
+printf "%s\n" "$as_me: WARNING: If CBLAS is installed in a custom prefix, pass --with-cblas-libdir=DIR matching the cblas.h include path" >&2;}
+          as_fn_error $? "CBLAS link check failed" "$LINENO" 5 ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+     LDFLAGS="$SAVE_LDFLAGS"
+     LIBS="$SAVE_LIBS"
+
+     SAVE_LDFLAGS="$LDFLAGS"
+     SAVE_LIBS="$LIBS"
+     if test "x$LAPACKE_LDFLAGS" != x
+then :
+  LDFLAGS="$LDFLAGS -L$LAPACKE_LDFLAGS"
+fi
+     if test "x$CBLAS_LDFLAGS" != x
+then :
+  LDFLAGS="$LDFLAGS -L$CBLAS_LDFLAGS"
+fi
+     LIBS="-llapacke -lcblas $LIBS"
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether LAPACKE library links with CBLAS" >&5
+printf %s "checking whether LAPACKE library links with CBLAS... " >&6; }
+     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <lapacke.h>
+int
+main (void)
+{
+double a[1] = {1.0};
+          int ipiv[1];
+          return LAPACKE_dgetrf(LAPACK_ROW_MAJOR, 1, 1, a, 1, ipiv);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
+
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+          if test "x$LAPACKE_LDFLAGS" != x
+then :
+  AM_LDFLAGS="$AM_LDFLAGS -L$LAPACKE_LDFLAGS $LB_RPATH_FLAGS$LAPACKE_LDFLAGS"
+fi
+          AM_LDFLAGS="$AM_LDFLAGS -llapacke"
+
+printf "%s\n" "#define HAVE_LAPACKE 1" >>confdefs.h
+
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Dependency conflict: LAPACKE library could not be linked with the selected CBLAS provider" >&5
+printf "%s\n" "$as_me: WARNING: Dependency conflict: LAPACKE library could not be linked with the selected CBLAS provider" >&2;}
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Resolution: use matching BLAS/LAPACK packages, or pass matching --with-cblas-libdir and --with-lapacke-libdir paths" >&5
+printf "%s\n" "$as_me: WARNING: Resolution: use matching BLAS/LAPACK packages, or pass matching --with-cblas-libdir and --with-lapacke-libdir paths" >&2;}
+          as_fn_error $? "LAPACKE/CBLAS link check failed" "$LINENO" 5 ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+     LDFLAGS="$SAVE_LDFLAGS"
+     LIBS="$SAVE_LIBS" ;;
+esac
+fi
+CPPFLAGS="$SAVE_CPPFLAGS"
+
+# Check for Boost headers and Boost.Serialization without relying on external
+# autoconf-archive Boost macros.
+BOOST_CPPFLAGS=""
+BOOST_LDFLAGS=""
+BOOST_SERIALIZATION_LIB=""
+BOOST_PREFIX=""
+BOOST_LIBDIR=""
+
+
+# Check whether --with-boost was given.
+if test ${with_boost+y}
+then :
+  withval=$with_boost; if test "x$withval" != xno && test "x$withval" != xyes && test "x$withval" != x
+then :
+  if test -d "$withval"
+then :
+  BOOST_PREFIX="$withval"
+                   BOOST_CPPFLAGS="-I$withval/include"
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Boost prefix $withval does not exist" >&5
+printf "%s\n" "$as_me: WARNING: Boost prefix $withval does not exist" >&2;}
+                   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+                   as_fn_error $? "invalid --with-boost" "$LINENO" 5 ;;
+esac
+fi
+fi
+fi
+
+
+
+# Check whether --with-boost-libdir was given.
+if test ${with_boost_libdir+y}
+then :
+  withval=$with_boost_libdir; if test "x$withval" != xno && test "x$withval" != x
+then :
+  if test -d "$withval"
+then :
+  BOOST_LIBDIR="$withval"
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Boost library directory $withval does not exist" >&5
+printf "%s\n" "$as_me: WARNING: Boost library directory $withval does not exist" >&2;}
+                   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+                   as_fn_error $? "invalid --with-boost-libdir" "$LINENO" 5 ;;
+esac
+fi
+fi
+fi
+
+
+if test "x$BOOST_LIBDIR" = x && test "x$BOOST_PREFIX" != x
+then :
+  for afepack_boost_libdir in "$BOOST_PREFIX/lib" "$BOOST_PREFIX/lib64" "$BOOST_PREFIX/lib/x86_64-linux-gnu"; do
+       if test -d "$afepack_boost_libdir"
+then :
+  BOOST_LIBDIR="$afepack_boost_libdir"; break
+fi
+     done
+fi
+if test "x$BOOST_LIBDIR" != x
+then :
+  BOOST_LDFLAGS="-L$BOOST_LIBDIR"
+fi
+
+# setup Boost for its LDFLAGS and CPPFLAGS
+AM_CPPFLAGS="$AM_CPPFLAGS $BOOST_CPPFLAGS"
+
+SAVE_CPPFLAGS="$CPPFLAGS"
+SAVE_LDFLAGS="$LDFLAGS"
+SAVE_LIBS="$LIBS"
+CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
+LIBS="-lboost_serialization $LIBS"
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Boost headers >= 1.65" >&5
+printf %s "checking for Boost headers >= 1.65... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <boost/version.hpp>
+#if BOOST_VERSION < 106500
+#error Boost is too old
+#endif
 int
 main (void)
 {
@@ -19439,33 +19813,259 @@ main (void)
   ;
   return 0;
 }
-
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"
 then :
-  ac_pid_type='int'
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
 else case e in #(
-  e) ac_pid_type='__int64' ;;
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Missing required dependency: Boost headers >= 1.65" >&5
+printf "%s\n" "$as_me: WARNING: Missing required dependency: Boost headers >= 1.65" >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: If Boost is installed in a custom prefix, pass --with-boost=DIR" >&5
+printf "%s\n" "$as_me: WARNING: If Boost is installed in a custom prefix, pass --with-boost=DIR" >&2;}
+     as_fn_error $? "Boost headers not found or too old" "$LINENO" 5 ;;
 esac
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+       for ac_header in boost/archive/text_oarchive.hpp
+do :
+  ac_fn_cxx_check_header_compile "$LINENO" "boost/archive/text_oarchive.hpp" "ac_cv_header_boost_archive_text_oarchive_hpp" "$ac_includes_default"
+if test "x$ac_cv_header_boost_archive_text_oarchive_hpp" = xyes
+then :
+  printf "%s\n" "#define HAVE_BOOST_ARCHIVE_TEXT_OARCHIVE_HPP 1" >>confdefs.h
 
-printf "%s\n" "#define pid_t $ac_pid_type" >>confdefs.h
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Missing required dependency: Boost.Serialization headers" >&5
+printf "%s\n" "$as_me: WARNING: Missing required dependency: Boost.Serialization headers" >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+     as_fn_error $? "Boost.Serialization headers not found" "$LINENO" 5 ;;
+esac
+fi
 
-     ;;
+done
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether Boost.Serialization library links" >&5
+printf %s "checking whether Boost.Serialization library links... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <boost/archive/text_oarchive.hpp>
+#include <sstream>
+int
+main (void)
+{
+std::ostringstream os;
+      boost::archive::text_oarchive oa(os);
+      int value = 1;
+      oa << value;
+      return 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+     BOOST_SERIALIZATION_LIB="-lboost_serialization"
+
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Dependency conflict: Boost.Serialization headers were found, but libboost_serialization could not be linked" >&5
+printf "%s\n" "$as_me: WARNING: Dependency conflict: Boost.Serialization headers were found, but libboost_serialization could not be linked" >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE" >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Resolution: ensure Boost headers and libboost_serialization are from the same installation prefix; use --with-boost=DIR and --with-boost-libdir=DIR if needed" >&5
+printf "%s\n" "$as_me: WARNING: Resolution: ensure Boost headers and libboost_serialization are from the same installation prefix; use --with-boost=DIR and --with-boost-libdir=DIR if needed" >&2;}
+     as_fn_error $? "Boost.Serialization link check failed" "$LINENO" 5 ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+CPPFLAGS="$SAVE_CPPFLAGS"
+LDFLAGS="$SAVE_LDFLAGS"
+LIBS="$SAVE_LIBS"
+BOOST_RPATH=$(echo "$BOOST_LDFLAGS" | sed 's/-L\(^ *\)/-Wl,-rpath,\1/g')
+AM_LDFLAGS="$AM_LDFLAGS $BOOST_LDFLAGS $BOOST_SERIALIZATION_LIB $BOOST_RPATH"
+
+
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: The value of BOOST_LDFLAGS is: $BOOST_LDFLAGS" >&5
+printf "%s\n" "$as_me: The value of BOOST_LDFLAGS is: $BOOST_LDFLAGS" >&6;}
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: The value of BOOST_CPPFLAGS is: $BOOST_CPPFLAGS" >&5
+printf "%s\n" "$as_me: The value of BOOST_CPPFLAGS is: $BOOST_CPPFLAGS" >&6;}
+
+# Extract the first word of "gmsh", so it can be a program name with args.
+set dummy gmsh; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_prog_GMSH+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) if test -n "$GMSH"; then
+  ac_cv_prog_GMSH="$GMSH" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_prog_GMSH="gmsh"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi ;;
+esac
+fi
+GMSH=$ac_cv_prog_GMSH
+if test -n "$GMSH"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $GMSH" >&5
+printf "%s\n" "$GMSH" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+if test "x$enable_gmsh_tests" = xyes && test "x$GMSH" = x
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Missing test dependency: gmsh" >&5
+printf "%s\n" "$as_me: WARNING: Missing test dependency: gmsh" >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_GMSH" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_GMSH" >&2;}
+     as_fn_error $? "--enable-gmsh-tests=yes requires gmsh" "$LINENO" 5
+fi
+if test "x$enable_gmsh_tests" = xno
+then :
+  GMSH_TESTS=no
+else case e in #(
+  e) if test "x$GMSH" = x
+then :
+  GMSH_TESTS=no
+         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: gmsh not found; 3D example run tests will be skipped" >&5
+printf "%s\n" "$as_me: WARNING: gmsh not found; 3D example run tests will be skipped" >&2;}
+         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_GMSH" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_GMSH" >&2;}
+else case e in #(
+  e) GMSH_TESTS=yes ;;
+esac
+fi ;;
 esac
 fi
 
 
-ac_fn_cxx_check_type "$LINENO" "size_t" "ac_cv_type_size_t" "$ac_includes_default"
-if test "x$ac_cv_type_size_t" = xyes
-then :
 
+MPICXX=""
+if test "x$enable_mpi" = xyes
+then :
+  for ac_prog in mpicxx mpic++ mpiCC
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_prog_MPICXX+y}
+then :
+  printf %s "(cached) " >&6
 else case e in #(
-  e)
-printf "%s\n" "#define size_t unsigned int" >>confdefs.h
- ;;
+  e) if test -n "$MPICXX"; then
+  ac_cv_prog_MPICXX="$MPICXX" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_prog_MPICXX="$ac_prog"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi ;;
 esac
+fi
+MPICXX=$ac_cv_prog_MPICXX
+if test -n "$MPICXX"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $MPICXX" >&5
+printf "%s\n" "$MPICXX" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+  test -n "$MPICXX" && break
+done
+
+     if test "x$MPICXX" = x
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Missing MPI dependency: mpicxx" >&5
+printf "%s\n" "$as_me: WARNING: Missing MPI dependency: mpicxx" >&2;}
+         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_MPI" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_MPI" >&2;}
+         as_fn_error $? "--enable-mpi requires an MPI C++ compiler" "$LINENO" 5
+fi
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether $MPICXX can compile MPI code with C++20" >&5
+printf %s "checking whether $MPICXX can compile MPI code with C++20... " >&6; }
+     cat > conftest_mpi.cpp <<'_ACEOF'
+#include <mpi.h>
+#include <concepts>
+int main(int argc, char **argv) {
+  MPI_Init(&argc, &argv);
+  MPI_Finalize();
+  return 0;
+}
+_ACEOF
+     if $MPICXX -std=c++20 -c conftest_mpi.cpp >/dev/null 2>&1
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Dependency conflict: $MPICXX cannot compile a C++20 MPI program" >&5
+printf "%s\n" "$as_me: WARNING: Dependency conflict: $MPICXX cannot compile a C++20 MPI program" >&2;}
+         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_MPI" >&5
+printf "%s\n" "$as_me: WARNING: Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_MPI" >&2;}
+         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Resolution: install an MPI implementation with C++ compiler wrappers, or set MPICXX=/path/to/mpicxx" >&5
+printf "%s\n" "$as_me: WARNING: Resolution: install an MPI implementation with C++ compiler wrappers, or set MPICXX=/path/to/mpicxx" >&2;}
+         rm -f conftest_mpi.cpp conftest_mpi.o
+         as_fn_error $? "MPI C++20 compile check failed" "$LINENO" 5 ;;
+esac
+fi
+     rm -f conftest_mpi.cpp conftest_mpi.o
+fi
+
+ if test "x$enable_mpi" = xyes; then
+  ENABLE_MPI_TRUE=
+  ENABLE_MPI_FALSE='#'
+else
+  ENABLE_MPI_TRUE='#'
+  ENABLE_MPI_FALSE=
 fi
 
 
@@ -19577,14 +20177,71 @@ then :
 fi
 
 
-# preconfig some flags
-AM_CPPFLAGS='-I$(top_srcdir)/include'
 
-AM_CXXFLAGS='-D__SERIALIZATION -DMULTITHREAD -pthread -fopenmp -fno-delete-null-pointer-checks'
+# Detect the platform
+
+case "$host_os" in
+  linux*)
+    RPATH_FLAGS="-Wl,--enable-new-dtags,-rpath,${libdir}"
+    ;;
+  darwin*)
+    RPATH_FLAGS="-Wl,-rpath,@loader_path/../lib"
+    ;;
+  mingw* | cygwin*)
+    RPATH_FLAGS="" # Windows typically doesn't use rpath; adjust as needed
+    ;;
+  freebsd* | openbsd*)
+    RPATH_FLAGS="-Wl,-rpath,\$$ORIGIN/../lib"
+    ;;
+  *)
+    as_fn_error $? "Unsupported platform: $host_os" "$LINENO" 5
+    ;;
+esac
+
+
+# Add --enable-debug option
+# Check whether --enable-debug was given.
+if test ${enable_debug+y}
+then :
+  enableval=$enable_debug; enable_debug=$enableval
+else case e in #(
+  e) enable_debug=no ;;
+esac
+fi
+
+
+# Set compiler and linker flags
+# Clear CXXFLAGS to avoid default -O2 -g
+CXXFLAGS=""
+if test "x$enable_debug" = "xyes"
+then :
+
+        AM_CXXFLAGS="-O0 -g -D__SERIALIZATION -DMULTITHREAD -pthread -std=c++20 -Wall -Wextra"
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Configuring for debug mode with -g -O0" >&5
+printf "%s\n" "$as_me: Configuring for debug mode with -g -O0" >&6;}
+
+else case e in #(
+  e)
+        AM_CXXFLAGS="-O2 -D__SERIALIZATION -DMULTITHREAD -pthread -std=c++20 -Wall"
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Configuring for release mode with -O2" >&5
+printf "%s\n" "$as_me: Configuring for release mode with -O2" >&6;}
+     ;;
+esac
+fi
+
+
+# Export variables to Makefile
+
+AM_CPPFLAGS="$AM_CPPFLAGS -I\$(top_srcdir)/include"
 
 
 
-ac_config_files="$ac_config_files Makefile tools/Makefile doc/Makefile external/Makefile external/easymesh/Makefile examples/Makefile examples/poisson_equation/Makefile examples/poisson_equation_3D/Makefile examples/DysonSphere/Makefile examples/TaiChiYinYang/Makefile examples/elliptic_equation/Makefile examples/step-7/Makefile examples/moving_mesh/Makefile examples/laplacian_evp3D/Makefile examples/coefficient_possion_equation/Makefile examples/local_refine/Makefile examples/local_refine/2d/Makefile examples/local_refine/3d/Makefile include/AFEPack/Makefile include/AFEPack/template/Makefile include/AFEPack/template/four_tetrahedron/Makefile include/AFEPack/template/four_tetrahedron/four_tetrahedron.0/Makefile include/AFEPack/template/four_tetrahedron/four_tetrahedron.1.D/Makefile include/AFEPack/template/four_tetrahedron/four_tetrahedron.1/Makefile include/AFEPack/template/interval/Makefile include/AFEPack/template/interval/interval.1/Makefile include/AFEPack/template/interval/interval.2/Makefile include/AFEPack/template/interval/interval.3/Makefile include/AFEPack/template/interval/interval.4/Makefile include/AFEPack/template/tetrahedron/Makefile include/AFEPack/template/tetrahedron/tetrahedron.0/Makefile include/AFEPack/template/tetrahedron/tetrahedron.1.D/Makefile include/AFEPack/template/tetrahedron/tetrahedron.1/Makefile include/AFEPack/template/tetrahedron/tetrahedron.2.D/Makefile include/AFEPack/template/tetrahedron/tetrahedron.2/Makefile include/AFEPack/template/tetrahedron/tetrahedron.3.D/Makefile include/AFEPack/template/tetrahedron/tetrahedron.edge.1/Makefile include/AFEPack/template/triangle/Makefile include/AFEPack/template/triangle/triangle.0/Makefile include/AFEPack/template/triangle/triangle.1.D/Makefile include/AFEPack/template/triangle/triangle.1/Makefile include/AFEPack/template/triangle/triangle.2/Makefile include/AFEPack/template/triangle/triangle.3/Makefile include/AFEPack/template/triangle/triangle.4/Makefile include/AFEPack/template/triangle/triangle.DG.1/Makefile include/AFEPack/template/triangle/triangle.DG.2/Makefile include/AFEPack/template/triangle/triangle.DG.3/Makefile include/AFEPack/template/triangle/triangle.RT.1/Makefile include/AFEPack/template/triangle/triangle.RT.2/Makefile include/AFEPack/template/triangle/triangle.dual.0/Makefile include/AFEPack/template/triangle/triangle.edge.1/Makefile include/AFEPack/template/triangle/triangle.edge.Full.1/Makefile include/AFEPack/template/triangle/triangle.morley.1/Makefile include/AFEPack/template/twin_tetrahedron/Makefile include/AFEPack/template/twin_tetrahedron/twin_tetrahedron.0/Makefile include/AFEPack/template/twin_tetrahedron/twin_tetrahedron.1.D/Makefile include/AFEPack/template/twin_tetrahedron/twin_tetrahedron.1/Makefile include/AFEPack/template/twin_triangle/Makefile include/AFEPack/template/twin_triangle/twin_triangle.0/Makefile include/AFEPack/template/twin_triangle/twin_triangle.1.D/Makefile include/AFEPack/template/twin_triangle/twin_triangle.1/Makefile include/AFEPack/template/twin_triangle/twin_triangle.2/Makefile include/AFEPack/template/twin_triangle/twin_triangle.DG.1/Makefile include/AFEPack/template/twin_triangle/twin_triangle.RT.1/Makefile include/AFEPack/template/twin_triangle/twin_triangle.morley.1/Makefile include/Makefile src/Makefile src/mpi/Makefile"
+ac_config_files="$ac_config_files examples/check-2d-examples.sh"
+
+ac_config_files="$ac_config_files examples/check-3d-examples.sh"
+
+
+ac_config_files="$ac_config_files Makefile tools/Makefile doc/Makefile external/Makefile external/easymesh/Makefile examples/Makefile examples/poisson_equation/Makefile examples/poisson_equation/Makefile.sample examples/poisson_equation/run.sh.sample examples/poisson_equation_3D/Makefile examples/poisson_equation_3D/Makefile.sample examples/poisson_equation_3D/run.sh.sample examples/elliptic_equation/Makefile examples/elliptic_equation/Makefile.sample examples/elliptic_equation/run.sh.sample examples/TaiChiYinYang/Makefile examples/TaiChiYinYang/Makefile.sample examples/TaiChiYinYang/run.sh.sample examples/DysonSphere/Makefile examples/DysonSphere/Makefile.sample examples/DysonSphere/run.sh.sample tools/gmsh2mesh.sh include/AFEPack/Makefile include/AFEPack/mpi/Makefile include/AFEPack/template/Makefile include/AFEPack/template/four_tetrahedron/Makefile include/AFEPack/template/four_tetrahedron/four_tetrahedron.0/Makefile include/AFEPack/template/four_tetrahedron/four_tetrahedron.1.D/Makefile include/AFEPack/template/four_tetrahedron/four_tetrahedron.1/Makefile include/AFEPack/template/interval/Makefile include/AFEPack/template/interval/interval.1/Makefile include/AFEPack/template/interval/interval.2/Makefile include/AFEPack/template/interval/interval.3/Makefile include/AFEPack/template/interval/interval.4/Makefile include/AFEPack/template/tetrahedron/Makefile include/AFEPack/template/tetrahedron/tetrahedron.0/Makefile include/AFEPack/template/tetrahedron/tetrahedron.1.D/Makefile include/AFEPack/template/tetrahedron/tetrahedron.1/Makefile include/AFEPack/template/tetrahedron/tetrahedron.2.D/Makefile include/AFEPack/template/tetrahedron/tetrahedron.2/Makefile include/AFEPack/template/tetrahedron/tetrahedron.3.D/Makefile include/AFEPack/template/tetrahedron/tetrahedron.edge.1/Makefile include/AFEPack/template/triangle/Makefile include/AFEPack/template/triangle/triangle.0/Makefile include/AFEPack/template/triangle/triangle.1.D/Makefile include/AFEPack/template/triangle/triangle.1/Makefile include/AFEPack/template/triangle/triangle.2/Makefile include/AFEPack/template/triangle/triangle.3/Makefile include/AFEPack/template/triangle/triangle.4/Makefile include/AFEPack/template/triangle/triangle.DG.1/Makefile include/AFEPack/template/triangle/triangle.DG.2/Makefile include/AFEPack/template/triangle/triangle.DG.3/Makefile include/AFEPack/template/triangle/triangle.RT.1/Makefile include/AFEPack/template/triangle/triangle.RT.2/Makefile include/AFEPack/template/triangle/triangle.dual.0/Makefile include/AFEPack/template/triangle/triangle.edge.1/Makefile include/AFEPack/template/triangle/triangle.edge.Full.1/Makefile include/AFEPack/template/triangle/triangle.morley.1/Makefile include/AFEPack/template/twin_tetrahedron/Makefile include/AFEPack/template/twin_tetrahedron/twin_tetrahedron.0/Makefile include/AFEPack/template/twin_tetrahedron/twin_tetrahedron.1.D/Makefile include/AFEPack/template/twin_tetrahedron/twin_tetrahedron.1/Makefile include/AFEPack/template/twin_triangle/Makefile include/AFEPack/template/twin_triangle/twin_triangle.0/Makefile include/AFEPack/template/twin_triangle/twin_triangle.1.D/Makefile include/AFEPack/template/twin_triangle/twin_triangle.1/Makefile include/AFEPack/template/twin_triangle/twin_triangle.2/Makefile include/AFEPack/template/twin_triangle/twin_triangle.DG.1/Makefile include/AFEPack/template/twin_triangle/twin_triangle.RT.1/Makefile include/AFEPack/template/twin_triangle/twin_triangle.morley.1/Makefile include/Makefile src/Makefile src/mpi/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -19738,6 +20395,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCC\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${ENABLE_MPI_TRUE}" && test -z "${ENABLE_MPI_FALSE}"; then
+  as_fn_error $? "conditional \"ENABLE_MPI\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
@@ -20716,6 +21377,8 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
+    "examples/check-2d-examples.sh") CONFIG_FILES="$CONFIG_FILES examples/check-2d-examples.sh" ;;
+    "examples/check-3d-examples.sh") CONFIG_FILES="$CONFIG_FILES examples/check-3d-examples.sh" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "tools/Makefile") CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
@@ -20723,18 +21386,23 @@ do
     "external/easymesh/Makefile") CONFIG_FILES="$CONFIG_FILES external/easymesh/Makefile" ;;
     "examples/Makefile") CONFIG_FILES="$CONFIG_FILES examples/Makefile" ;;
     "examples/poisson_equation/Makefile") CONFIG_FILES="$CONFIG_FILES examples/poisson_equation/Makefile" ;;
+    "examples/poisson_equation/Makefile.sample") CONFIG_FILES="$CONFIG_FILES examples/poisson_equation/Makefile.sample" ;;
+    "examples/poisson_equation/run.sh.sample") CONFIG_FILES="$CONFIG_FILES examples/poisson_equation/run.sh.sample" ;;
     "examples/poisson_equation_3D/Makefile") CONFIG_FILES="$CONFIG_FILES examples/poisson_equation_3D/Makefile" ;;
-    "examples/DysonSphere/Makefile") CONFIG_FILES="$CONFIG_FILES examples/DysonSphere/Makefile" ;;
-    "examples/TaiChiYinYang/Makefile") CONFIG_FILES="$CONFIG_FILES examples/TaiChiYinYang/Makefile" ;;
+    "examples/poisson_equation_3D/Makefile.sample") CONFIG_FILES="$CONFIG_FILES examples/poisson_equation_3D/Makefile.sample" ;;
+    "examples/poisson_equation_3D/run.sh.sample") CONFIG_FILES="$CONFIG_FILES examples/poisson_equation_3D/run.sh.sample" ;;
     "examples/elliptic_equation/Makefile") CONFIG_FILES="$CONFIG_FILES examples/elliptic_equation/Makefile" ;;
-    "examples/step-7/Makefile") CONFIG_FILES="$CONFIG_FILES examples/step-7/Makefile" ;;
-    "examples/moving_mesh/Makefile") CONFIG_FILES="$CONFIG_FILES examples/moving_mesh/Makefile" ;;
-    "examples/laplacian_evp3D/Makefile") CONFIG_FILES="$CONFIG_FILES examples/laplacian_evp3D/Makefile" ;;
-    "examples/coefficient_possion_equation/Makefile") CONFIG_FILES="$CONFIG_FILES examples/coefficient_possion_equation/Makefile" ;;
-    "examples/local_refine/Makefile") CONFIG_FILES="$CONFIG_FILES examples/local_refine/Makefile" ;;
-    "examples/local_refine/2d/Makefile") CONFIG_FILES="$CONFIG_FILES examples/local_refine/2d/Makefile" ;;
-    "examples/local_refine/3d/Makefile") CONFIG_FILES="$CONFIG_FILES examples/local_refine/3d/Makefile" ;;
+    "examples/elliptic_equation/Makefile.sample") CONFIG_FILES="$CONFIG_FILES examples/elliptic_equation/Makefile.sample" ;;
+    "examples/elliptic_equation/run.sh.sample") CONFIG_FILES="$CONFIG_FILES examples/elliptic_equation/run.sh.sample" ;;
+    "examples/TaiChiYinYang/Makefile") CONFIG_FILES="$CONFIG_FILES examples/TaiChiYinYang/Makefile" ;;
+    "examples/TaiChiYinYang/Makefile.sample") CONFIG_FILES="$CONFIG_FILES examples/TaiChiYinYang/Makefile.sample" ;;
+    "examples/TaiChiYinYang/run.sh.sample") CONFIG_FILES="$CONFIG_FILES examples/TaiChiYinYang/run.sh.sample" ;;
+    "examples/DysonSphere/Makefile") CONFIG_FILES="$CONFIG_FILES examples/DysonSphere/Makefile" ;;
+    "examples/DysonSphere/Makefile.sample") CONFIG_FILES="$CONFIG_FILES examples/DysonSphere/Makefile.sample" ;;
+    "examples/DysonSphere/run.sh.sample") CONFIG_FILES="$CONFIG_FILES examples/DysonSphere/run.sh.sample" ;;
+    "tools/gmsh2mesh.sh") CONFIG_FILES="$CONFIG_FILES tools/gmsh2mesh.sh" ;;
     "include/AFEPack/Makefile") CONFIG_FILES="$CONFIG_FILES include/AFEPack/Makefile" ;;
+    "include/AFEPack/mpi/Makefile") CONFIG_FILES="$CONFIG_FILES include/AFEPack/mpi/Makefile" ;;
     "include/AFEPack/template/Makefile") CONFIG_FILES="$CONFIG_FILES include/AFEPack/template/Makefile" ;;
     "include/AFEPack/template/four_tetrahedron/Makefile") CONFIG_FILES="$CONFIG_FILES include/AFEPack/template/four_tetrahedron/Makefile" ;;
     "include/AFEPack/template/four_tetrahedron/four_tetrahedron.0/Makefile") CONFIG_FILES="$CONFIG_FILES include/AFEPack/template/four_tetrahedron/four_tetrahedron.0/Makefile" ;;
@@ -22191,6 +22859,8 @@ compiler_lib_search_path=$lt_compiler_lib_search_path_CXX
 _LT_EOF
 
  ;;
+    "examples/check-2d-examples.sh":F) chmod +x examples/check-2d-examples.sh ;;
+    "examples/check-3d-examples.sh":F) chmod +x examples/check-3d-examples.sh ;;
 
   esac
 done # for ac_tag

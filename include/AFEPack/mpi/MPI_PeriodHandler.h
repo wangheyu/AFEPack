@@ -120,7 +120,7 @@ namespace MPI {
                              int bnd_mark,
                              property_id_t<bool>& pid,
                              std::vector<std::vector<void *> >& bnd_geo) {
-        if (geo.get_property(pid) == NULL) {
+        if (geo.get_property(pid) == nullptr) {
           if (geo.bmark == bnd_mark) {
             geo.new_property(pid);
             bnd_geo[DIM].push_back((void *)(&geo));
@@ -207,7 +207,7 @@ namespace MPI {
             if (type > 0) { /// 匹配上但是不是同一个几何体的情形
               Shared_object<geometry_t> * 
                 p_info = forest.get_shared_info(*p_geo_i);
-              if (p_info == NULL) p_info = forest.new_shared_info(*p_geo_i);
+              if (p_info == nullptr) p_info = forest.new_shared_info(*p_geo_i);
               p_info->add_clone(remote_rank, type, p_geo_j);
             }
             /**

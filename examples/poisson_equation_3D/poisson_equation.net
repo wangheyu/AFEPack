@@ -13,7 +13,7 @@ macro main(
 ) {
     // 
     // node FileSelector[1]: x = 131, y = 10, inputs = 0, label = FileSelector
-    // output[1]: visible = 1, type = 32, value = "/Users/gary/tmp/poisson_equation_3D/u.dx"
+    // output[1]: visible = 1, type = 32, value = "u.dx"
     // output[2]: visible = 1, type = 32, value = "u.dx"
     //
     // 
@@ -214,7 +214,7 @@ main_Image_2_out_3 =
 CacheScene(main_Image_1_in_1, main_Image_1_out_1, main_Image_1_out_2);
 CacheScene(main_Image_2_in_1, main_Image_2_out_1, main_Image_2_out_2);
 }
-main_FileSelector_1_out_1 = "/Users/gary/tmp/poisson_equation_3D/u.dx";
+main_FileSelector_1_out_1 = "u.dx";
 main_Import_1_in_2 = NULL;
 main_Import_1_in_3 = NULL;
 main_Import_1_in_4 = NULL;

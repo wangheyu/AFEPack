@@ -11,11 +11,6 @@
 #ifndef __MovingMesh2D_h__
 #define __MovingMesh2D_h__
 
-//#include <deal.II/lac/sparsity_pattern.h>
-//#include <deal.II/lac/sparse_matrix.h>
-#include <AFEPack/SparsityPattern.h>
-#include <AFEPack/SparseMatrix.h>
-
 #include <AFEPack/AMGSolver.h>
 #include <AFEPack/Geometry.h>
 #include <AFEPack/EasyMesh.h>

@@ -85,7 +85,7 @@ void LoadLibraryFunction(dlhandle_t& handle,
                          dlhandle_t& fun_ptr)
 {
   fun_ptr = dlsym(handle, sym.c_str());
-  if (fun_ptr == NULL) {
+  if (fun_ptr == nullptr) {
     std::cerr << dlerror() << std::endl;
     abort();
   }
@@ -146,7 +146,7 @@ std::string FindAFEPackLibraryFilePath(const std::string& filename)
 {
   char * buffer = getenv(LIB_PATH);
   std::string lib_path;
-  if (buffer == NULL)
+  if (buffer == nullptr)
     lib_path = ".";
   else {
     lib_path = buffer;
@@ -181,21 +181,21 @@ std::string FindAFEPackLibraryFilePath(const std::string& filename)
     abort();
   }
   // to remove compiling warning
-  return "NULL";
+  return "nullptr";
 }
 
 
 
 dlhandle_t AFEPackDLOpen(const std::string& filename)
 {
-  if (filename.size() == 0) return NULL;
+  if (filename.size() == 0) return nullptr;
 
   std::string temp(filename);
   ExpandString(temp);
 	
   std::cerr << "Opening shared library " << temp << " ..." << std::endl;
   dlhandle_t handle = dlopen(temp.c_str(), 1);
-  if (handle == NULL) {
+  if (handle == nullptr) {
     std::cerr << "\ttried " << temp << ": failed" << std::endl;
   }
   else {
@@ -227,7 +227,7 @@ dlhandle_t AFEPackDLOpen(const std::string& filename)
         int current = temp.rfind("/") + 1;
         temp.replace(current, last - current, start, (end - start)/sizeof(char));
         handle = dlopen(temp.c_str(), 1);
-        if (handle == NULL) {
+        if (handle == nullptr) {
           std::cerr << "\ttried " << temp << ": failed" << std::endl;
           abort();
         }
@@ -263,7 +263,7 @@ dlhandle_t AFEPackDLOpen(const std::string& filename)
         current = temp.rfind("/") + 1;
         temp.replace(current, last - current, start, (end - start)/sizeof(char));
         handle = dlopen(temp.c_str(), 1);
-        if (handle == NULL) {
+        if (handle == nullptr) {
           std::cerr << "\ttried " << temp << ": failed" << std::endl;
           abort();
         }

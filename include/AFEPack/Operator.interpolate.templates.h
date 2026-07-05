@@ -27,7 +27,7 @@ void Operator::L2Interpolate(const FEMFunction<value_type, DIM>& f0, FEMFunction
   if (&(irregular_mesh0.geometryTree()) != &(irregular_mesh1.geometryTree())) {
     std::cerr << "The two FEM functions are even not on the same hierarchy geometry tree."
 	      << std::endl;
-    Assert(false, ExcInternalError());
+    assert(false);
   }
   std::vector<bool> flag(f1.size(), false);
   f1.Vector<value_type>::operator=(0.0);
@@ -39,8 +39,8 @@ void Operator::L2Interpolate(const FEMFunction<value_type, DIM>& f0, FEMFunction
     const HElement<DIM>& h_element1 = the_pair(1);
     const Element<value_type,DIM>& element0 = fem_space0.element(h_element0.index);
     const Element<value_type,DIM>& element1 = fem_space1.element(h_element1.index);
-    Assert(element0.index() == h_element0.index, ExcInternalError());
-    Assert(element1.index() == h_element1.index, ExcInternalError());
+    assert(element0.index() == h_element0.index);
+    assert(element1.index() == h_element1.index);
     const std::vector<int>& element_dof1 = element1.dof();
     unsigned int n_element_dof1 = element_dof1.size();
     if (the_pair.state() != ActiveElementPairIterator<DIM>::LESS_THAN) {

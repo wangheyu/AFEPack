@@ -32,9 +32,9 @@ namespace SparseMatrixTool {
       m.reinit(sp);
       int i, j, n = sp0.n_cols();
       const std::size_t * p_rowstart0 = sp0.get_rowstart_indices();
-      const u_int * p_column0 = sp0.get_column_numbers();
+      const size_t * p_column0 = sp0.get_column_numbers();
       const std::size_t * p_rowstart1 = sp1.get_rowstart_indices();
-      const u_int * p_column1 = sp1.get_column_numbers();
+      const size_t * p_column1 = sp1.get_column_numbers();
       for (i = 0;i < sp.n_rows();i ++) {
 	for (j = p_rowstart0[i];j < p_rowstart0[i + 1];j ++)
 	  m.add(i, p_column0[j], m0.global_entry(j));
@@ -68,9 +68,9 @@ namespace SparseMatrixTool {
       m.reinit(sp);
       int i, j, n = sp0.n_rows();
       const std::size_t * p_rowstart0 = sp0.get_rowstart_indices();
-      const u_int * p_column0 = sp0.get_column_numbers();
+      const size_t * p_column0 = sp0.get_column_numbers();
       const std::size_t * p_rowstart1 = sp1.get_rowstart_indices();
-      const u_int * p_column1 = sp1.get_column_numbers();
+      const size_t * p_column1 = sp1.get_column_numbers();
       for (i = 0;i < n;i ++)
 	for (j = p_rowstart0[i];j < p_rowstart0[i + 1];j ++)
 	  m.add(i, p_column0[j], m0.global_entry(j));
@@ -114,9 +114,9 @@ namespace SparseMatrixTool {
 
       int i, j, n = sp0.n_rows();
       const std::size_t * p_rowstart0 = sp0.get_rowstart_indices();
-      const u_int * p_column0 = sp0.get_column_numbers();
+      const size_t * p_column0 = sp0.get_column_numbers();
       const std::size_t * p_rowstart1 = sp1.get_rowstart_indices();
-      const u_int * p_column1 = sp1.get_column_numbers();
+      const size_t * p_column1 = sp1.get_column_numbers();
       for (i = 0;i < n;i ++) {
 	for (j = p_rowstart0[i];j < p_rowstart0[i + 1];j ++)
 	  m.add(i, p_column0[j], m0.global_entry(j));
@@ -155,9 +155,9 @@ namespace SparseMatrixTool {
       int r0 = sp0.n_rows(), r1 = sp1.n_rows();
       int c0 = sp0.n_cols();
       const std::size_t * p_rowstart0 = sp0.get_rowstart_indices();
-      const u_int * p_column0 = sp0.get_column_numbers();
+      const size_t * p_column0 = sp0.get_column_numbers();
       const std::size_t * p_rowstart1 = sp1.get_rowstart_indices();
-      const u_int * p_column1 = sp1.get_column_numbers();
+      const size_t * p_column1 = sp1.get_column_numbers();
       for (i = 0;i < r0;i ++)
 	for (j = p_rowstart0[i];j < p_rowstart0[i + 1];j ++)
 	  m.add(i, p_column0[j], m0.global_entry(j));

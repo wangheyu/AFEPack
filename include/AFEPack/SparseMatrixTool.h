@@ -8,10 +8,11 @@
  * 
  */
 
-//#include <deal.II/base/exceptions.h>
-//#include <deal.II/lac/sparse_matrix.h>
-
+#include <AFEPack/Vector.h>
+#include <AFEPack/DenseMatrix.h>
+#include <AFEPack/SparsityPattern.h>
 #include <AFEPack/SparseMatrix.h>
+
 #include <AFEPack/Miscellaneous.h>
 
 /**
@@ -210,30 +211,10 @@ namespace SparseMatrixTool {
 			     SparseMatrix<number>& m,
 			     bool is_pattern_ok = true);
 
-  class ExcNotCompressed : public std::exception{
-  public:
-    ExcNotCompressed(){};
-    ~ExcNotCompressed(){};
-    void print_info (std::ostream &out) const {                   
-     out << "Not Compressed" << std::endl;                           
-    }                        
-  };
-
-  class ExcDimensionDontMatch: public std::exception{
-  public:
-  ExcDimensionDontMatch(int _a, int _b):a(_a),b(_b){};
-    ~ExcDimensionDontMatch(){};
-    void print_info (std::ostream &out) const {                   
-      out << "The dimensions " << a << " and " << b << " do not match properly.";
-   }
-    int a;
-    int b;
-  };
-  
- //AFEPack::DeclException0(ExcNotCompressed, "Not Compressed");
- // AFEPack::DeclException2(ExcDimensionDontMatch, int, int,
- //		 << "The dimensions " << arg1 << " and " << arg2
- //		 << " do not match properly.");
+  // DeclException0(ExcNotCompressed);
+  // DeclException2(ExcDimensionDontMatch, int, int,
+  // 		 << "The dimensions " << arg1 << " and " << arg2
+  // 		 << " do not match properly.");
 };
 
 /**

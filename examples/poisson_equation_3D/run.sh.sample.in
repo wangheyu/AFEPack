@@ -1,0 +1,7 @@
+#!/bin/bash
+
+export LD_LIBRARY_PATH=@prefix@/lib:$LD_LIBRARY_PATH
+export AFEPACK_PATH=@prefix@/include/AFEPack
+export AFEPACK_TEMPLATE_PATH=$AFEPACK_PATH/template/tetrahedron
+
+./main $1

@@ -43,7 +43,7 @@ void FEMFunction<double, 2>::writeEasyMeshData(const std::string& filename)
     }
   }
   for (i = 0;i < n_node;i ++) {
-    Assert(count[i] > 0, ExcInternalError());
+    assert(count[i] > 0);
     val[i] /= count[i];
   }
   for (i = 0;i < n_node;i ++)	os << val[i] << "\n";
@@ -230,7 +230,7 @@ void FEMFunction<double, 2>::writeOpenDXData(const std::string& filename,
 	 << mesh.geometry(0, geo.vertex(3)).vertex(0) << "\t\n";
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
     if (flag == 0) {
       for (int i = 0;i < geo.n_vertex();i ++) {
@@ -259,7 +259,7 @@ void FEMFunction<double, 2>::writeOpenDXData(const std::string& filename,
 	
   if (flag == 0) {
     for (int i = 0;i < n_node;i ++) {
-      Assert(count[i] > 0, ExcInternalError());
+      assert(count[i] > 0);
       val[i] /= count[i];
     }
   }
@@ -357,7 +357,7 @@ void FEMFunction<double,3>::writeOpenDXData(const std::string& filename,
 	 << mesh.geometry(0, geo.vertex(6)).vertex(0) << "\t\n";
       break;
     default:
-      Assert(false, ExcInternalError());
+      assert(false);
     }
     if (flag == 0) {
       for (int i = 0;i < geo.n_vertex();i ++) {
@@ -381,7 +381,7 @@ void FEMFunction<double,3>::writeOpenDXData(const std::string& filename,
 	
   if (flag == 0) {
     for (int i = 0;i < n_data;i ++) {
-      Assert(count[i] > 0, ExcInternalError());
+      assert(count[i] > 0);
       val[i] /= count[i];
     }
   }

@@ -19,8 +19,6 @@
 #include <iterator>
 #include <algorithm>
 
-//#include <deal.II/base/exceptions.h>
-
 #include <AFEPack/DerefIterator.h>
 #include <AFEPack/Geometry.h>
 #include <AFEPack/TemplateElement.h>
@@ -278,7 +276,7 @@ struct HTools {
     return result;
   }
 
-  /*
+  /**
    * 判断一个三角形是否半正则。半正则需要满足两个条件：
    *
    *   - 至多有一条边被细分了；
@@ -391,7 +389,7 @@ struct HTools {
    */
   template <class GEO> void
   setParentInactive(GEO& geo) const {
-    if (geo.parent == NULL) return;
+    if (geo.parent == nullptr) return;
     setGeometryInactive(*geo.parent);
   }
 
@@ -667,8 +665,10 @@ class HGeometry<0,DOW> : public Point<DOW>, public HGeometryInfo<0>, public HGeo
 };
 
 
-
-template <int DOW=1>
+/*
+  A partial specilazation
+ */
+template <int DOW>
   class HGeometry<1,DOW> : public HGeometryInfo<1>, public HGeometryBase
   {
   public:
@@ -702,7 +702,48 @@ template <int DOW=1>
   friend std::ostream& operator<< <>(std::ostream&, const HGeometry<1,DOW>&);
   };
 
-template <int DOW=2>
+/*
+  A full specialization
+ */
+// template <>
+//   class HGeometry<1,1> : public HGeometryInfo<1>, public HGeometryBase
+//   {
+//   public:
+//   enum { dim = 1, dow = 1 };
+//   typedef HGeometry<0,dow> vertex_t;
+//   typedef HGeometry<dim-1,dow> bound_t;
+//   typedef HGeometry<dim,dow> this_t;
+//   typedef this_t child_t;
+//   typedef this_t parent_t;
+
+//   static void (*mid_point)(const Point<dow>&, 
+//                            const Point<dow>&,
+//                            bmark_t,
+//                            Point<dow>&);
+//   public:
+//   int index;
+//   std::vector<vertex_t *> vertex;
+//   std::vector<bound_t *> boundary;
+//   parent_t * parent;
+//   std::vector<HGeometry<1,dow> *> child;
+//   bmark_t bmark;
+//   public:
+//   HGeometry();
+//   virtual ~HGeometry() {}
+//   public:
+//   bool isRefined() const;
+//   bool isIncludePoint(const Point<dow>&) const;
+//   void refine();
+//   void checkIntegrity() const;
+
+//   friend std::ostream& operator<< <>(std::ostream&, const HGeometry<1,dow>&);
+//   };
+
+
+/*
+  A partial specialization
+ */
+template <int DOW>
   class HGeometry<2,DOW> : public HGeometryInfo<2>, public HGeometryBase
   {
   public:
@@ -742,7 +783,53 @@ template <int DOW=2>
   friend std::ostream& operator<< <>(std::ostream&, const HGeometry<2,DOW>&);
   };
 
-template <int DOW=3>
+/*
+  A full specialization
+ */
+// template <>
+//   class HGeometry<2,2> : public HGeometryInfo<2>, public HGeometryBase
+//   {
+//   public:
+//   enum { dim = 2, dow = 2 };
+//   typedef HGeometry<0,dow> vertex_t;
+//   typedef HGeometry<dim-1,dow> bound_t;
+//   typedef HGeometry<dim,dow> this_t;
+//   typedef this_t child_t;
+//   typedef this_t parent_t;
+
+//   int index;
+//   std::vector<vertex_t *> vertex;
+//   std::vector<bound_t *> boundary;
+//   parent_t * parent;
+//   std::vector<child_t *> child;
+//   bmark_t bmark;
+//   public:
+//   HGeometry();
+//   virtual ~HGeometry() {}
+//   public:
+//   bool isRefined() const;
+//   bool isIncludePoint(const Point<dow>&) const;
+//   void refine();
+//   void checkIntegrity() const;
+
+//   /**
+//    * 计算二维三角形的有向面积，此函数必须在DOW=2的时候才对。
+//    */
+//   static double 
+//   triangle_area(const Point<dow>& v0,
+//                 const Point<dow>& v1,
+//                 const Point<dow>& v2) {
+//     return 0.5*((v1[0] - v0[0])*(v2[1] - v0[1]) - 
+//                 (v1[1] - v0[1])*(v2[0] - v0[0]));
+//   }
+
+//   friend std::ostream& operator<< <>(std::ostream&, const HGeometry<2,dow>&);
+//   };
+
+/*
+  A partial specialization
+ */
+template <int DOW>
   class HGeometry<3,DOW> : public HGeometryInfo<3>, public HGeometryBase
   {
   public:
@@ -791,6 +878,59 @@ template <int DOW=3>
 
   friend std::ostream& operator<< <>(std::ostream&, const HGeometry<3,DOW>&);
   };
+
+/*
+  A full specialization
+ */
+// template <>
+//   class HGeometry<3,3> : public HGeometryInfo<3>, public HGeometryBase
+//   {
+//   public:
+//   enum { dim = 3, dow = 3 };
+//   typedef HGeometry<0,dow> vertex_t;
+//   typedef HGeometry<dim-1,dow> bound_t;
+//   typedef HGeometry<dim,dow> this_t;
+//   typedef this_t child_t;
+//   typedef this_t parent_t;
+
+//   static const int	REFINE_MODEL_03 = 0;
+//   static const int	REFINE_MODEL_14 = 1;
+//   static const int	REFINE_MODEL_25 = 2;
+//   int			refine_model;
+//   public:
+//   int index;
+//   std::vector<vertex_t *> vertex;
+//   std::vector<bound_t *> boundary;
+//   parent_t * parent;
+//   std::vector<child_t *> child;
+//   bmark_t bmark;
+//   public:
+//   HGeometry();
+//   virtual ~HGeometry() {}
+//   public:
+//   bool isRefined() const;
+//   bool isIncludePoint(const Point<dow>&) const;
+//   void refine();
+//   void checkIntegrity() const;
+
+//   /**
+//    * 计算三维四面体的有向体积，此函数必须在DOW=3的时候才对。
+//    */
+//   static double
+//   tetrahedron_volume(const Point<dow>& v0,
+//                      const Point<dow>& v1,
+//                      const Point<dow>& v2,
+//                      const Point<dow>& v3) {
+//     return ((v1[0] - v0[0])*(v2[1] - v0[1])*(v3[2] - v0[2]) +
+//             (v1[1] - v0[1])*(v2[2] - v0[2])*(v3[0] - v0[0]) +
+//             (v1[2] - v0[2])*(v2[0] - v0[0])*(v3[1] - v0[1]) -
+//             (v1[0] - v0[0])*(v2[2] - v0[2])*(v3[1] - v0[1]) -
+//             (v1[1] - v0[1])*(v2[0] - v0[0])*(v3[2] - v0[2]) -
+//             (v1[2] - v0[2])*(v2[1] - v0[1])*(v3[0] - v0[0]))/6.;
+//   }
+
+//   friend std::ostream& operator<< <>(std::ostream&, const HGeometry<3,dow>&);
+//   };
 
 
 /**
@@ -904,9 +1044,9 @@ template <int DIM, int DOW=DIM>
  int					index;
  double					indicator;
  int					value; // default: -1
- h_element_t *				h_element; // default: NULL
- element_t *				parent; // default: NULL
- std::vector<element_t *>		child; // default: NULL
+ h_element_t *				h_element; // default: nullptr
+ element_t *				parent; // default: nullptr
+ std::vector<element_t *>		child; // default: nullptr
  public:
  HElement();
  HElement(const element_t&);
@@ -951,9 +1091,9 @@ template <int DIM, int DOW=DIM>
   typedef HTools Tools;
 
   private:
-  tree_t * geometry_tree; // default: NULL
-  container_t root_element; // default: NULL
-  mesh_t * regular_mesh; // default: NULL
+  tree_t * geometry_tree; // default: nullptr
+  container_t root_element; // default: nullptr
+  mesh_t * regular_mesh; // default: nullptr
 
   public:
   typedef _Deref_iterator<typename container_t::iterator, element_t> RootIterator;
@@ -1251,9 +1391,9 @@ template <int DIM, int DOW=DIM>
     for (;the_ele != end_ele;++ the_ele) {
       if (flag[the_ele->index]) {
         HElement<DIM,DOW> * p_ele = the_ele->parent;
-        if (p_ele != NULL) {
+        if (p_ele != nullptr) {
           int * p_prp = p_ele->get_property(pid);
-          if (p_prp == NULL) {
+          if (p_prp == nullptr) {
             p_prp = p_ele->new_property(pid);
             *p_prp = 1;
           } else {
@@ -1276,7 +1416,7 @@ template <int DIM, int DOW=DIM>
     }
   } 
 
-  void renumerateElementHSFC(void (*f)(const double*, double*)=NULL);
+  void renumerateElementHSFC(void (*f)(const double*, double*)=nullptr);
   /**
    * Write the mesh data into \p{easymesh} format data files. For 2-d only.
    */
@@ -1477,7 +1617,7 @@ template <int DIM, int DOW=DIM>
   iterator		iterator1;
 
   public:
-  ActiveElementPairIterator() : mesh_pair(NULL) {};
+  ActiveElementPairIterator() : mesh_pair(nullptr) {};
   ActiveElementPairIterator(ir_mesh_pair_t * mp,
                             State s,
                             const iterator& it0,
@@ -1490,14 +1630,14 @@ template <int DIM, int DOW=DIM>
   const reference_t operator()(u_int i) const {
     if (i == 0) return *iterator0;
     else if (i == 1) return *iterator1;
-    else Assert (false, ExcInternalError()); // something must be wrong
+    else assert(false); // something must be wrong
   }
   reference_t operator()(u_int i) {
     if (i == 0) return *iterator0;
     else if (i == 1) return *iterator1;
     else {
-      Assert (false, ExcInternalError()); // something must be wrong
-      return *((HElement<DIM, DOW> *)NULL);
+      assert(false); // something must be wrong
+      return *((HElement<DIM, DOW> *)nullptr);
     }
   };
 
@@ -1530,7 +1670,7 @@ template <int DIM, int DOW=DIM>
   public:
   mesh_t *				msh;
   public:
-  Indicator() : msh(NULL) {};
+  Indicator() : msh(nullptr) {};
   explicit Indicator(mesh_t& m) : msh(&m) {
     resize(msh->n_geometry(DIM));
   };
@@ -1599,7 +1739,7 @@ template <int DIM, int DOW=DIM>
   double& indicator(const int& i) {return (*ind)[i];};
   void setIndicator(indicator_t& i) {
     ind = &i;
-    Assert (&(ind->mesh()) == &(from_mesh->regularMesh()), ExcInternalError());
+    assert(&(ind->mesh()) == &(from_mesh->regularMesh()));
   };
   const double& tolerence() const {return tol;};
   double& tolerence() {return tol;};
@@ -1646,3 +1786,4 @@ AFEPACK_CLOSE_NAMESPACE
  * end of file
  * 
  */
+

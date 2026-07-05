@@ -17,12 +17,12 @@
 #include <iterator>
 #include <algorithm>
 
-// #include <deal.II/base/exceptions.h>
-// #include <deal.II/lac/vector.h>
-// #include <deal.II/lac/sparse_matrix.h>
 
 #include <AFEPack/Vector.h>
+#include <AFEPack/DenseMatrix.h>
+#include <AFEPack/SparsityPattern.h>
 #include <AFEPack/SparseMatrix.h>
+
 #include <AFEPack/Geometry.h>
 #include <AFEPack/HGeometry.h>
 #include <AFEPack/TemplateElement.h>
@@ -130,7 +130,7 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM>
   const QuadratureInfo<TDIM>& findQuadratureInfo(int) const; /**< Quadrature information with certain algebraic accuracy. */
 
   public:
-  DeclException1(ExcMeshData, std::string, << "Mesh data uncompatible: " << arg1);
+    //  DeclException1(ExcMeshData, std::string, << "Mesh data uncompatible: " << arg1);
 #ifdef __SERIALIZATION__ 
   template <class T> T *
   new_property(const property_id_t<T>& pid) const {
@@ -187,9 +187,9 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM>
   virtual ~FEMSpace(); /**< Destructor. */
   public:
   fe_space_t& operator=(const fe_space_t&); /**< Copy operator. */
-  void reinit(mesh_t& = *((mesh_t *)NULL),
+  void reinit(mesh_t& = *((mesh_t *)nullptr),
 	      std::vector<template_t>& 
-	      = *((std::vector<template_t> *)NULL)); /**< Reinitialization. */
+	      = *((std::vector<template_t> *)nullptr)); /**< Reinitialization. */
   const mesh_t& mesh() const {return *msh;}
   mesh_t& mesh() {return *msh;}
 
@@ -235,7 +235,7 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM>
   ElementIterator endElement() {return element().end();};
   ConstElementIterator endElement() const {return element().end();};
 	
-  DeclException1(ExcDOFData, std::string, << "DOF data uncompatible: " << arg1);
+    //DeclException1(ExcDOFData, std::string, << "DOF data uncompatible: " << arg1);
 
   const unsigned int& efficiencyFlag() const {return effi_flag;};
   unsigned int& efficiencyFlag() {return effi_flag;}
@@ -357,7 +357,7 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, typename Number=
   private:
   Element<value_type,DIM,DOW,TDIM> * ele;
   public:
-  LocalFEMFunction(Element<value_type,DIM,DOW,TDIM> & = *((Element<value_type,DIM,DOW,TDIM> *)NULL));
+  LocalFEMFunction(Element<value_type,DIM,DOW,TDIM> & = *((Element<value_type,DIM,DOW,TDIM> *)nullptr));
   virtual ~LocalFEMFunction() {};
   public:
   Element<value_type,DIM,DOW,TDIM>& element();
@@ -438,7 +438,7 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, typename Number=
   bool is_newed;
   const Function<Number> * f;
   public:
-  BoundaryFunction() : is_newed(false), f(NULL) {};
+  BoundaryFunction() : is_newed(false), f(nullptr) {};
   BoundaryFunction(const Type& t,
                    const bmark_t& m,
                    const Function<Number>& fun) :
@@ -448,7 +448,7 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, typename Number=
   BoundaryFunction(const Type& t,
                    const bmark_t& m, 
                    value_type (*fun)(const double *),
-                   std::vector<value_type> (*grad)(const double *) = NULL) :
+                   std::vector<value_type> (*grad)(const double *) = nullptr) :
   BoundaryCondition<value_type,DIM,DOW,TDIM,Number>(t,m) 
   {
     is_newed = true;
@@ -459,15 +459,15 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, typename Number=
   is_newed(false), 
   f(b.f) {};
   virtual ~BoundaryFunction() {
-    if (is_newed && f != NULL) delete f;
+    if (is_newed && f != nullptr) delete f;
   };
   public:
   void reinit(const Type& t,
               const bmark_t& m, 
               value_type (*fun)(const double *),
-              std::vector<value_type> (*grad)(const double *) = NULL) {
+              std::vector<value_type> (*grad)(const double *) = nullptr) {
     BoundaryCondition<value_type,DIM,DOW,TDIM,Number>::reinit(t, m);
-    if (is_newed && f != NULL) delete f;
+    if (is_newed && f != nullptr) delete f;
     is_newed = true;
     f = new FunctionFunction<Number>(fun, grad);
   }
@@ -493,7 +493,7 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, typename Number=
   const FEMSpace<value_type,DIM,DOW,TDIM> *		fem_space;
   public:
   BoundaryConditionAdmin(const FEMSpace<value_type,DIM,DOW,TDIM>& sp = 
-                         *((const FEMSpace<value_type,DIM,DOW,TDIM> *)(NULL))) {fem_space = &sp;};
+                         *((const FEMSpace<value_type,DIM,DOW,TDIM> *)(nullptr))) {fem_space = &sp;};
   ~BoundaryConditionAdmin() {};
   public:
   void reinit(const FEMSpace<value_type,DIM,DOW,TDIM>& sp) {fem_space = &sp; index_map.clear();};
@@ -505,14 +505,15 @@ template <class value_type, int DIM, int DOW=DIM, int TDIM=DIM, typename Number=
   void clearEntry(Vector<double>& f);
   void add(const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>& b);
 
-  bool isValid(const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>& bc) const {
-    return (&bc != NULL);
+  bool isValid(const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>* bc) const {
+    return (bc != nullptr);
   };
-  const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>& find(const bmark_t& bm) const {
+  const BoundaryCondition<value_type,DIM,DOW,TDIM,Number>* find(const bmark_t& bm) const {
     if ((unsigned int)bm >= index_map.size() || index_map[bm] == -1)
-      return *((const BoundaryCondition<value_type,DIM,DOW,TDIM,Number> *)NULL);
+      //return *((const BoundaryCondition<value_type,DIM,DOW,TDIM,Number> *)nullptr);
+      return nullptr;
     else
-      return *((*this)[index_map[bm]]);
+      return ((*this)[index_map[bm]]);
   };
   };
 
