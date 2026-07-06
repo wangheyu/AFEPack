@@ -201,13 +201,15 @@ AS_IF([test "x$OPENBLAS_LDFLAGS" != x],
           AC_MSG_ERROR([OpenBLAS/CBLAS/LAPACKE link check failed])])
      LDFLAGS="$SAVE_LDFLAGS"
      LIBS="$SAVE_LIBS"],
-    [# Otherwise, check for general CBLAS and LAPACKE libraries
+    [# Otherwise, check for general CBLAS and LAPACKE libraries.
+     # Try libopenblas first (common on Debian/Ubuntu), fall back to libcblas.
      SAVE_LDFLAGS="$LDFLAGS"
      SAVE_LIBS="$LIBS"
+     CBLAS_LIBS=""
      AS_IF([test "x$CBLAS_LDFLAGS" != x],
            [LDFLAGS="$LDFLAGS -L$CBLAS_LDFLAGS"])
-     LIBS="-lcblas $LIBS"
-     AC_MSG_CHECKING([whether CBLAS library links])
+     LIBS="-lopenblas $LIBS"
+     AC_MSG_CHECKING([whether OpenBLAS (system default) provides CBLAS])
      AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <cblas.h>]],
         [[double a[1] = {1.0};
           cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
@@ -217,13 +219,28 @@ AS_IF([test "x$OPENBLAS_LDFLAGS" != x],
           AC_MSG_RESULT([yes])
           AS_IF([test "x$CBLAS_LDFLAGS" != x],
                 [AM_LDFLAGS="$AM_LDFLAGS -L$CBLAS_LDFLAGS $LB_RPATH_FLAGS$CBLAS_LDFLAGS"])
-          AM_LDFLAGS="$AM_LDFLAGS -lcblas"
+          CBLAS_LIBS="-lopenblas"
           AC_DEFINE([HAVE_CBLAS], [1], [Define if CBLAS library is found])],
          [AC_MSG_RESULT([no])
-          AC_MSG_WARN([Missing or conflicting dependency: libcblas could not be linked])
-          AC_MSG_WARN([Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE])
-          AC_MSG_WARN([If CBLAS is installed in a custom prefix, pass --with-cblas-libdir=DIR matching the cblas.h include path])
-          AC_MSG_ERROR([CBLAS link check failed])])
+          LIBS="-lcblas $SAVE_LIBS"
+          AC_MSG_CHECKING([whether general CBLAS library (-lcblas) links])
+          AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <cblas.h>]],
+             [[double a[1] = {1.0};
+               cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                           1, 1, 1, 1.0, a, 1, a, 1, 0.0, a, 1);
+               return 0;]])],
+              [
+               AC_MSG_RESULT([yes])
+               AS_IF([test "x$CBLAS_LDFLAGS" != x],
+                     [AM_LDFLAGS="$AM_LDFLAGS -L$CBLAS_LDFLAGS $LB_RPATH_FLAGS$CBLAS_LDFLAGS"])
+               CBLAS_LIBS="-lcblas"
+               AC_DEFINE([HAVE_CBLAS], [1], [Define if CBLAS library is found])],
+              [AC_MSG_RESULT([no])
+               AC_MSG_WARN([Missing or conflicting dependency: neither -lopenblas nor -lcblas could be linked])
+               AC_MSG_WARN([Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE])
+               AC_MSG_WARN([If CBLAS is installed in a custom prefix, pass --with-cblas-libdir=DIR matching the cblas.h include path])
+               AC_MSG_ERROR([CBLAS link check failed])])])
+     AM_LDFLAGS="$AM_LDFLAGS $CBLAS_LIBS"
      LDFLAGS="$SAVE_LDFLAGS"
      LIBS="$SAVE_LIBS"
 
@@ -233,8 +250,8 @@ AS_IF([test "x$OPENBLAS_LDFLAGS" != x],
            [LDFLAGS="$LDFLAGS -L$LAPACKE_LDFLAGS"])
      AS_IF([test "x$CBLAS_LDFLAGS" != x],
            [LDFLAGS="$LDFLAGS -L$CBLAS_LDFLAGS"])
-     LIBS="-llapacke -lcblas $LIBS"
-     AC_MSG_CHECKING([whether LAPACKE library links with CBLAS])
+     LIBS="-llapacke $CBLAS_LIBS $LIBS"
+     AC_MSG_CHECKING([whether LAPACKE library links with $CBLAS_LIBS])
      AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <lapacke.h>]],
         [[double a[1] = {1.0};
           int ipiv[1];
@@ -246,7 +263,7 @@ AS_IF([test "x$OPENBLAS_LDFLAGS" != x],
           AM_LDFLAGS="$AM_LDFLAGS -llapacke"
           AC_DEFINE([HAVE_LAPACKE], [1], [Define if LAPACKE library is found])],
          [AC_MSG_RESULT([no])
-          AC_MSG_WARN([Dependency conflict: LAPACKE library could not be linked with the selected CBLAS provider])
+          AC_MSG_WARN([Dependency conflict: LAPACKE library could not be linked with $CBLAS_LIBS])
           AC_MSG_WARN([Debian/Ubuntu install suggestion: sudo apt install $AFEPACK_APT_CORE])
           AC_MSG_WARN([Resolution: use matching BLAS/LAPACK packages, or pass matching --with-cblas-libdir and --with-lapacke-libdir paths])
           AC_MSG_ERROR([LAPACKE/CBLAS link check failed])])
