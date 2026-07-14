@@ -841,6 +841,396 @@ AFEPack 的一个重要特性是可以在同一层次几何树上维护多个自
   \item 运行前通常需要 \file{gmsh2mesh} 和 \file{mesh_refine} 预处理。
 \end{itemize}
 
+\chapter{FAST 算例专章}
+
+\section{目录定位与总体目标}
+
+\file{examples/FAST} 是从本机 FEM 工作目录迁移到本仓库的一组 AFEPack 算例集合，原始来源目录为：
+
+\begin{lstlisting}[language=bash]
+$HOME/Projects/FEM/examples/afepack
+\end{lstlisting}
+
+该目录不依赖原 FEM 仓库，所有源码、EasyMesh 输入和 Makefile 管理逻辑都放在当前项目内。当前包含：
+
+\begin{itemize}[leftmargin=2em]
+  \item \file{src}：116 个 C++ 算例源文件和一个共享头文件 \file{navier\_stokes\_schur\_common.h}；
+  \item \file{meshes/afepack}：21 个 EasyMesh \file{.d} 输入文件；
+  \item \file{Makefile}：统一生成网格、编译全部算例、编译单个算例和运行单个算例；
+  \item \file{build}：Makefile 生成的网格、可执行文件和输出数据，已由局部 \file{.gitignore} 排除。
+\end{itemize}
+
+FAST 的重点不是演示 AFEPack 的最小用法，而是把 Poisson、对流扩散、Stokes、Navier--Stokes 和 Oseen 等模型问题组织成可批量编译和对比的实验集。它特别适合用来观察：
+
+\begin{enumerate}[leftmargin=2em]
+  \item 同一套 AFEPack 网格、模板单元和有限元空间如何服务于不同方程；
+  \item 稳定化、两重网格、误差估计、AMG 和块预条件器在不同问题中的表现；
+  \item 不可压流鞍点系统中速度块、压力块和 Schur 补近似的程序组织方式；
+  \item Makefile 如何把 AFEPack 库、模板动态库、EasyMesh 和外部线性代数库串成完整工作流。
+\end{enumerate}
+
+\section{Makefile 管理的构建模型}
+
+\file{examples/FAST/Makefile} 以 \file{src/*.cpp} 自动发现目标。每个源文件对应一个同名可执行文件，例如：
+
+\begin{lstlisting}[language=bash]
+src/poisson_convergence_afepack.cpp
+build/bin/poisson_convergence_afepack
+\end{lstlisting}
+
+常用命令如下：
+
+\begin{lstlisting}[language=bash]
+# 列出全部可编译目标
+make -C examples/FAST list
+
+# 打印 AFEPack、EasyMesh、Eigen、UMFPACK 等路径探测结果
+make -C examples/FAST info
+
+# 只生成 EasyMesh 网格
+make -C examples/FAST meshes
+
+# 编译全部 116 个算例
+make -C examples/FAST
+
+# 编译单个目标
+make -C examples/FAST poisson_convergence_afepack
+
+# 运行单个目标，自动设置 LD_LIBRARY_PATH 和模板路径
+make -C examples/FAST run-poisson_convergence_afepack
+\end{lstlisting}
+
+Makefile 的默认路径优先使用当前仓库的构建产物：
+
+\begin{longtable}{>{\ttfamily}p{0.34\textwidth}p{0.56\textwidth}}
+\toprule
+变量 & 默认含义\\
+\midrule
+\endfirsthead
+\toprule
+变量 & 默认含义\\
+\midrule
+\endhead
+AFEPACK\_INCLUDE\_DIR & 当前仓库的 \file{include} 目录。\\
+AFEPACK\_BUILD\_LIB\_DIR & 当前仓库构建出的 \file{build/src/.libs}。\\
+AFEPACK\_LIB\_DIR & 若本仓库已有 \file{libAFEPack.so}，优先链接它；否则回退到安装目录。\\
+AFEPACK\_TEMPLATE\_DIR & 三角形模板目录，优先使用构建目录，必要时回退到 \file{\$HOME/local/AFEPack}。\\
+EASYMESH & 优先使用 \file{build/external/easymesh/easymesh}。\\
+ENABLE\_EIGEN & 自动探测 Eigen3；存在时为 Blasius 组算例启用 Eigen 直接求解器。\\
+ENABLE\_UMFPACK & 自动探测 SuiteSparse UMFPACK；存在时启用 Eigen UMFPACK 后端。\\
+\bottomrule
+\end{longtable}
+
+在另一套安装环境中使用 FAST 时，可以显式覆盖这些变量：
+
+\begin{lstlisting}[language=bash]
+make -C examples/FAST \
+  AFEPACK_INCLUDE_DIR=$HOME/local/AFEPack/include \
+  AFEPACK_LIB_DIR=$HOME/local/AFEPack/lib \
+  AFEPACK_TEMPLATE_DIR=$HOME/local/AFEPack/include/AFEPack/template/triangle \
+  EASYMESH=$HOME/local/AFEPack/bin/easymesh
+\end{lstlisting}
+
+\subsection{网格生成规则}
+
+FAST 中的二维网格以 EasyMesh \file{.d} 文件为源。Makefile 将每个 \file{meshes/afepack/name.d} 复制到 \file{build/meshes/afepack/name.d}，再在该目录运行：
+
+\begin{lstlisting}[language=bash]
+easymesh name
+\end{lstlisting}
+
+EasyMesh 在当前版本中常会返回非零状态，但只要 \file{name.n}、\file{name.e} 和 \file{name.s} 都成功生成且节点数、单元数为正，Makefile 就认为网格可用。这与 FAST 原 CMake 脚本的处理方式一致。程序运行时通过宏
+
+\begin{lstlisting}[language=C++]
+AFEPACK_DEFAULT_MESH_DIR
+AFEPACK_DEFAULT_OUTPUT_DIR
+\end{lstlisting}
+
+定位生成网格和输出目录，因此源码中不需要写死本地路径。
+
+\section{方程族与源码分组}
+
+FAST 算例按文件名前缀分为五个方程族：
+
+\begin{longtable}{p{0.23\textwidth}p{0.16\textwidth}p{0.51\textwidth}}
+\toprule
+前缀 & 数量特征 & 主要内容\\
+\midrule
+\endfirsthead
+\toprule
+前缀 & 数量特征 & 主要内容\\
+\midrule
+\endhead
+\file{poisson\_*} & Poisson 组 & 收敛阶、误差估计、混合边界、Neumann 条件、AMG 参数扫描、两重网格和求解器对比。\\
+\file{convection\_diffusion\_*} & 对流扩散组 & 边界层、内层、特征层、回流速度场、人工扩散、Shishkin 网格、两重网格和预条件器扫描。\\
+\file{stokes\_*} & Stokes 组 & Taylor--Hood 元、等阶稳定化、MINRES、速度 AMG、压力零空间、方腔流、Poiseuille 流、后台阶流和收缩通道。\\
+\file{navier\_stokes\_*} & Navier--Stokes 组 & Picard/Newton 线性化、PCD/LSC/Schur 补预条件器、后台阶再附长度、驱动方腔、Blasius 边界层代理和雷诺数扫描。\\
+\file{oseen\_*} & Oseen 组 & 固定对流场线性化后的不可压流鞍点系统，用于验证 PCD、LSC 和速度 AMG 的矩阵向量乘及迭代求解。\\
+\bottomrule
+\end{longtable}
+
+有些文件是“包装算例”：它们用 \cmd{\#define main old\_main} 后包含另一个 \file{.cpp}，再提供新的 \class{main()} 来改变参数扫描、网格列表或输出方式。因此 Makefile 把所有 \file{src/*.cpp} 和 \file{src/*.h} 都作为目标依赖，保证被包含源码更新后相关包装程序会重新编译。
+
+\section{Poisson 方程算例}
+
+Poisson 组求解二阶椭圆模型问题
+\[
+  -\nabla\cdot(\kappa\nabla u)=f \quad \text{in }\Omega,
+\]
+配合 Dirichlet、Neumann 或混合边界条件。最常见的弱形式为：求 $u_h\in V_h$，使得
+\[
+  a(u_h,v_h)=\ell(v_h),\qquad
+  a(u_h,v_h)=\int_\Omega \kappa\nabla u_h\cdot\nabla v_h\,\mathrm dx .
+\]
+
+离散空间通常是三角形网格上的连续 $P_1$ 空间。程序流程与基础 Poisson 示例相同：读入 EasyMesh 网格，读取 \file{triangle.1.tmp\_dof} 和 \file{triangle.1.bas\_fun}，建立 \class{FEMSpace<double,2>}，用刚度矩阵装配 Laplace 项，用 \class{Operator::L2Discretize} 离散右端，再通过 \class{AMGSolver} 或对比求解器求解。
+
+典型文件包括：
+
+\begin{itemize}[leftmargin=2em]
+  \item \file{poisson\_convergence\_afepack.cpp}：在多级单位方形网格上计算 $L^2$ 误差和经验收敛阶；
+  \item \file{poisson\_lshape\_estimator\_afepack.cpp}：在 L 形区域上输出后验误差估计数据；
+  \item \file{poisson\_square\_estimator\_afepack.cpp}：在规则方形区域上给出误差估计基准；
+  \item \file{poisson\_mixed\_boundary\_afepack.cpp}：展示 Dirichlet/Neumann 混合边界；
+  \item \file{poisson\_neumann\_afepack.cpp}：展示纯 Neumann 问题中的兼容性和零空间处理；
+  \item \file{poisson\_amg\_sweep\_afepack.cpp}、\file{poisson\_solver\_comparison\_afepack.cpp} 和 \file{poisson\_two\_grid\_afepack.cpp}：比较 AMG、线性求解器和两重网格策略。
+\end{itemize}
+
+从 AFEPack 使用角度看，Poisson 组最适合作为检查环境的入口。若 \cmd{make -C examples/FAST run-poisson\_convergence\_afepack} 能完成并输出收敛表，通常说明 AFEPack 库、模板动态库、EasyMesh 网格和 OpenDX 输出路径均已配置正确。
+
+\section{对流扩散方程算例}
+
+对流扩散组围绕模型方程
+\[
+  -\varepsilon\Delta u + \boldsymbol\beta\cdot\nabla u + c u = f
+  \quad \text{in }\Omega
+\]
+展开。当扩散系数 $\varepsilon$ 很小时，解会出现边界层、内层或沿特征方向的尖锐过渡。标准 Galerkin 离散可能产生非物理振荡，因此 FAST 中准备了多组参数扫描和稳定化对比。
+
+基本离散仍使用连续 $P_1$ 空间。单元矩阵可写成
+\[
+  a_K(u_h,v_h)=
+  \int_K \varepsilon\nabla u_h\cdot\nabla v_h
+  +(\boldsymbol\beta\cdot\nabla u_h)v_h
+  +c u_h v_h\,\mathrm dx .
+\]
+人工扩散和网格分层类算例会改变 $\varepsilon$、速度场或网格尺度，以观察数值扩散、层分辨率和迭代收敛性。
+
+文件名体现了实验类型：
+
+\begin{itemize}[leftmargin=2em]
+  \item \file{convection\_diffusion\_boundary\_layer\_*}：边界层实验；
+  \item \file{convection\_diffusion\_interior\_layer\_*}：内部层实验；
+  \item \file{convection\_diffusion\_characteristic\_*}：沿特征方向发展的层结构；
+  \item \file{convection\_diffusion\_recirculating\_*}：回流速度场下的输运问题；
+  \item \file{convection\_diffusion\_shishkin\_afepack.cpp}：使用 Shishkin 型分层网格处理奇异摄动问题；
+  \item \file{convection\_diffusion\_artificial\_diffusion\_afepack.cpp}：加入人工扩散抑制振荡；
+  \item \file{convection\_diffusion\_solver\_comparison\_afepack.cpp}：比较线性求解器；
+  \item 预条件器扫描文件如下，用于批量改变预条件参数：
+\begin{lstlisting}[language=bash]
+convection_diffusion_sweep_preconditioner_afepack.cpp
+\end{lstlisting}
+\end{itemize}
+
+这组算例的价值在于展示“同一个 AFEPack 装配框架，换局部双线性型即可换方程”。用户实现新的标量二阶方程时，通常只需要仿照这些文件改写单元积分、边界条件和解析解/右端函数。
+
+\section{Stokes 方程算例}
+
+Stokes 组求解不可压低雷诺数流动：
+\[
+\begin{aligned}
+  -\nu\Delta\boldsymbol u + \nabla p &= \boldsymbol f,\\
+  \nabla\cdot\boldsymbol u &= 0.
+\end{aligned}
+\]
+对应弱形式为：求 $(\boldsymbol u_h,p_h)\in V_h\times Q_h$，使得
+\[
+  \nu(\nabla\boldsymbol u_h,\nabla\boldsymbol v_h)
+  -(p_h,\nabla\cdot\boldsymbol v_h)
+  +(q_h,\nabla\cdot\boldsymbol u_h)
+  =(\boldsymbol f,\boldsymbol v_h).
+\]
+
+FAST 中同时包含稳定混合元和等阶稳定化两类离散：
+
+\begin{itemize}[leftmargin=2em]
+  \item Taylor--Hood 型：速度使用二次三角形元，压力使用一次元，满足典型 inf--sup 稳定性要求；
+  \item 等阶稳定化：速度和压力使用同阶空间，额外加入压力稳定项或残差型稳定化；
+  \item 间断压力空间：部分收缩通道算例用于比较压力空间选择对结果的影响。
+\end{itemize}
+
+装配后得到典型鞍点系统
+\[
+  \begin{bmatrix}
+    A & B^T\\
+    B & -C
+  \end{bmatrix}
+  \begin{bmatrix}
+    U\\ P
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+    F\\ G
+  \end{bmatrix},
+\]
+其中 $A$ 是速度扩散块，$B$ 是离散散度，$C$ 是稳定化或压力约束相关块。纯 Neumann 型压力或不可压系统中常有压力常数核空间，FAST 中的 \file{stokes\_pressure\_nullspace\_afepack.cpp} 专门展示如何固定或消除该零空间。
+
+主要物理几何包括：
+
+\begin{itemize}[leftmargin=2em]
+  \item \file{stokes\_driven\_cavity\_*}：顶盖驱动方腔；
+  \item \file{stokes\_poiseuille\_*}：管道 Poiseuille 流；
+  \item \file{stokes\_step\_flow\_*}：后台阶通道；
+  \item \file{stokes\_contracting\_channel\_*}：收缩通道；
+  \item \file{stokes\_colliding\_*}：碰撞流边界条件。
+\end{itemize}
+
+算法方面，Stokes 组覆盖直接块求解、MINRES、速度 AMG、Schur 补近似和网格扫描。对于学习不可压流程序组织，建议先读 \file{stokes\_taylor\_hood\_afepack.cpp}，再读 \file{stokes\_step\_flow\_schur\_afepack.cpp}。
+
+\section{Navier--Stokes 方程算例}
+
+Navier--Stokes 组在 Stokes 方程基础上加入非线性对流项：
+\[
+\begin{aligned}
+  -\nu\Delta\boldsymbol u
+  +(\boldsymbol u\cdot\nabla)\boldsymbol u
+  +\nabla p &= \boldsymbol f,\\
+  \nabla\cdot\boldsymbol u &= 0.
+\end{aligned}
+\]
+
+FAST 中主要使用两类非线性线性化：
+
+\begin{description}[leftmargin=2em,style=nextline]
+  \item[Picard 迭代]
+    用上一轮速度 $\boldsymbol u^{(k)}$ 固定对流场，求解
+    \[
+      -\nu\Delta\boldsymbol u^{(k+1)}
+      +(\boldsymbol u^{(k)}\cdot\nabla)\boldsymbol u^{(k+1)}
+      +\nabla p^{(k+1)}=\boldsymbol f.
+    \]
+    Picard 稳健但局部收敛速度通常较慢。
+  \item[Newton 迭代]
+    对非线性残差作 Fréchet 导数，求解速度和压力增量。Newton 在初值足够好时收敛快，但每步线性系统更复杂。
+\end{description}
+
+线性化后仍是不可压鞍点系统，因此 \file{navier\_stokes\_pcd\_*}、\file{navier\_stokes\_lsc\_*} 和 \file{navier\_stokes\_*\_schur\_*} 重点比较 Schur 补预条件器。常见块形式为
+\[
+  \begin{bmatrix}
+    F & B^T\\
+    B & -C
+  \end{bmatrix},
+\]
+其中 $F$ 是包含扩散、对流和可能的 Newton Jacobian 项的速度块。理想 Schur 补 $S=BF^{-1}B^T+C$ 通常不可直接形成，FAST 中用压力质量矩阵、压力对流扩散算子或最小二乘交换子近似它。
+
+\subsection{PCD、LSC 与共享 GMRES 工具}
+
+\file{navier\_stokes\_schur\_common.h} 提供多个 Navier--Stokes/Oseen 算例共享的线性代数工具：
+
+\begin{itemize}[leftmargin=2em]
+  \item \class{RowSparseMatrix}：按行保存小型显式稀疏块矩阵；
+  \item \class{SchurMassPreconditioner}：用速度 AMG 和压力质量矩阵近似 Schur 补；
+  \item \class{solve\_pcg}：用于压力质量矩阵的 Jacobi-PCG；
+  \item \class{solve\_right\_preconditioned\_gmres}：右预条件 restarted GMRES。
+\end{itemize}
+
+PCD 预条件器把 Schur 补近似为压力质量矩阵、压力 Laplace 矩阵和压力对流扩散矩阵的组合；LSC 预条件器则使用最小二乘交换子思想构造压力块近似。相关文件名中带有 \file{iterative} 的版本通常把速度块或 Schur 补子问题也改为迭代求解，适合观察自由度增长时的可扩展性。
+
+\subsection{流动基准与扫描}
+
+Navier--Stokes 组覆盖多种基准：
+
+\begin{itemize}[leftmargin=2em]
+  \item \file{navier\_stokes\_driven\_cavity\_*}：方腔涡结构、高雷诺数、剖面输出和网格扫描；
+  \item \file{navier\_stokes\_step\_flow\_*}：后台阶回流、出流边界、再附长度、压力空间对比和雷诺数扫描；
+  \item \file{navier\_stokes\_contracting\_channel\_*}：收缩通道几何、IFISS 风格基准和剖面输出；
+  \item \file{navier\_stokes\_blasius\_*}：平板边界层代理、开缝几何、网格拉伸和雷诺数对比；
+  \item \file{navier\_stokes\_viscosity\_sweep\_afepack.cpp}：黏性系数变化下的非线性与线性求解表现。
+\end{itemize}
+
+这些算例运行时间差异很大。建议先运行基础方腔或 Poiseuille 文件，确认环境正确后，再运行带 \file{fine}、\file{high\_reynolds}、\file{mesh\_sweep} 或 \file{viscosity\_sweep} 的长算例。
+
+\section{Oseen 方程算例}
+
+Oseen 方程是 Navier--Stokes 在给定对流速度 $\boldsymbol w$ 下的线性化模型：
+\[
+\begin{aligned}
+  -\nu\Delta\boldsymbol u
+  +(\boldsymbol w\cdot\nabla)\boldsymbol u
+  +\nabla p &= \boldsymbol f,\\
+  \nabla\cdot\boldsymbol u &= 0.
+\end{aligned}
+\]
+它保留了不可压鞍点结构和非对称速度块，但去掉了外层非线性迭代。因此 Oseen 组常用于单独验证 PCD、LSC、速度 AMG 和 Schur 补矩阵向量乘：
+
+\begin{itemize}[leftmargin=2em]
+  \item \file{oseen\_pcd\_vmult\_afepack.cpp}、\file{oseen\_lsc\_vmult\_afepack.cpp}：验证预条件器乘法；
+  \item \file{oseen\_block\_pcd\_*} 与 \file{oseen\_block\_lsc\_*}：比较 PCD 和 LSC 块预条件器；
+  \item \file{oseen\_velocity\_amg\_afepack.cpp}：关注速度块 AMG 在非对称流动问题中的使用。
+\end{itemize}
+
+若用户要调试 Navier--Stokes 的 PCD/LSC 预条件器，通常应先在 Oseen 组中确认线性部分正确，再回到非线性算例中处理 Picard 或 Newton 收敛。
+
+\section{用 AFEPack 实现 FAST 风格算例的步骤}
+
+FAST 中多数程序可以抽象成以下步骤：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \textbf{读网格}：用 \class{EasyMesh::readData(prefix)} 读取 Makefile 生成的 \file{prefix.n/.s/.e}。
+  \item \textbf{读模板单元}：读取三角形模板几何、坐标变换、自由度分布和基函数；标量 $P_1$、速度 $P_2$ 或压力 $P_1/P_0$ 的差异主要体现在模板自由度和基函数文件。
+  \item \textbf{建空间}：为速度、压力或标量未知量分别建立 \class{FEMSpace}；混合问题通常维护多个空间和多个 \class{FEMFunction}。
+  \item \textbf{装配局部矩阵}：对每个单元用数值积分计算扩散、质量、对流、散度、压力质量或稳定化项。
+  \item \textbf{形成块系统}：标量问题形成单个稀疏矩阵；不可压流形成速度块、压力块、散度块和转置梯度块。
+  \item \textbf{施加边界条件}：通过边界标号识别入口、出口、壁面、顶盖或对称边界；Dirichlet 条件通常通过清行列和修正右端施加。
+  \item \textbf{求解}：简单椭圆问题用 \class{AMGSolver}；鞍点系统使用块预条件 Krylov 方法，或在小问题中使用直接/显式 Schur 补策略。
+  \item \textbf{输出与评估}：输出 OpenDX、CSV 或文本剖面，计算 $L^2$ 误差、自由度数、非零元数、迭代次数、再附长度或通量误差等指标。
+\end{enumerate}
+
+对于新算例，推荐先复制最接近的 FAST 文件，再按以下顺序修改：
+
+\begin{enumerate}[leftmargin=2em]
+  \item 改网格名称和边界标号；
+  \item 改解析解、右端项、物理参数和输出文件名；
+  \item 改局部双线性型或块矩阵装配；
+  \item 改求解器参数和扫描列表；
+  \item 用下面两条命令分别做编译检查和运行检查：
+\begin{lstlisting}[language=bash]
+make -C examples/FAST 目标名
+make -C examples/FAST run-目标名
+\end{lstlisting}
+\end{enumerate}
+
+\section{运行结果和故障定位}
+
+FAST 算例默认把输出写入 \file{examples/FAST/build}。常见输出包括：
+
+\begin{itemize}[leftmargin=2em]
+  \item \file{*.dx}：OpenDX 可视化数据；
+  \item \file{*.csv} 或文本表格：误差、剖面、扫描参数、迭代次数；
+  \item 终端输出：自由度数、网格单元数、残差、收敛阶、线性/非线性迭代信息。
+\end{itemize}
+
+故障定位可以按以下顺序进行：
+
+\begin{enumerate}[leftmargin=2em]
+  \item \cmd{make -C examples/FAST info}：确认 AFEPack 库、模板目录、EasyMesh、Eigen 和 UMFPACK 探测结果；
+  \item \cmd{make -C examples/FAST meshes}：确认 \file{build/meshes/afepack} 下生成 \file{.n/.e/.s}；
+  \item 编译一个短目标，例如 \cmd{make -C examples/FAST poisson\_convergence\_afepack}；
+  \item 运行同一目标，例如：
+\begin{lstlisting}[language=bash]
+make -C examples/FAST run-poisson_convergence_afepack
+\end{lstlisting}
+  \item 若模板库加载失败，分别检查以下变量：
+\begin{lstlisting}[language=bash]
+AFEPACK_TEMPLATE_DIR
+AFEPACK_PATH
+LD_LIBRARY_PATH
+\end{lstlisting}
+  \item 若不可压流求解不收敛，先降低雷诺数或使用较粗网格，确认边界条件和压力零空间处理无误。
+\end{enumerate}
+
+长扫描类目标可能运行很久，尤其是文件名含有 \file{fine}、\file{high\_reynolds}、\file{mesh\_sweep}、\file{viscosity\_sweep} 或 \file{stretch\_scan} 的算例。调试时应先使用短算例确认构建链路，再运行这些目标。
+
 \chapter{常用 API 速查}
 
 \section{网格与模板}
